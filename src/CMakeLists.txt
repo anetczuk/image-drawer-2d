@@ -13,6 +13,9 @@ endif()
 project( memory-performance )
 
 
+set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
+
+
 include( CMakeCompileFlags.txt )
 
 include( CMakeCoverage.txt )
@@ -38,6 +41,9 @@ include_directories( . )
 
 if( CMAKE_TESTING_ENABLED )   
     #include_directories( test_utils )
+    
+    find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+    
 endif()
 
 

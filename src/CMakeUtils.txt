@@ -57,24 +57,3 @@ function(build_cpps project_name)
     endforeach()
 endfunction()
 
-
-function(build_tests project_name ext_libs)
-    if( NOT CMAKE_TESTING_ENABLED )
-        return()
-    endif()
-    
-    file(GLOB cpp_files test_*.cpp)
-    
-    foreach(single_cpp ${cpp_files})
-        get_filename_component( cpp_name ${single_cpp} NAME_WE)
-        set( TARGET_NAME ${project_name}-${cpp_name} )
-        add_executable( ${TARGET_NAME} ${single_cpp} )
-        #add_dependencies( ${TARGET_NAME} gtest )
-        target_link_libraries( ${TARGET_NAME} ${ext_libs} )
-        set_target_properties( ${TARGET_NAME} PROPERTIES OUTPUT_NAME ${cpp_name})
-        add_test(
-            NAME ${TARGET_NAME} 
-            COMMAND ${cpp_name}
-        )
-    endforeach()
-endfunction()
