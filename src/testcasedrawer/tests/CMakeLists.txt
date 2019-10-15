@@ -2,6 +2,10 @@
 #
 #
 
+if( NOT CMAKE_TESTING_ENABLED )  
+    return()
+endif()
+
 
 set( TARGET_NAME testcasedrawer_tests )
 
