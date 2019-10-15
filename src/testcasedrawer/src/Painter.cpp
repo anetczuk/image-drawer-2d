@@ -73,7 +73,16 @@ namespace tcd {
         }
 
         void fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) override {
-            //
+            const Image::Pixel pixColor = Image::convertColor( color );
+            const uint32_t w = img->width();
+            const uint32_t h = img->height();
+            const uint32_t endW = std::min(w, x + width );
+            const uint32_t endH = std::min(h, y + height );
+            for( uint32_t i = x; i<endW; ++i ) {
+                for( uint32_t j = y; j<endH; ++j ) {
+                    img->setPixel( i, j, pixColor );
+                }
+            }
         }
 
     };
@@ -91,23 +100,39 @@ namespace tcd {
             const uint32_t endH = std::min(h, y + source.height() );
             for( uint32_t i = x; i<endW; ++i ) {
                 for( uint32_t j = y; j<endH; ++j ) {
-                    const Image::Pixel orig = img->pixel( i, j );
                     const Image::Pixel src = source.pixel( i-x, j-y );
-                    const uint32_t origLight = brightness(orig);
-                    const uint32_t srcLight = brightness(src);
-                    if (origLight > srcLight) {
-                        const Image::Pixel diff = difference(orig, src);
-                        img->setPixel( i, j, diff );
-                    } else {
-                        const Image::Pixel diff = difference(src, orig);
-                        img->setPixel( i, j, diff );
-                    }
+                    setPixel(i, j, src);
                 }
             }
         }
 
         void fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) override {
-            //
+            const Image::Pixel pixColor = Image::convertColor( color );
+            const uint32_t w = img->width();
+            const uint32_t h = img->height();
+            const uint32_t endW = std::min(w, x + width );
+            const uint32_t endH = std::min(h, y + height );
+            for( uint32_t i = x; i<endW; ++i ) {
+                for( uint32_t j = y; j<endH; ++j ) {
+                    setPixel( i, j, pixColor );
+                }
+            }
+        }
+
+
+    private:
+
+        void setPixel(const uint32_t x, const uint32_t y, const Image::Pixel& src) {
+            const Image::Pixel orig = img->pixel( x, y );
+            const uint32_t origLight = brightness(orig);
+            const uint32_t srcLight = brightness(src);
+            if (origLight > srcLight) {
+                const Image::Pixel diff = difference(orig, src);
+                img->setPixel( x, y, diff );
+            } else {
+                const Image::Pixel diff = difference(src, orig);
+                img->setPixel( x, y, diff );
+            }
         }
 
     };
@@ -143,16 +168,7 @@ namespace tcd {
     }
 
     void Painter::fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) {
-        const Image::Pixel pixColor = Image::convertColor( color );
-        const uint32_t w = img->width();
-        const uint32_t h = img->height();
-        const uint32_t endW = std::min(w, x + width );
-        const uint32_t endH = std::min(h, y + height );
-        for( uint32_t i = x; i<endW; ++i ) {
-            for( uint32_t j = y; j<endH; ++j ) {
-                img->setPixel( i, j, pixColor );
-            }
-        }
+        worker->fillRect(x, y, width, height, color);
     }
 
 } /* namespace tcd */

@@ -55,6 +55,7 @@ namespace tcd {
             CM_DIFFERENCE               /// similar to QPainter::CompositionMode_Difference
         };
 
+
     private:
 
         Image* img;
