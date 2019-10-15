@@ -21,7 +21,7 @@
 /// SOFTWARE.
 ///
 
-#define BOOST_TEST_MODULE ias-test
+#define BOOST_TEST_MODULE testcasedrawer-tests
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 
