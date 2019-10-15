@@ -22,7 +22,10 @@ file(GLOB_RECURSE cpp_files *.cpp )
 add_executable( ${TARGET_NAME} ${cpp_files} )
 target_link_libraries( ${TARGET_NAME} ${EXT_LIBS} )
 
-add_test( NAME ${TARGET_NAME} COMMAND ${TARGET_NAME} )
+set( EXECUTABLE "./${TARGET_NAME}" )
+generate_file( run_tests.sh.in )
+
+add_test( NAME ${TARGET_NAME} COMMAND ${TARGET_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
         
 
 #TODO: copying data and scripts can be optimised by creating script from template with defined data directry

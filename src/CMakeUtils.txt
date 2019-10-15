@@ -57,3 +57,10 @@ function(build_cpps project_name)
     endforeach()
 endfunction()
 
+
+function(generate_file script_template)
+    set( GENERATOR_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${script_template}" )
+    set( DATA_TYPE ${data_type} )
+    string(REGEX REPLACE "\\.[^.]*$" "" output_file ${script_template})
+    configure_file( ${GENERATOR_FILE} "${output_file}" @ONLY )
+endfunction()
