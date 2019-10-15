@@ -21,8 +21,8 @@
 /// SOFTWARE.
 ///
 
-#ifndef IMAGE_LOADER_H_
-#define IMAGE_LOADER_H_
+#ifndef IMAGE_COMPARATOR_H_
+#define IMAGE_COMPARATOR_H_
 
 #include <string>
 
@@ -31,18 +31,15 @@
 
 namespace tcd {
 
-    //TODO: rename to ImageComparator or similar
-    class ImageLoader {
+    class ImageComparator {
     public:
 
-        ImagePtr loadImage(const std::string& path);
+        static ImagePtr compare(const Image& imgA, const Image& imgB);
 
-        ImagePtr makeDiff(const Image& imgA, const Image& imgB);
-
-        ImagePtr makeDiff(const Image* imgA, const Image* imgB);
+        static ImagePtr compare(const Image* imgA, const Image* imgB);
 
     };
 
 }
 
-#endif /* IMAGE_LOADER_H_ */
+#endif /* IMAGE_COMPARATOR_H_ */

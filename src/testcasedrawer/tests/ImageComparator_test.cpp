@@ -23,28 +23,26 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "ImageLoader.h"
+#include "ImageComparator.h"
 
 
 using namespace tcd;
 
 
-BOOST_AUTO_TEST_SUITE( ImageLoaderSuite )
+BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
 
     BOOST_AUTO_TEST_CASE( makeDiff_null ) {
         const Image image("data/blue.png");
         BOOST_CHECK_EQUAL( image.empty(), false );
 
-        ImageLoader loader;
-
         {
-            const ImagePtr result = loader.makeDiff(nullptr, &image);
+            const ImagePtr result = ImageComparator::compare(nullptr, &image);
             BOOST_REQUIRE( result != nullptr );
             BOOST_CHECK_EQUAL( result->empty(), true );
         }
 
         {
-            const ImagePtr result = loader.makeDiff(&image, nullptr);
+            const ImagePtr result = ImageComparator::compare(&image, nullptr);
             BOOST_REQUIRE( result != nullptr );
             BOOST_CHECK_EQUAL( result->empty(), true );
         }
@@ -54,9 +52,7 @@ BOOST_AUTO_TEST_SUITE( ImageLoaderSuite )
         const Image image("data/blue.png");
         BOOST_CHECK_EQUAL( image.empty(), false );
 
-        ImageLoader loader;
-
-        const ImagePtr result = loader.makeDiff(image, image);
+        const ImagePtr result = ImageComparator::compare(image, image);
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
@@ -75,9 +71,7 @@ BOOST_AUTO_TEST_SUITE( ImageLoaderSuite )
         const Image imageB("data/blue.png");
         BOOST_CHECK_EQUAL( imageB.empty(), false );
 
-        ImageLoader loader;
-
-        const ImagePtr result = loader.makeDiff(imageA, imageB);
+        const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
@@ -96,9 +90,7 @@ BOOST_AUTO_TEST_SUITE( ImageLoaderSuite )
         const Image imageB("data/blue.png");
         BOOST_CHECK_EQUAL( imageB.empty(), false );
 
-        ImageLoader loader;
-
-        const ImagePtr result = loader.makeDiff(imageA, imageB);
+        const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
@@ -117,9 +109,7 @@ BOOST_AUTO_TEST_SUITE( ImageLoaderSuite )
         const Image imageB;                    // empty
         BOOST_CHECK_EQUAL( imageB.empty(), true );
 
-        ImageLoader loader;
-
-        const ImagePtr result = loader.makeDiff(imageA, imageB);
+        const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
@@ -138,9 +128,7 @@ BOOST_AUTO_TEST_SUITE( ImageLoaderSuite )
         const Image imageB;                    // empty
         BOOST_CHECK( imageB.empty() );
 
-        ImageLoader loader;
-
-        const ImagePtr result = loader.makeDiff(imageA, imageB);
+        const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
 
         result->save("tests/diff/emptyC_diff.png");
@@ -158,9 +146,7 @@ BOOST_AUTO_TEST_SUITE( ImageLoaderSuite )
         const Image imageB;                    // empty
         BOOST_CHECK_EQUAL( imageB.empty(), true );
 
-        ImageLoader loader;
-
-        const ImagePtr result = loader.makeDiff(imageA, imageB);
+        const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
 
         result->save("tests/diff/chess_custom_diff.png");
@@ -178,9 +164,7 @@ BOOST_AUTO_TEST_SUITE( ImageLoaderSuite )
         const Image imageB;                    // empty
         BOOST_CHECK( imageB.empty() );
 
-        ImageLoader loader;
-
-        const ImagePtr result = loader.makeDiff(imageA, imageB);
+        const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
 
         result->save("tests/diff/chess_min_diff.png");

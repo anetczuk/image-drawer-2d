@@ -21,7 +21,7 @@
 /// SOFTWARE.
 ///
 
-#include "ImageLoader.h"
+#include "ImageComparator.h"
 
 #include "Painter.h"
 
@@ -33,13 +33,6 @@ static const int DIFF_IMAGES_SPACING = CHESS_GRID_SIZE * 2;
 
 
 namespace tcd {
-
-    ImagePtr ImageLoader::loadImage(const std::string& /*path*/) {
-//        Image* obj = new Image(this);
-//        obj->load(path);
-//        return obj;
-        return nullptr;
-    }
 
     static ImagePtr generateChessboard(const uint32_t width, const uint32_t height) {
         ImagePtr chessPtr( new Image(width, height) );
@@ -65,7 +58,7 @@ namespace tcd {
         return chessPtr;
     }
 
-    ImagePtr ImageLoader::makeDiff(const Image& imgA, const Image& imgB) {
+    ImagePtr ImageComparator::compare(const Image& imgA, const Image& imgB) {
         if(imgA.empty() && imgB.empty()) {
             ImagePtr emptyDiff( new Image(2, 1) );
             Image& empty = *emptyDiff;
@@ -123,11 +116,11 @@ namespace tcd {
         return joinPtr;
     }
 
-    ImagePtr ImageLoader::makeDiff(const Image* imgA, const Image* imgB) {
+    ImagePtr ImageComparator::compare(const Image* imgA, const Image* imgB) {
         if (imgA == nullptr || imgB == nullptr) {
             return ImagePtr( new Image() );
         }
-        return makeDiff( *imgA, *imgB );
+        return compare( *imgA, *imgB );
     }
 
 }
