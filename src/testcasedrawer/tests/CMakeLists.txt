@@ -33,6 +33,5 @@ add_test( NAME ${TARGET_NAME} COMMAND ${TARGET_NAME} WORKING_DIRECTORY ${CMAKE_C
 ## copy run script
 #file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/runTests.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
 
-## copy data files
-#file(GLOB_RECURSE data_files data/* )
-#file(COPY ${data_files} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data )
+## copy data directory
+file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
