@@ -9,7 +9,7 @@ set( TARGET_NAME testcasedrawer )
 include_directories( "../include" )
 
 
-set( EXT_LIBS ${PNG_LIBRARIES} ${png++_LIBRARIES} )
+set( EXT_LIBS ${PNG_LIBRARIES} ${png++_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} )
 
 
 file(GLOB_RECURSE cpp_files *.cpp )
