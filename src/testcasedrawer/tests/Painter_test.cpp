@@ -54,17 +54,17 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         BOOST_CHECK( compare );
     }
 
-    BOOST_AUTO_TEST_CASE( drawLine_horizontal ) {
+    BOOST_AUTO_TEST_CASE( drawLine_horizontal_1 ) {
         Image image(220, 140);
         Painter painter( image );
         painter.drawLine( 20, 20, 200, 120, 1, "blue" );
-        image.save("tests/painter/draw_line_horizontal.png");
+        image.save("tests/painter/draw_line_horizontal_1.png");
 
-        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_horizontal.png", "tests/painter/draw_line_horizontal_diff.png");
+        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_horizontal_1.png", "tests/painter/draw_line_horizontal_1_diff.png");
         BOOST_CHECK( compare );
     }
 
-    BOOST_AUTO_TEST_CASE( drawLine_horizontal_width ) {
+    BOOST_AUTO_TEST_CASE( drawLine_horizontal_10 ) {
         Image image(140, 40);
         Painter painter( image );
         painter.drawLine( 20, 20, 120, 20, 10, "blue" );
@@ -74,23 +74,33 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         BOOST_CHECK( compare );
     }
 
-    BOOST_AUTO_TEST_CASE( drawLine_vertical ) {
+    BOOST_AUTO_TEST_CASE( drawLine_vertical_1 ) {
         Image image(140, 220);
         Painter painter( image );
         painter.drawLine( 20, 20, 120, 200, 1, "blue" );
-        image.save("tests/painter/draw_line_vertical.png");
+        image.save("tests/painter/draw_line_vertical_1.png");
 
-        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_vertical.png", "tests/painter/draw_line_vertical_diff.png");
+        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_vertical_1.png", "tests/painter/draw_line_vertical_1_diff.png");
         BOOST_CHECK( compare );
     }
 
-    BOOST_AUTO_TEST_CASE( drawLine_vertical_width ) {
+    BOOST_AUTO_TEST_CASE( drawLine_vertical_10 ) {
         Image image(40, 140);
         Painter painter( image );
         painter.drawLine( 20, 20, 20, 120, 10, "blue" );
         image.save("tests/painter/draw_line_vertical_10.png");
 
         const bool compare = ImageComparator::compare(image, "data/painter/draw_line_vertical_10.png", "tests/painter/draw_line_vertical_10_diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawLine_diagonal_1 ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawLine( 20, 20, 120, 120, 1, "blue" );
+        image.save("tests/painter/draw_line_diagonal_1.png");
+
+        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_diagonal_1.png", "tests/painter/draw_line_diagonal_1_diff.png");
         BOOST_CHECK( compare );
     }
 
