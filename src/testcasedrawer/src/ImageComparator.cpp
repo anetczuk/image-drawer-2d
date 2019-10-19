@@ -123,4 +123,12 @@ namespace tcd {
         return compare( *imgA, *imgB );
     }
 
+    bool ImageComparator::compare(const Image& imgA, const std::string& imgB, const std::string& diffImage) {
+        Image imageB;
+        imageB.load( imgB );
+        ImagePtr diff = compare(imgA, imageB);
+        diff->save( diffImage );
+        return (imgA == imageB);
+    }
+
 }

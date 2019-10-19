@@ -89,6 +89,8 @@ namespace tcd {
 
         void save(const std::string& path);
 
+        void resize(const std::size_t width, const std::size_t height);
+
 
         static ImagePtr make() {
             return ImagePtr( new Image() );

@@ -31,13 +31,6 @@ using namespace tcd;
 
 BOOST_AUTO_TEST_SUITE( ImageSuite )
 
-    BOOST_AUTO_TEST_CASE( color_diff ) {
-        const Image::PixByte pixA = 0;
-        const Image::PixByte pixB = 255;
-        const Image::PixByte pixDiff = pixA - pixB;
-        BOOST_CHECK_EQUAL( pixDiff, 1 );
-    }
-
     BOOST_AUTO_TEST_CASE( compare_same_instance ) {
         const Image object;
         BOOST_CHECK_EQUAL( (object == object), true );

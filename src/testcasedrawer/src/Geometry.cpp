@@ -21,27 +21,10 @@
 /// SOFTWARE.
 ///
 
-#ifndef IMAGE_COMPARATOR_H_
-#define IMAGE_COMPARATOR_H_
-
-#include <string>
-
-#include "Image.h"
-
+#include "Geometry.h"
 
 namespace tcd {
 
-    class ImageComparator {
-    public:
+    ///
 
-        static ImagePtr compare(const Image& imgA, const Image& imgB);
-
-        static ImagePtr compare(const Image* imgA, const Image* imgB);
-
-        static bool compare(const Image& imgA, const std::string& imgB, const std::string& diffImage);
-
-    };
-
-}
-
-#endif /* IMAGE_COMPARATOR_H_ */
+} /* namespace tcd */

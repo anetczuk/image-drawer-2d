@@ -124,6 +124,10 @@ namespace tcd {
         img.write(path);
     }
 
+    void Image::resize(const std::size_t width, const std::size_t height) {
+        img.resize(width, height);
+    }
+
     Image::Pixel Image::convertColor(const std::string& color) {
         if ( color[0] == '#' ) {
             std::string valueCode = color.substr(1);

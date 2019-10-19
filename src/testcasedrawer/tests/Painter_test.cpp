@@ -21,8 +21,87 @@
 /// SOFTWARE.
 ///
 
+#include <boost/test/unit_test.hpp>
+
 #include "Painter.h"
 
-namespace tcd {
+#include "Image.h"
+#include "ImageComparator.h"
 
-} /* namespace tcd */
+
+using namespace tcd;
+
+
+BOOST_AUTO_TEST_SUITE( PainterSuite )
+
+    BOOST_AUTO_TEST_CASE( fillCircle ) {
+        Image image(400, 400);
+        Painter painter( image );
+        painter.fillCircle( 200, 200, 100, "red" );
+        image.save("tests/painter/fill_circle.png");
+
+        const bool compare = ImageComparator::compare(image, "data/painter/fill_circle.png", "tests/painter/fill_circle_diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( fillRect ) {
+        Image image(400, 400);
+        Painter painter( image );
+        painter.fillRect( 100, 100, 200, 200, "blue" );
+        image.save("tests/painter/fill_rect.png");
+
+        const bool compare = ImageComparator::compare(image, "data/painter/fill_rect.png", "tests/painter/fill_rect_diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawLine_horizontal ) {
+        Image image(220, 140);
+        Painter painter( image );
+        painter.drawLine( 20, 20, 200, 120, 1, "blue" );
+        image.save("tests/painter/draw_line_horizontal.png");
+
+        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_horizontal.png", "tests/painter/draw_line_horizontal_diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawLine_horizontal_width ) {
+        Image image(140, 40);
+        Painter painter( image );
+        painter.drawLine( 20, 20, 120, 20, 10, "blue" );
+        image.save("tests/painter/draw_line_horizontal_10.png");
+
+        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_horizontal_10.png", "tests/painter/draw_line_horizontal_10_diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawLine_vertical ) {
+        Image image(140, 220);
+        Painter painter( image );
+        painter.drawLine( 20, 20, 120, 200, 1, "blue" );
+        image.save("tests/painter/draw_line_vertical.png");
+
+        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_vertical.png", "tests/painter/draw_line_vertical_diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawLine_vertical_width ) {
+        Image image(40, 140);
+        Painter painter( image );
+        painter.drawLine( 20, 20, 20, 120, 10, "blue" );
+        image.save("tests/painter/draw_line_vertical_10.png");
+
+        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_vertical_10.png", "tests/painter/draw_line_vertical_10_diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawLine_diagonal_10 ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawLine( 20, 20, 120, 120, 10, "blue" );
+        image.save("tests/painter/draw_line_diagonal_10.png");
+
+        const bool compare = ImageComparator::compare(image, "data/painter/draw_line_diagonal_10.png", "tests/painter/draw_line_diagonal_10_diff.png");
+        BOOST_CHECK( compare );
+    }
+
+BOOST_AUTO_TEST_SUITE_END()
