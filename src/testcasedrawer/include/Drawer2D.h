@@ -21,54 +21,50 @@
 /// SOFTWARE.
 ///
 
-#ifndef TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
-#define TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
+#ifndef TESTCASEDRAWER_INCLUDE_DRAWER2D_H_
+#define TESTCASEDRAWER_INCLUDE_DRAWER2D_H_
 
-#include <cstdint>
-#include <algorithm>
+#include "Painter.h"
 
 
 namespace tcd {
 
-    struct Point {
-        int64_t x;
-        int64_t y;
+    class Drawer2D {
 
-        Point operator-() const {
-            return Point{ -x, -y };
-        }
-        Point operator-(const Point& point) const {
-            return Point{ x - point.x, y - point.y };
-        }
-        Point operator+(const Point& point) const {
-            return Point{ x + point.x, y + point.y };
-        }
-
-        Point ortho() const {
-            return Point{y, -x};
-        }
-    };
+        ImagePtr img;
+        Painter painter;
 
 
-    struct Rect {
-        Point a;
-        Point b;
+    public:
 
+        Drawer2D();
 
-        static Rect minmax(const Point& p1, const Point& p2) {
-            return minmax(p1.x, p1.y, p2.x, p2.y);
+        const Image& image() const {
+            return *(img.get());
         }
 
-        static Rect minmax(const int64_t x1, const int64_t y1, const int64_t x2, const int64_t y2) {
-            Rect ret;
-            ret.a.x = std::min(x1, x2);
-            ret.a.y = std::min(y1, y2);
-            ret.b.x = std::max(x1, x2);
-            ret.b.y = std::max(y1, y2);
-            return ret;
+        void save(const std::string& path) {
+            img->save(path);
         }
+
+        void drawImage(const Point& point, const Image& source) {
+            painter.drawImage( point, source );
+        }
+
+        void drawLine(const Point& fromPoint, const Point& toPoint, const uint32_t radius, const std::string& color) {
+            painter.drawLine( fromPoint, toPoint, radius, color );
+        }
+
+        void fillRect(const Point& point, const uint32_t width, const uint32_t height, const std::string& color) {
+            painter.fillRect( point, width, height, color );
+        }
+
+        void fillCircle(const Point& point, const uint32_t radius, const std::string& color) {
+            painter.fillCircle( point, radius, color );
+        }
+
     };
 
 } /* namespace tcd */
 
-#endif /* TESTCASEDRAWER_INCLUDE_GEOMETRY_H_ */
+#endif /* TESTCASEDRAWER_INCLUDE_DRAWER2D_H_ */

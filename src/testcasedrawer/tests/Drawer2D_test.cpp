@@ -21,54 +21,25 @@
 /// SOFTWARE.
 ///
 
-#ifndef TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
-#define TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
+#include <boost/test/unit_test.hpp>
 
-#include <cstdint>
-#include <algorithm>
+#include "Drawer2D.h"
 
-
-namespace tcd {
-
-    struct Point {
-        int64_t x;
-        int64_t y;
-
-        Point operator-() const {
-            return Point{ -x, -y };
-        }
-        Point operator-(const Point& point) const {
-            return Point{ x - point.x, y - point.y };
-        }
-        Point operator+(const Point& point) const {
-            return Point{ x + point.x, y + point.y };
-        }
-
-        Point ortho() const {
-            return Point{y, -x};
-        }
-    };
+#include "ImageComparator.h"
 
 
-    struct Rect {
-        Point a;
-        Point b;
+using namespace tcd;
 
 
-        static Rect minmax(const Point& p1, const Point& p2) {
-            return minmax(p1.x, p1.y, p2.x, p2.y);
-        }
+BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
-        static Rect minmax(const int64_t x1, const int64_t y1, const int64_t x2, const int64_t y2) {
-            Rect ret;
-            ret.a.x = std::min(x1, x2);
-            ret.a.y = std::min(y1, y2);
-            ret.b.x = std::max(x1, x2);
-            ret.b.y = std::max(y1, y2);
-            return ret;
-        }
-    };
+    BOOST_AUTO_TEST_CASE( drawLine_1 ) {
+        Drawer2D drawer;
+        drawer.drawLine( Point{20, 20}, Point{200, 120}, 1, "blue" );
+        drawer.save("tests/drawer_line_1.png");
 
-} /* namespace tcd */
+        const bool compare = ImageComparator::compare(drawer.image(), "data/drawer_line_1.png", "tests/drawer_line_1.png");
+        BOOST_CHECK( compare );
+    }
 
-#endif /* TESTCASEDRAWER_INCLUDE_GEOMETRY_H_ */
+BOOST_AUTO_TEST_SUITE_END()

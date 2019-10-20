@@ -21,54 +21,12 @@
 /// SOFTWARE.
 ///
 
-#ifndef TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
-#define TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
-
-#include <cstdint>
-#include <algorithm>
+#include "Drawer2D.h"
 
 
 namespace tcd {
 
-    struct Point {
-        int64_t x;
-        int64_t y;
-
-        Point operator-() const {
-            return Point{ -x, -y };
-        }
-        Point operator-(const Point& point) const {
-            return Point{ x - point.x, y - point.y };
-        }
-        Point operator+(const Point& point) const {
-            return Point{ x + point.x, y + point.y };
-        }
-
-        Point ortho() const {
-            return Point{y, -x};
-        }
-    };
-
-
-    struct Rect {
-        Point a;
-        Point b;
-
-
-        static Rect minmax(const Point& p1, const Point& p2) {
-            return minmax(p1.x, p1.y, p2.x, p2.y);
-        }
-
-        static Rect minmax(const int64_t x1, const int64_t y1, const int64_t x2, const int64_t y2) {
-            Rect ret;
-            ret.a.x = std::min(x1, x2);
-            ret.a.y = std::min(y1, y2);
-            ret.b.x = std::max(x1, x2);
-            ret.b.y = std::max(y1, y2);
-            return ret;
-        }
-    };
+    Drawer2D::Drawer2D(): img( new Image() ), painter( *img ) {
+    }
 
 } /* namespace tcd */
-
-#endif /* TESTCASEDRAWER_INCLUDE_GEOMETRY_H_ */

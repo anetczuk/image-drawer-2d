@@ -31,7 +31,28 @@
 namespace tcd {
     namespace painter {
 
-        class ModeWorker {
+        class AbstractPainter {
+        public:
+
+            virtual ~AbstractPainter() {
+            }
+
+            virtual void drawImage(const Point& point, const Image& source) = 0;
+
+            virtual void drawLine(const Point& fromPoint, const Point& toPoint, const uint32_t radius, const std::string& color) = 0;
+
+            //TODO: draw arc
+
+            //TODO: draw clothoid
+
+            virtual void fillRect(const Point& point, const uint32_t width, const uint32_t height, const std::string& color) = 0;
+
+            virtual void fillCircle(const Point& point, const uint32_t radius, const std::string& color) = 0;
+
+        };
+
+
+        class ModeWorker: public AbstractPainter {
         public:
 
             Image* img;
@@ -39,16 +60,13 @@ namespace tcd {
             ModeWorker(Image* image): img(image) {
             }
 
-            virtual ~ModeWorker() {
-            }
+            using AbstractPainter::drawImage;
 
-            virtual void drawImage(const Point& point, const Image& source) = 0;
+            using AbstractPainter::drawLine;
 
-            virtual void drawLine(const Point& fromPoint, const Point& toPoint, const uint32_t radius, const std::string& color) = 0;
+            using AbstractPainter::fillRect;
 
-            virtual void fillRect(const Point& point, const uint32_t width, const uint32_t height, const std::string& color) = 0;
-
-            virtual void fillCircle(const Point& point, const uint32_t radius, const std::string& color) = 0;
+            using AbstractPainter::fillCircle;
 
 
             void drawImage(const uint32_t x, const uint32_t y, const Image& source) {
@@ -95,9 +113,7 @@ namespace tcd {
 
         void setCompositionMode(const CompositionMode mode);
 
-
         // ====================================================================
-
 
         using painter::ModeWorker::drawImage;
 

@@ -100,7 +100,7 @@ namespace tcd {
 
     /// functor -- functor or function pointer
     template <typename Functor>
-    static void linear(const Point& vector, Functor functor) {
+    static void linear(const Point& vector, Functor& functor) {
         if (std::abs(vector.x) > std::abs(vector.y)) {
             int64_t from = 0;
             int64_t to = 0;
@@ -132,7 +132,7 @@ namespace tcd {
         }
     }
     template <typename Functor>
-    static void linear(const Point& vector, const uint32_t steps, Functor functor) {
+    static void linear(const Point& vector, const uint32_t steps, Functor& functor) {
         if (std::abs(vector.x) > std::abs(vector.y)) {
             int64_t from = 0;
             int64_t to = 0;
