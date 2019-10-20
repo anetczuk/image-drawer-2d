@@ -21,8 +21,78 @@
 /// SOFTWARE.
 ///
 
+#include <boost/test/unit_test.hpp>
+
 #include "Geometry.h"
+#include <iostream>
 
-namespace tcd {
 
-} /* namespace tcd */
+using namespace tcd;
+
+
+BOOST_AUTO_TEST_SUITE( LinearSuite )
+
+    BOOST_AUTO_TEST_CASE( createFromOrthogonal_OX_1 ) {
+        const Linear linear = Linear::createFromOrthogonal( PointI{0, 5}, PointI{0, 1} );
+        BOOST_CHECK_EQUAL( 5, linear.valueY(10) );
+    }
+
+    BOOST_AUTO_TEST_CASE( createFromOrthogonal_OX_2 ) {
+        const Linear linear = Linear::createFromOrthogonal( PointI{0, -5}, PointI{0, 1} );
+        BOOST_CHECK_EQUAL( -5, linear.valueY(10) );
+    }
+
+    BOOST_AUTO_TEST_CASE( createFromOrthogonal_OY ) {
+        const Linear linear = Linear::createFromOrthogonal( PointI{5, 0}, PointI{1, 0} );
+        BOOST_CHECK_EQUAL( 5, linear.valueX(10) );
+    }
+
+    BOOST_AUTO_TEST_CASE( createFromParallel_OX ) {
+        const Linear linear = Linear::createFromParallel( PointI{0, 5}, PointI{1, 0} );
+        BOOST_CHECK_EQUAL( linear.valueY(10), 5 );
+    }
+
+    BOOST_AUTO_TEST_CASE( createFromParallel_OY ) {
+        const Linear linear = Linear::createFromParallel( PointI{5, 0}, PointI{0, 1} );
+        BOOST_CHECK_EQUAL( linear.valueX(10), 5 );
+    }
+
+    BOOST_AUTO_TEST_CASE( pointSide_OX_above_01 ) {
+        const Linear linear = Linear::createFromParallel( PointI{5, 0}, PointI{ 1, 0} );
+        BOOST_CHECK_EQUAL( linear.pointSide( PointI{10, 10} ), 10 );
+    }
+
+    BOOST_AUTO_TEST_CASE( pointSide_OX_above_02 ) {
+        const Linear linear = Linear::createFromParallel( PointI{5, 0}, PointI{-1, 0} );
+        BOOST_CHECK_EQUAL( linear.pointSide( PointI{10, 10} ), 10 );
+    }
+
+    BOOST_AUTO_TEST_CASE( pointSide_OX_below_01 ) {
+        const Linear linear = Linear::createFromParallel( PointI{5, 0}, PointI{ 1, 0} );
+        BOOST_CHECK_EQUAL( linear.pointSide( PointI{10, -10} ), -10 );
+    }
+
+    BOOST_AUTO_TEST_CASE( pointSide_OX_below_02 ) {
+        const Linear linear = Linear::createFromParallel( PointI{5, 0}, PointI{-1, 0} );
+        BOOST_CHECK_EQUAL( linear.pointSide( PointI{10, -10} ), -10 );
+    }
+
+    BOOST_AUTO_TEST_CASE( pointSide_diagonal ) {
+        const Linear linear = Linear::createFromParallel( PointI{5, 5}, PointI{ 1,  1} );
+        BOOST_CHECK_EQUAL( linear.pointSide( PointI{5,  10} ),   5 );
+        BOOST_CHECK_EQUAL( linear.pointSide( PointI{5, -10} ), -15 );
+    }
+
+    BOOST_AUTO_TEST_CASE( pointSide_diagonal_reverse ) {
+        const Linear linear = Linear::createFromParallel( PointI{5, 5}, PointI{-1, -1} );
+        BOOST_CHECK_EQUAL( linear.pointSide( PointI{5,  10} ),   5 );
+        BOOST_CHECK_EQUAL( linear.pointSide( PointI{5, -10} ), -15 );
+    }
+
+    BOOST_AUTO_TEST_CASE( distance ) {
+        const Linear linear = Linear::createFromParallel( PointI{5, 5}, PointI{1, 0} );
+        BOOST_CHECK_CLOSE( linear.distance( PointI{5,  10} ),   5, 1.0 );
+        BOOST_CHECK_CLOSE( linear.distance( PointI{5, -10} ),  15, 1.0 );
+    }
+
+BOOST_AUTO_TEST_SUITE_END()

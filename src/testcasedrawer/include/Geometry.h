@@ -25,6 +25,7 @@
 #define TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
 
 #include <cstdint>
+#include <cmath>
 #include <algorithm>
 
 
@@ -57,6 +58,19 @@ namespace tcd {
     typedef Point<double> PointD;
 
 
+    template <typename T>
+    double linearX(const Point<T>& vector, const T value) {
+        return (double) value * vector.x / vector.y;
+    }
+    template <typename T>
+    double linearY(const Point<T>& vector, const T value) {
+        return (double) value * vector.y / vector.x;
+    }
+
+
+    /// ========================================================
+
+
     struct Rect {
         PointI a;
         PointI b;
@@ -73,6 +87,79 @@ namespace tcd {
             ret.b.x = std::max(x1, x2);
             ret.b.y = std::max(y1, y2);
             return ret;
+        }
+    };
+
+
+    /// ========================================================
+
+
+    struct Linear {
+        typedef PointI::value_type value_type;
+
+        value_type A;
+        value_type B;
+        value_type C;
+        double distFactor;
+
+
+        Linear(const value_type a, const value_type b, const value_type c): A(a), B(b), C(c), distFactor( std::sqrt( A*A + B*B ) ) {
+        }
+
+        static Linear createFromOrthogonal(const PointI& start, const PointI& ortho) {
+            const PointI sense = ortho.ortho();
+            const PointI end = start + sense;
+            return createFromPoints(start, end);
+        }
+        static Linear createFromOrthogonal(const PointI& ortho) {
+            const PointI sense = ortho.ortho();
+            return createFromPoints( PointI{0, 0}, sense );
+        }
+
+        static Linear createFromParallel(const PointI& start, const PointI& sense) {
+            const PointI end = start + sense;
+            return createFromPoints( start, end );
+        }
+        static Linear createFromParallel(const PointI& sense) {
+            return createFromPoints( PointI{0, 0}, sense );
+        }
+
+        static Linear createFromPoints(const PointI& start, const PointI& end) {
+            const PointI sense = end - start;
+            const value_type cFactor = end.x * start.y - start.x * end.y;
+            return Linear( -sense.y, sense.x, -cFactor );
+        }
+
+        value_type valueY(const value_type x) const {
+            // Ax + By + C = 0
+            // By =  -C - Ax
+            //  y = (-C - Ax) / B
+            return (double) (-C - A*x) / B;
+        }
+        value_type valueX(const value_type y) const {
+            // Ax + By + C = 0
+            // Ax =  -C - By
+            //  x = (-C - By) / A
+            return (double) (-C - B*y) / A;
+        }
+
+        value_type pointSide(const PointI& point) const {
+            return pointSide( point.x, point.y );
+        }
+
+        value_type pointSide(const value_type x, const value_type y) const {
+            if (B != 0) {
+                const PointI::value_type base = valueY( x );
+                return y - base;
+            } else {
+                const PointI::value_type base = valueX( y );
+                return x - base;
+            }
+        }
+
+        double distance(const PointI& point) const {
+            const double factorA = std::abs( A * point.x + B * point.y + C );
+            return factorA / distFactor;
         }
     };
 

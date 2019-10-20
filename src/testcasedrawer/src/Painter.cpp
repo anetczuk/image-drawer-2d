@@ -57,47 +57,6 @@ namespace tcd {
         return value - subtractor;
     }
 
-    inline int64_t linearX(const int64_t x, const PointI& vector) {
-        return (double)x * vector.y / vector.x;
-    }
-    inline int64_t linearY(const int64_t y, const PointI& vector) {
-        return (double)y * vector.x / vector.y;
-    }
-
-    inline int64_t pointPosition(const PointI& baseVector, const PointI& vector) {
-        if (baseVector.x != 0) {
-            const int64_t base = linearX( vector.x, baseVector );
-            return vector.y - base;
-        } else {
-            const int64_t base = linearY( vector.y, baseVector );
-            return vector.x - base;
-        }
-    }
-
-    inline int64_t pointPosition(const PointI& start, const PointI& vector, const PointI& point) {
-        const PointI diff = point - start;
-        return pointPosition( vector, diff );
-    }
-
-    inline int64_t distanceParallel(const PointI& sense, const PointI& vector) {
-        // Ax + By + C = 0
-        // A = y2 - y1
-        // B = x1 - x2
-        // C = x2 * y1 - x1 * y2
-
-        const int64_t A = sense.y;
-        const int64_t B = -sense.x;
-
-        const double factorA = std::abs( A * vector.x + B * vector.y );
-        const double factorB = std::sqrt( A*A + B*B );
-        return factorA / factorB;
-    }
-
-    inline int64_t distanceParallel(const PointI& start, const PointI& sense, const PointI& point) {
-        const PointI diff = point - start;
-        return distanceParallel( sense, diff );
-    }
-
     /// functor -- functor or function pointer
     template <typename Functor>
     static void linear(const PointI& vector, Functor& functor) {
@@ -112,7 +71,7 @@ namespace tcd {
                 to = 0;
             }
             for( int64_t i = from; i<=to; ++i ) {
-                const int64_t j = linearX(i, vector);
+                const int64_t j = linearY(vector, i);
                 functor(i, j);
             }
         } else {
@@ -126,39 +85,7 @@ namespace tcd {
                 to = 0;
             }
             for( int64_t j = from; j<=to; ++j ) {
-                const int64_t i = linearY(j, vector);
-                functor(i, j);
-            }
-        }
-    }
-    template <typename Functor>
-    static void linear(const PointI& vector, const uint32_t steps, Functor& functor) {
-        if (std::abs(vector.x) > std::abs(vector.y)) {
-            int64_t from = 0;
-            int64_t to = 0;
-            if (vector.x > 0) {
-                from = 0;
-                to = steps;
-            } else {
-                from = -(int64_t)steps + 1;
-                to = 1;
-            }
-            for( int64_t i = from; i<to; ++i ) {
-                const int64_t j = linearX(i, vector);
-                functor(i, j);
-            }
-        } else {
-            int64_t from = 0;
-            int64_t to = 0;
-            if (vector.y > 0) {
-                from = 0;
-                to = steps;
-            } else {
-                from = -(int64_t)steps + 1;
-                to = 1;
-            }
-            for( int64_t j = from; j<to; ++j ) {
-                const int64_t i = linearY(j, vector);
+                const int64_t i = linearX(vector, j);
                 functor(i, j);
             }
         }
@@ -218,7 +145,6 @@ namespace tcd {
             const Image::Pixel pixColor = Image::convertColor( color );
 
             const PointI lineVector = toPoint - fromPoint;
-            const PointI ortho = lineVector.ortho();
 
             const int64_t startW = - (int64_t) radius;
             const int64_t startH = - (int64_t) radius;
@@ -226,19 +152,22 @@ namespace tcd {
             const int64_t endW = lineVector.x + radius;
             const int64_t endH = lineVector.y + radius;
 
+            const Linear parallelLine = Linear::createFromParallel(lineVector);
+            const Linear orthoLine    = Linear::createFromOrthogonal(lineVector);
+
             for( int64_t i = startW; i<=endW; ++i ) {
                 for( int64_t j = startH; j<=endH; ++j ) {
                     const PointI currVector{i, j};
-                    const int64_t side1 = pointPosition(ortho, currVector);
+                    const int64_t side1 = orthoLine.pointSide(currVector);
                     if (side1 < 0) {
                         continue;
                     }
                     const PointI toVector = currVector - lineVector;
-                    const int64_t side2 = pointPosition(ortho, toVector);
+                    const int64_t side2 = orthoLine.pointSide(toVector);
                     if (side2 > 0) {
                         continue;
                     }
-                    const int64_t dist = distanceParallel(lineVector, currVector);
+                    const double dist = parallelLine.distance( currVector );
                     if (dist >= radius) {
                         continue;
                     }
