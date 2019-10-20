@@ -57,14 +57,14 @@ namespace tcd {
         return value - subtractor;
     }
 
-    inline int64_t linearX(const int64_t x, const Point& vector) {
+    inline int64_t linearX(const int64_t x, const PointI& vector) {
         return (double)x * vector.y / vector.x;
     }
-    inline int64_t linearY(const int64_t y, const Point& vector) {
+    inline int64_t linearY(const int64_t y, const PointI& vector) {
         return (double)y * vector.x / vector.y;
     }
 
-    inline int64_t pointPosition(const Point& baseVector, const Point& vector) {
+    inline int64_t pointPosition(const PointI& baseVector, const PointI& vector) {
         if (baseVector.x != 0) {
             const int64_t base = linearX( vector.x, baseVector );
             return vector.y - base;
@@ -74,12 +74,12 @@ namespace tcd {
         }
     }
 
-    inline int64_t pointPosition(const Point& start, const Point& vector, const Point& point) {
-        const Point diff = point - start;
+    inline int64_t pointPosition(const PointI& start, const PointI& vector, const PointI& point) {
+        const PointI diff = point - start;
         return pointPosition( vector, diff );
     }
 
-    inline int64_t distanceParallel(const Point& sense, const Point& vector) {
+    inline int64_t distanceParallel(const PointI& sense, const PointI& vector) {
         // Ax + By + C = 0
         // A = y2 - y1
         // B = x1 - x2
@@ -93,14 +93,14 @@ namespace tcd {
         return factorA / factorB;
     }
 
-    inline int64_t distanceParallel(const Point& start, const Point& sense, const Point& point) {
-        const Point diff = point - start;
+    inline int64_t distanceParallel(const PointI& start, const PointI& sense, const PointI& point) {
+        const PointI diff = point - start;
         return distanceParallel( sense, diff );
     }
 
     /// functor -- functor or function pointer
     template <typename Functor>
-    static void linear(const Point& vector, Functor& functor) {
+    static void linear(const PointI& vector, Functor& functor) {
         if (std::abs(vector.x) > std::abs(vector.y)) {
             int64_t from = 0;
             int64_t to = 0;
@@ -132,7 +132,7 @@ namespace tcd {
         }
     }
     template <typename Functor>
-    static void linear(const Point& vector, const uint32_t steps, Functor& functor) {
+    static void linear(const PointI& vector, const uint32_t steps, Functor& functor) {
         if (std::abs(vector.x) > std::abs(vector.y)) {
             int64_t from = 0;
             int64_t to = 0;
@@ -166,7 +166,7 @@ namespace tcd {
 
     struct PixelDrawer {
         Image* img;
-        const Point& startPoint;
+        const PointI& startPoint;
         const Image::Pixel& pixColor;
 
         void operator()(const int64_t x, const int64_t y) {
@@ -183,12 +183,12 @@ namespace tcd {
 
         struct VectorDrawer {
             DestinationModeWorker* worker;
-            const Point& startPoint;
-            const Point& vector;
+            const PointI& startPoint;
+            const PointI& vector;
             const Image::Pixel& pixColor;
 
             void operator()(const int64_t x, const int64_t y) {
-                const Point currStartPoint{ startPoint.x + x, startPoint.y + y };
+                const PointI currStartPoint{ startPoint.x + x, startPoint.y + y };
                 worker->drawVector(currStartPoint, vector, pixColor);
             }
         };
@@ -197,7 +197,7 @@ namespace tcd {
         DestinationModeWorker(Image* image): ModeWorker(image) {
         }
 
-        void drawImage(const Point& point, const Image& source) override {
+        void drawImage(const PointI& point, const Image& source) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
             const int64_t x = point.x;
@@ -214,11 +214,11 @@ namespace tcd {
             }
         }
 
-        void drawLine(const Point& fromPoint, const Point& toPoint, const uint32_t radius, const std::string& color) override {
+        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) override {
             const Image::Pixel pixColor = Image::convertColor( color );
 
-            const Point lineVector = toPoint - fromPoint;
-            const Point ortho = lineVector.ortho();
+            const PointI lineVector = toPoint - fromPoint;
+            const PointI ortho = lineVector.ortho();
 
             const int64_t startW = - (int64_t) radius;
             const int64_t startH = - (int64_t) radius;
@@ -228,12 +228,12 @@ namespace tcd {
 
             for( int64_t i = startW; i<=endW; ++i ) {
                 for( int64_t j = startH; j<=endH; ++j ) {
-                    const Point currVector{i, j};
+                    const PointI currVector{i, j};
                     const int64_t side1 = pointPosition(ortho, currVector);
                     if (side1 < 0) {
                         continue;
                     }
-                    const Point toVector = currVector - lineVector;
+                    const PointI toVector = currVector - lineVector;
                     const int64_t side2 = pointPosition(ortho, toVector);
                     if (side2 > 0) {
                         continue;
@@ -247,12 +247,12 @@ namespace tcd {
             }
         }
 
-        void drawVector(const Point& startPoint, const Point& vector, const Image::Pixel& pixColor) {
+        void drawVector(const PointI& startPoint, const PointI& vector, const Image::Pixel& pixColor) {
             PixelDrawer drawer{img, startPoint, pixColor};
             linear( vector, drawer );
         }
 
-        void fillRect(const Point& point, const uint32_t width, const uint32_t height, const std::string& color) override {
+        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
             const Image::Pixel pixColor = Image::convertColor( color );
@@ -269,7 +269,7 @@ namespace tcd {
             }
         }
 
-        void fillCircle(const Point& point, const uint32_t radius, const std::string& color) override {
+        void fillCircle(const PointI& point, const uint32_t radius, const std::string& color) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
             const uint32_t rSquare = radius * radius;
@@ -302,7 +302,7 @@ namespace tcd {
         DifferenceModeWorker(Image* image): ModeWorker(image) {
         }
 
-        void drawImage(const Point& point, const Image& source) override {
+        void drawImage(const PointI& point, const Image& source) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
             const int64_t x = point.x;
@@ -319,12 +319,12 @@ namespace tcd {
             }
         }
 
-        void drawLine(const Point& /*fromPoint*/, const Point& /*toPoint*/, const uint32_t /*radius*/, const std::string& /*color*/) override {
+        void drawLine(const PointI& /*fromPoint*/, const PointI& /*toPoint*/, const uint32_t /*radius*/, const std::string& /*color*/) override {
             //TODO: implement
             throw std::runtime_error("drawLine not implemented");
         }
 
-        void fillRect(const Point& point, const uint32_t width, const uint32_t height, const std::string& color) override {
+        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
             const Image::Pixel pixColor = Image::convertColor( color );
@@ -341,7 +341,7 @@ namespace tcd {
             }
         }
 
-        void fillCircle(const Point& /*point*/, const uint32_t /*radius*/, const std::string& /*color*/) override {
+        void fillCircle(const PointI& /*point*/, const uint32_t /*radius*/, const std::string& /*color*/) override {
             //TODO: implement
             throw std::runtime_error("fillCircle not implemented");
         }

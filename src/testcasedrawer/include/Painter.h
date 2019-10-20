@@ -37,17 +37,17 @@ namespace tcd {
             virtual ~AbstractPainter() {
             }
 
-            virtual void drawImage(const Point& point, const Image& source) = 0;
+            virtual void drawImage(const PointI& point, const Image& source) = 0;
 
-            virtual void drawLine(const Point& fromPoint, const Point& toPoint, const uint32_t radius, const std::string& color) = 0;
+            virtual void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) = 0;
 
             //TODO: draw arc
 
             //TODO: draw clothoid
 
-            virtual void fillRect(const Point& point, const uint32_t width, const uint32_t height, const std::string& color) = 0;
+            virtual void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) = 0;
 
-            virtual void fillCircle(const Point& point, const uint32_t radius, const std::string& color) = 0;
+            virtual void fillCircle(const PointI& point, const uint32_t radius, const std::string& color) = 0;
 
         };
 
@@ -70,19 +70,19 @@ namespace tcd {
 
 
             void drawImage(const uint32_t x, const uint32_t y, const Image& source) {
-                drawImage( Point{x, y}, source );
+                drawImage( PointI{x, y}, source );
             }
 
             void drawLine(const uint32_t fromX, const uint32_t fromY, const uint32_t toX, const uint32_t toY, const uint32_t radius, const std::string& color) {
-                drawLine( Point{fromX, fromY}, Point{toX, toY}, radius, color );
+                drawLine( PointI{fromX, fromY}, PointI{toX, toY}, radius, color );
             }
 
             void fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) {
-                fillRect( Point{x, y}, width, height, color );
+                fillRect( PointI{x, y}, width, height, color );
             }
 
             void fillCircle(const uint32_t x, const uint32_t y, const uint32_t radius, const std::string& color) {
-                fillCircle( Point{x, y}, radius, color );
+                fillCircle( PointI{x, y}, radius, color );
             }
 
         };
@@ -124,19 +124,19 @@ namespace tcd {
         using painter::ModeWorker::fillCircle;
 
 
-        void drawImage(const Point& point, const Image& source) override {
+        void drawImage(const PointI& point, const Image& source) override {
             worker->drawImage(point, source);
         }
 
-        void drawLine(const Point& fromPoint, const Point& toPoint, const uint32_t radius, const std::string& color) override {
+        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) override {
             worker->drawLine(fromPoint, toPoint, radius, color);
         }
 
-        void fillRect(const Point& point, const uint32_t width, const uint32_t height, const std::string& color) override {
+        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) override {
             worker->fillRect(point, width, height, color);
         }
 
-        void fillCircle(const Point& point, const uint32_t radius, const std::string& color) override {
+        void fillCircle(const PointI& point, const uint32_t radius, const std::string& color) override {
             worker->fillCircle(point, radius, color);
         }
 

@@ -30,32 +30,39 @@
 
 namespace tcd {
 
+    template <typename T>
     struct Point {
-        int64_t x;
-        int64_t y;
+        typedef T value_type;
 
-        Point operator-() const {
-            return Point{ -x, -y };
+        T x;
+        T y;
+
+        Point<T> operator-() const {
+            return Point<T>{ -x, -y };
         }
-        Point operator-(const Point& point) const {
-            return Point{ x - point.x, y - point.y };
+        Point<T> operator-(const Point<T>& point) const {
+            return Point<T>{ x - point.x, y - point.y };
         }
-        Point operator+(const Point& point) const {
-            return Point{ x + point.x, y + point.y };
+        Point<T> operator+(const Point<T>& point) const {
+            return Point<T>{ x + point.x, y + point.y };
         }
 
-        Point ortho() const {
-            return Point{y, -x};
+        Point<T> ortho() const {
+            return Point<T>{y, -x};
         }
     };
 
+    typedef Point<int64_t> PointI;
+
+    typedef Point<double> PointD;
+
 
     struct Rect {
-        Point a;
-        Point b;
+        PointI a;
+        PointI b;
 
 
-        static Rect minmax(const Point& p1, const Point& p2) {
+        static Rect minmax(const PointI& p1, const PointI& p2) {
             return minmax(p1.x, p1.y, p2.x, p2.y);
         }
 

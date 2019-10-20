@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawLine_1 ) {
         Drawer2D drawer;
-        drawer.drawLine( Point{20, 20}, Point{200, 120}, 1, "blue" );
+        drawer.drawLine( PointI{20, 20}, PointI{200, 120}, 1, "blue" );
         drawer.save("tests/drawer_line_1.png");
 
         const bool compare = ImageComparator::compare(drawer.image(), "data/drawer_line_1.png", "tests/drawer_line_1.png");

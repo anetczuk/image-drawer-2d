@@ -47,19 +47,19 @@ namespace tcd {
             img->save(path);
         }
 
-        void drawImage(const Point& point, const Image& source) {
+        void drawImage(const PointI& point, const Image& source) {
             painter.drawImage( point, source );
         }
 
-        void drawLine(const Point& fromPoint, const Point& toPoint, const uint32_t radius, const std::string& color) {
+        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) {
             painter.drawLine( fromPoint, toPoint, radius, color );
         }
 
-        void fillRect(const Point& point, const uint32_t width, const uint32_t height, const std::string& color) {
+        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) {
             painter.fillRect( point, width, height, color );
         }
 
-        void fillCircle(const Point& point, const uint32_t radius, const std::string& color) {
+        void fillCircle(const PointI& point, const uint32_t radius, const std::string& color) {
             painter.fillCircle( point, radius, color );
         }
 
