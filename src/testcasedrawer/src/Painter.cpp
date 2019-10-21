@@ -145,25 +145,24 @@ namespace tcd {
             const Image::Pixel pixColor = Image::convertColor( color );
 
             const PointI lineVector = toPoint - fromPoint;
+            const PointI orthoVector = lineVector.ortho();
 
-            const int64_t startW = - (int64_t) radius;
-            const int64_t startH = - (int64_t) radius;
-
-            const int64_t endW = lineVector.x + radius;
-            const int64_t endH = lineVector.y + radius;
+            RectI box = RectI::minmax(fromPoint, toPoint);
+            box.expand( radius );
 
             const Linear parallelLine = Linear::createFromParallel(lineVector);
-            const Linear orthoLine    = Linear::createFromOrthogonal(lineVector);
 
-            for( int64_t i = startW; i<=endW; ++i ) {
-                for( int64_t j = startH; j<=endH; ++j ) {
-                    const PointI currVector{i, j};
-                    const int64_t side1 = orthoLine.pointSide(currVector);
+            const double direction = directionSign( orthoVector );
+
+            for( int64_t i=box.a.x; i<=box.b.x; ++i ) {
+                for( int64_t j=box.a.y; j<=box.b.y; ++j ) {
+                    const PointI currVector = PointI{i, j} - fromPoint;
+                    const int64_t side1 = pointPosition(orthoVector, currVector) * direction;
                     if (side1 < 0) {
                         continue;
                     }
                     const PointI toVector = currVector - lineVector;
-                    const int64_t side2 = orthoLine.pointSide(toVector);
+                    const int64_t side2 = pointPosition(orthoVector, toVector) * direction;
                     if (side2 > 0) {
                         continue;
                     }
@@ -171,7 +170,7 @@ namespace tcd {
                     if (dist >= radius) {
                         continue;
                     }
-                    img->setPixel( i + fromPoint.x, j + fromPoint.y, pixColor );
+                    img->setPixel( i, j, pixColor );
                 }
             }
         }

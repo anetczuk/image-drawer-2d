@@ -44,8 +44,22 @@ namespace tcd {
         Point<T> operator-(const Point<T>& point) const {
             return Point<T>{ x - point.x, y - point.y };
         }
+        Point<T>& operator-=(const Point<T>& point) {
+            x -= point.x;
+            y -= point.y;
+            return *this;
+        }
         Point<T> operator+(const Point<T>& point) const {
             return Point<T>{ x + point.x, y + point.y };
+        }
+        Point<T>& operator+=(const Point<T>& point) {
+            x += point.x;
+            y += point.y;
+            return *this;
+        }
+
+        Point<T> operator*(const double factor) const {
+            return Point<T>{ x * factor, y * factor };
         }
 
         Point<T> ortho() const {
@@ -54,8 +68,7 @@ namespace tcd {
     };
 
     typedef Point<int64_t> PointI;
-
-    typedef Point<double> PointD;
+    typedef Point<double>  PointD;
 
 
     template <typename T>
@@ -64,24 +77,59 @@ namespace tcd {
     }
     template <typename T>
     double linearY(const Point<T>& vector, const T value) {
+        // y/x = tg(alpha) = m
+        // m -- direction coefficient
         return (double) value * vector.y / vector.x;
+    }
+    template <typename T>
+    inline double pointPosition(const Point<T>& baseVector, const Point<T>& point) {
+        if (baseVector.x != 0) {
+            const double base = linearY( baseVector, point.x );
+            return point.y - base;
+        } else {
+            const double base = linearX( baseVector, point.y );
+            return point.x - base;
+        }
+    }
+    template <typename T>
+    inline double directionSign(const Point<T>& vector) {
+        if (vector.x >=0)
+            return 1.0;
+        else
+            return -1.0;
     }
 
 
     /// ========================================================
 
 
+    template <typename T>
     struct Rect {
-        PointI a;
-        PointI b;
+        typedef T value_type;
+
+        Point<T> a;
+        Point<T> b;
 
 
-        static Rect minmax(const PointI& p1, const PointI& p2) {
+        T width() const {
+            return b.x - a.x;
+        }
+        T height() const {
+            return b.y - a.y;
+        }
+
+        void expand(const T radius) {
+            Point<T> r{radius, radius};
+            a -= r;
+            b += r;
+        }
+
+        static Rect<T> minmax(const Point<T>& p1, const Point<T>& p2) {
             return minmax(p1.x, p1.y, p2.x, p2.y);
         }
 
-        static Rect minmax(const int64_t x1, const int64_t y1, const int64_t x2, const int64_t y2) {
-            Rect ret;
+        static Rect<T> minmax(const int64_t x1, const int64_t y1, const int64_t x2, const int64_t y2) {
+            Rect<T> ret;
             ret.a.x = std::min(x1, x2);
             ret.a.y = std::min(y1, y2);
             ret.b.x = std::max(x1, x2);
@@ -89,6 +137,9 @@ namespace tcd {
             return ret;
         }
     };
+
+    typedef Rect<int64_t> RectI;
+    typedef Rect<double>  RectD;
 
 
     /// ========================================================
