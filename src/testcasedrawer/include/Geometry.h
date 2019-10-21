@@ -81,22 +81,29 @@ namespace tcd {
         // m -- direction coefficient
         return (double) value * vector.y / vector.x;
     }
+    
+    /// value:
+    ///     positive -- left side,
+    ///     negative -- right side,
+    ///     zero     -- on vector
     template <typename T>
     inline double pointPosition(const Point<T>& baseVector, const Point<T>& point) {
-        if (baseVector.x != 0) {
+        if (baseVector.x > 0) {
             const double base = linearY( baseVector, point.x );
             return point.y - base;
-        } else {
+        } else if (baseVector.x < 0) {
+            const double base = linearY( baseVector, point.x );
+            return -(point.y - base);
+
+        } else if (baseVector.y > 0) {
+            const double base = linearX( baseVector, point.y );
+            return -(point.x - base);
+        } else if (baseVector.y < 0) {
             const double base = linearX( baseVector, point.y );
             return point.x - base;
         }
-    }
-    template <typename T>
-    inline double directionSign(const Point<T>& vector) {
-        if (vector.x >=0)
-            return 1.0;
-        else
-            return -1.0;
+
+        return 0;
     }
 
 

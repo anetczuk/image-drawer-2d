@@ -152,17 +152,15 @@ namespace tcd {
 
             const Linear parallelLine = Linear::createFromParallel(lineVector);
 
-            const double direction = directionSign( orthoVector );
-
             for( int64_t i=box.a.x; i<=box.b.x; ++i ) {
                 for( int64_t j=box.a.y; j<=box.b.y; ++j ) {
                     const PointI currVector = PointI{i, j} - fromPoint;
-                    const int64_t side1 = pointPosition(orthoVector, currVector) * direction;
+                    const int64_t side1 = pointPosition(orthoVector, currVector);
                     if (side1 < 0) {
                         continue;
                     }
                     const PointI toVector = currVector - lineVector;
-                    const int64_t side2 = pointPosition(orthoVector, toVector) * direction;
+                    const int64_t side2 = pointPosition(orthoVector, toVector);
                     if (side2 > 0) {
                         continue;
                     }
