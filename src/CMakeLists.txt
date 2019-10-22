@@ -35,15 +35,8 @@ enable_testing()
 ## ================= build =================
 
 
-
-include_directories( . )
-
-
 if( CMAKE_TESTING_ENABLED )   
-    #include_directories( test_utils )
-    
     find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-    
 endif()
 
 

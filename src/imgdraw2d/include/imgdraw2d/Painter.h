@@ -24,8 +24,9 @@
 #ifndef IMGDRAW2D_INCLUDE_PAINTER_H_
 #define IMGDRAW2D_INCLUDE_PAINTER_H_
 
-#include "Image.h"
-#include "Geometry.h"
+#include "imgdraw2d/Image.h"
+
+#include "imgdraw2d/Geometry.h"
 
 
 namespace imgdraw2d {
