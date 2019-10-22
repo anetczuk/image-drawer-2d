@@ -21,15 +21,15 @@
 /// SOFTWARE.
 ///
 
-#ifndef TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
-#define TESTCASEDRAWER_INCLUDE_GEOMETRY_H_
+#ifndef IMGDRAW2D_INCLUDE_GEOMETRY_H_
+#define IMGDRAW2D_INCLUDE_GEOMETRY_H_
 
 #include <cstdint>
 #include <cmath>
 #include <algorithm>
 
 
-namespace tcd {
+namespace imgdraw2d {
 
     template <typename T>
     struct Point {
@@ -242,6 +242,6 @@ namespace tcd {
         }
     };
 
-} /* namespace tcd */
+} /* namespace imgdraw2d */
 
-#endif /* TESTCASEDRAWER_INCLUDE_GEOMETRY_H_ */
+#endif /* IMGDRAW2D_INCLUDE_GEOMETRY_H_ */

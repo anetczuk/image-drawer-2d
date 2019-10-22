@@ -21,14 +21,14 @@
 /// SOFTWARE.
 ///
 
-#ifndef TESTCASEDRAWER_INCLUDE_PAINTER_H_
-#define TESTCASEDRAWER_INCLUDE_PAINTER_H_
+#ifndef IMGDRAW2D_INCLUDE_PAINTER_H_
+#define IMGDRAW2D_INCLUDE_PAINTER_H_
 
 #include "Geometry.h"
 #include "Image.h"
 
 
-namespace tcd {
+namespace imgdraw2d {
     namespace painter {
 
         class AbstractPainter {
@@ -151,6 +151,6 @@ namespace tcd {
 
     };
 
-} /* namespace tcd */
+} /* namespace imgdraw2d */
 
-#endif /* TESTCASEDRAWER_INCLUDE_PAINTER_H_ */
+#endif /* IMGDRAW2D_INCLUDE_PAINTER_H_ */

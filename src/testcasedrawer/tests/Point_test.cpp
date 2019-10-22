@@ -28,7 +28,7 @@
 #include <vector>
 
 
-using namespace tcd;
+using namespace imgdraw2d;
 
 
 struct StripPoint {

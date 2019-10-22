@@ -3,7 +3,7 @@
 #
 
 
-set( TARGET_NAME testcasedrawer )
+set( TARGET_NAME imgdraw2d )
 
 
 include_directories( "../include" )

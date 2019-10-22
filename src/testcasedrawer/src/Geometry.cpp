@@ -23,8 +23,8 @@
 
 #include "Geometry.h"
 
-namespace tcd {
+namespace imgdraw2d {
 
     ///
 
-} /* namespace tcd */
+} /* namespace imgdraw2d */

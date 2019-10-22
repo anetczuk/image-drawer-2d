@@ -7,13 +7,13 @@ if( NOT CMAKE_TESTING_ENABLED )
 endif()
 
 
-set( TARGET_NAME testcasedrawer_tests )
+set( TARGET_NAME imgdraw2d_tests )
 
 
 include_directories( "../include" )
 
 
-set( EXT_LIBS ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} testcasedrawer )
+set( EXT_LIBS ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} imgdraw2d )
 
 
 file(GLOB_RECURSE cpp_files *.cpp )

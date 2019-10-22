@@ -21,13 +21,13 @@
 /// SOFTWARE.
 ///
 
-#ifndef TESTCASEDRAWER_INCLUDE_DRAWER2D_H_
-#define TESTCASEDRAWER_INCLUDE_DRAWER2D_H_
+#ifndef IMGDRAW2D_INCLUDE_DRAWER2D_H_
+#define IMGDRAW2D_INCLUDE_DRAWER2D_H_
 
 #include "Painter.h"
 
 
-namespace tcd {
+namespace imgdraw2d {
 
     class Drawer2D {
 
@@ -73,6 +73,6 @@ namespace tcd {
 
     };
 
-} /* namespace tcd */
+} /* namespace imgdraw2d */
 
-#endif /* TESTCASEDRAWER_INCLUDE_DRAWER2D_H_ */
+#endif /* IMGDRAW2D_INCLUDE_DRAWER2D_H_ */

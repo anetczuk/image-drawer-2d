@@ -28,7 +28,7 @@
 #include "ImageComparator.h"
 
 
-using namespace tcd;
+using namespace imgdraw2d;
 
 
 BOOST_AUTO_TEST_SUITE( Drawer2DSuite )

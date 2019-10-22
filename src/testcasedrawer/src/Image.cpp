@@ -28,7 +28,7 @@
 #include <boost/filesystem/fstream.hpp>
 
 
-namespace tcd {
+namespace imgdraw2d {
 
     Image::Image(const std::string& path): img() {
         if (path.empty() == false)
@@ -189,4 +189,4 @@ namespace tcd {
         return true;
     }
 
-} /* namespace tcd */
+} /* namespace imgdraw2d */

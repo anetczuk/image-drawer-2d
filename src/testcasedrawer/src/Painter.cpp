@@ -26,7 +26,7 @@
 #include <cmath>
 
 
-namespace tcd {
+namespace imgdraw2d {
 
     inline uint32_t brightness(const Image::Pixel& pix) {
         return pix.red + pix.green + pix.blue;
@@ -316,4 +316,4 @@ namespace tcd {
         }
     }
 
-} /* namespace tcd */
+} /* namespace imgdraw2d */

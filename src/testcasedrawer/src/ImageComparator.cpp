@@ -32,7 +32,7 @@ static const int CHESS_GRID_SIZE = 10;
 static const int DIFF_IMAGES_SPACING = CHESS_GRID_SIZE * 2;
 
 
-namespace tcd {
+namespace imgdraw2d {
 
     static ImagePtr generateChessboard(const uint32_t width, const uint32_t height) {
         ImagePtr chessPtr( new Image(width, height) );

@@ -27,7 +27,7 @@
 static const double MARGIN = 0.5;
 
 
-namespace tcd {
+namespace imgdraw2d {
 
     Drawer2D::Drawer2D(const double scale): img( new Image() ), painter( *img ), sizeBox{ {0.0, 0.0}, {0.0, 0.0} }, scale(scale) {
     }
@@ -115,4 +115,4 @@ namespace tcd {
         img->resize(w, h);
     }
 
-} /* namespace tcd */
+} /* namespace imgdraw2d */

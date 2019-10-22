@@ -29,7 +29,7 @@
 #include "Image.h"
 
 
-namespace tcd {
+namespace imgdraw2d {
 
     class ImageComparator {
     public:
