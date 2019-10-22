@@ -47,6 +47,10 @@ namespace imgdraw2d {
             return *(img.get());
         }
 
+        Image& image() {
+            return *(img.get());
+        }
+
         void save(const std::string& path) {
             img->save(path);
         }
