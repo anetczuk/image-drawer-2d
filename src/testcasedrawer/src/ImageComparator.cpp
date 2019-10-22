@@ -21,9 +21,9 @@
 /// SOFTWARE.
 ///
 
-#include "ImageComparator.h"
+#include "imgdraw2d/ImageComparator.h"
 
-#include "Painter.h"
+#include "imgdraw2d/Painter.h"
 
 
 //static QImage::Format DIFF_IMG_FORMAT = QImage::Format_RGB32;

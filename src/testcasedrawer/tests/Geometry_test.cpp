@@ -21,9 +21,9 @@
 /// SOFTWARE.
 ///
 
-#include <boost/test/unit_test.hpp>
+#include "imgdraw2d/Geometry.h"
 
-#include "Geometry.h"
+#include <boost/test/unit_test.hpp>
 #include <iostream>
 
 

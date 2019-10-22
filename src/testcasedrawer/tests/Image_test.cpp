@@ -21,9 +21,9 @@
 /// SOFTWARE.
 ///
 
-#include <boost/test/unit_test.hpp>
+#include "imgdraw2d/Image.h"
 
-#include "Image.h"
+#include <boost/test/unit_test.hpp>
 
 
 using namespace imgdraw2d;

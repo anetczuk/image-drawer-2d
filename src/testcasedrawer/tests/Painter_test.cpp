@@ -21,12 +21,12 @@
 /// SOFTWARE.
 ///
 
+#include "imgdraw2d/Painter.h"
+
+#include "imgdraw2d/ImageComparator.h"
+#include "imgdraw2d/Image.h"
+
 #include <boost/test/unit_test.hpp>
-
-#include "Painter.h"
-
-#include "Image.h"
-#include "ImageComparator.h"
 
 
 using namespace imgdraw2d;

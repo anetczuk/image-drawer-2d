@@ -21,7 +21,7 @@
 /// SOFTWARE.
 ///
 
-#include "Painter.h"
+#include "imgdraw2d/Painter.h"
 
 #include <cmath>
 

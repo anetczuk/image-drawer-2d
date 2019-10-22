@@ -24,11 +24,11 @@
 #ifndef IMGDRAW2D_INCLUDE_IMAGE_H_
 #define IMGDRAW2D_INCLUDE_IMAGE_H_
 
+#include <png++/png.hpp>
+
 #include <string>
 #include <cstdint>
 #include <memory>
-
-#include <png++/png.hpp>
 
 
 namespace imgdraw2d {

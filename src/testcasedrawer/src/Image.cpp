@@ -21,7 +21,7 @@
 /// SOFTWARE.
 ///
 
-#include "Image.h"
+#include "imgdraw2d/Image.h"
 
 #include <png++/types.hpp>
 #include <boost/filesystem.hpp>

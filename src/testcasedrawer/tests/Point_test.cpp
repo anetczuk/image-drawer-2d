@@ -21,10 +21,9 @@
 /// SOFTWARE.
 ///
 
-#include "Painter.h"
+#include "imgdraw2d/Painter.h"
 
 #include <boost/test/unit_test.hpp>
-
 #include <vector>
 
 

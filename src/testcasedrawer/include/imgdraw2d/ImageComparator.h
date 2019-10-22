@@ -24,9 +24,9 @@
 #ifndef IMAGE_COMPARATOR_H_
 #define IMAGE_COMPARATOR_H_
 
-#include <string>
-
 #include "Image.h"
+
+#include <string>
 
 
 namespace imgdraw2d {
