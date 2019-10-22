@@ -131,6 +131,27 @@ namespace tcd {
             b += r;
         }
 
+        bool expand(const Rect<T>& box) {
+            bool changed = false;
+            if (a.x > box.a.x) {
+                a.x = box.a.x;
+                changed = true;
+            }
+            if (a.y > box.a.y) {
+                a.y = box.a.y;
+                changed = true;
+            }
+            if (b.x < box.b.x) {
+                b.x = box.b.x;
+                changed = true;
+            }
+            if (b.y < box.b.y) {
+                b.y = box.b.y;
+                changed = true;
+            }
+            return changed;
+        }
+
         static Rect<T> minmax(const Point<T>& p1, const Point<T>& p2) {
             return minmax(p1.x, p1.y, p2.x, p2.y);
         }

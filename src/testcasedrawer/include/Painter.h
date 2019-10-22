@@ -60,6 +60,10 @@ namespace tcd {
             ModeWorker(Image* image): img(image) {
             }
 
+            virtual void setImage(Image* image) {
+                img = image;
+            }
+
             using AbstractPainter::drawImage;
 
             using AbstractPainter::drawLine;
@@ -110,6 +114,11 @@ namespace tcd {
         Painter(Image& image);
 
         Painter(Image* image);
+
+        void setImage(Image* image) override {
+            ModeWorker::setImage( image );
+            worker->setImage( image );
+        }
 
         void setCompositionMode(const CompositionMode mode);
 

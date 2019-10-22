@@ -33,11 +33,15 @@ namespace tcd {
 
         ImagePtr img;
         Painter painter;
+        RectD sizeBox;
+        double scale;
 
 
     public:
 
-        Drawer2D();
+        Drawer2D(const double scale = 10.0);
+
+        Drawer2D(const RectD& size, const double scale = 10.0);
 
         const Image& image() const {
             return *(img.get());
@@ -47,21 +51,25 @@ namespace tcd {
             img->save(path);
         }
 
-        void drawImage(const PointI& point, const Image& source) {
-            painter.drawImage( point, source );
-        }
+        void drawImage(const PointD& topLeftPoint, const Image& source);
 
-        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) {
-            painter.drawLine( fromPoint, toPoint, radius, color );
-        }
+        void drawLine(const PointD& fromPoint, const PointD& toPoint, const double radius, const std::string& color);
 
-        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) {
-            painter.fillRect( point, width, height, color );
-        }
+        void fillRect(const PointD& bottomLeftPoint, const double width, const double height, const std::string& color);
 
-        void fillCircle(const PointI& point, const uint32_t radius, const std::string& color) {
-            painter.fillCircle( point, radius, color );
-        }
+        void fillCircle(const PointD& point, const double radius, const std::string& color);
+
+
+        PointI transformPoint(const PointD& point) const;
+
+
+    protected:
+
+        void resize(const RectD& box);
+
+        void resetImage();
+
+        void resizeImage();
 
     };
 

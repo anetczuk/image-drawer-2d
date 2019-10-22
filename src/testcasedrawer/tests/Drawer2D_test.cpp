@@ -35,10 +35,38 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawLine_1 ) {
         Drawer2D drawer;
-        drawer.drawLine( PointI{20, 20}, PointI{200, 120}, 1, "blue" );
-        drawer.save("tests/drawer_line_1.png");
+        drawer.drawLine( PointD{1.0, 1.0}, PointD{10.0, 6.0}, 0.1, "blue" );
+        drawer.save("tests/drawer2d/drawLine_1.png");
 
-        const bool compare = ImageComparator::compare(drawer.image(), "data/drawer_line_1.png", "tests/drawer_line_1.png");
+        const bool compare = ImageComparator::compare(drawer.image(), "data/drawer2d/drawLine_1.png", "tests/drawer2d/drawLine_1.diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( fillCircle ) {
+        Drawer2D drawer(100.0);
+        drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
+        drawer.save("tests/drawer2d/fillCircle.png");
+
+        const bool compare = ImageComparator::compare(drawer.image(), "data/drawer2d/fillCircle.png", "tests/drawer2d/fillCircle.diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( fillRect ) {
+        Drawer2D drawer(100.0);
+        drawer.fillRect( PointD{1.0, 1.0}, 5.0, 5.0, "red" );
+        drawer.save("tests/drawer2d/fillRect.png");
+
+        const bool compare = ImageComparator::compare(drawer.image(), "data/drawer2d/fillRect.png", "tests/drawer2d/fillRect.diff.png");
+        BOOST_CHECK( compare );
+    }
+
+    BOOST_AUTO_TEST_CASE( resize ) {
+        Drawer2D drawer;
+        drawer.drawLine( PointD{ 2.0, 2.0}, PointD{10.0,  2.0}, 0.1, "blue" );
+        drawer.drawLine( PointD{10.0, 2.0}, PointD{10.0, 10.0}, 0.1, "red" );
+        drawer.save("tests/drawer2d/resize.png");
+
+        const bool compare = ImageComparator::compare(drawer.image(), "data/drawer2d/resize.png", "tests/drawer2d/resize.diff.png");
         BOOST_CHECK( compare );
     }
 
