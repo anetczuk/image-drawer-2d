@@ -10,6 +10,11 @@ Library allowing to draw simple 2D shapes and store it as image. Main purpose of
 - visualising difference between images
 
 
+## Example of shapes
+
+![Shapes image](doc/shapes_example.png "Shapes image")
+
+
 ## Example of generated diff image
 
 ![Diff image](doc/diff_example.png "Diff image")

@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
     }
 
     BOOST_AUTO_TEST_CASE( example ) {
-        Drawer2D drawer;
+        Drawer2D drawer(20.0);
         drawer.drawLine( PointD{0.0, 0.0}, PointD{10.0, 0.0}, 0.5, "red" );
         drawer.drawArc( PointD{5.0, 5.0}, 5.0, 1.0, 0.0, M_PI, "blue" );
         drawer.fillRect( PointD{3.0, 3.0}, 4.0, 4.0, "green" );
