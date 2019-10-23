@@ -42,13 +42,13 @@ namespace imgdraw2d {
 
             virtual void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) = 0;
 
-            //TODO: draw arc
+            virtual void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) = 0;
 
             //TODO: draw clothoid
 
             virtual void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) = 0;
 
-            virtual void fillCircle(const PointI& point, const uint32_t radius, const std::string& color) = 0;
+            virtual void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) = 0;
 
         };
 
@@ -142,12 +142,16 @@ namespace imgdraw2d {
             worker->drawLine(fromPoint, toPoint, radius, color);
         }
 
+        void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) override {
+            worker->drawArc(center, radius, width, startAngle, range, color);
+        }
+
         void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) override {
             worker->fillRect(point, width, height, color);
         }
 
-        void fillCircle(const PointI& point, const uint32_t radius, const std::string& color) override {
-            worker->fillCircle(point, radius, color);
+        void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {
+            worker->fillCircle(center, radius, color);
         }
 
     };

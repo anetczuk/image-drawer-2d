@@ -51,6 +51,17 @@ namespace imgdraw2d {
         painter.drawLine( from, to, rad, color );
     }
 
+    void Drawer2D::drawArc(const PointD& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
+        RectD box = RectD::minmax( center, center );
+        box.expand( radius + width / 2.0 );
+        resize(box);
+        const PointI point = transformPoint(center);
+        const uint32_t rad = radius * scale;
+        const uint32_t w = width * scale;
+        const double angle = 2 * M_PI - normalizeAngle( startAngle );
+        painter.drawArc( point, rad, w, angle, -range, color );
+    }
+
     void Drawer2D::fillRect(const PointD& bottomLeftPoint, const double width, const double height, const std::string& color) {
         const PointD topRight = bottomLeftPoint + PointD{width, height};
         const RectD box = RectD::minmax( bottomLeftPoint, topRight );
@@ -62,13 +73,13 @@ namespace imgdraw2d {
         painter.fillRect( point, w, h, color );
     }
 
-    void Drawer2D::fillCircle(const PointD& point, const double radius, const std::string& color) {
-        RectD box = RectD::minmax( point, point );
+    void Drawer2D::fillCircle(const PointD& center, const double radius, const std::string& color) {
+        RectD box = RectD::minmax( center, center );
         box.expand(radius);
         resize(box);
-        const PointI center = transformPoint(point);
+        const PointI point = transformPoint(center);
         const uint32_t rad = radius * scale;
-        painter.fillCircle( center, rad, color );
+        painter.fillCircle( point, rad, color );
     }
 
     PointI Drawer2D::transformPoint(const PointD& point) const {

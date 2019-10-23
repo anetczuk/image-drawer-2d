@@ -11,15 +11,28 @@
 #include "imgdraw2d/ImageComparator.h"
 
 #include <boost/test/unit_test.hpp>
+#include <sstream>
 
 
-#define IMAGE_CHECK( image, path )                                                                          \
-    {                                                                                                       \
-        image.save( std::string("tests/") + path + ".png");                                                 \
-        const bool compare = ImageComparator::compare(  image,                                              \
-                                                        std::string("data/")  + path + ".png",              \
-                                                        std::string("tests/") + path + ".diff.png");        \
-        BOOST_CHECK( compare );                                                                             \
+#define CONCAT_STRINGS( strings )            ((std::stringstream&)(std::stringstream() << strings)).str()
+
+
+#define IMAGE_CHECK( image, path )                                                                            \
+    {                                                                                                         \
+        const std::string sourcePath = CONCAT_STRINGS( "data/" << path << ".png" );                           \
+        const std::string testPath = CONCAT_STRINGS( "tests/" << path << ".png" );                            \
+        image.save( testPath );                                                                               \
+        const bool compare = ImageComparator::compare(  image, sourcePath,                                    \
+                                                        CONCAT_STRINGS( "tests/" << path << ".diff.png" ) );  \
+        BOOST_CHECK_MESSAGE( compare, CONCAT_STRINGS( testPath <<  " differs from " << sourcePath )  );       \
+    }
+
+
+#define IMAGE_CHECK_CASE( image, checkCase )                                                                  \
+    {                                                                                                         \
+        const std::string testCaseName = boost::unit_test::framework::current_test_case().p_name;             \
+        const std::string imgDir = checkCase + std::string("/") + testCaseName;                               \
+        IMAGE_CHECK( image, imgDir );                                                                         \
     }
 
 

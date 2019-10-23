@@ -106,6 +106,39 @@ namespace imgdraw2d {
         return 0;
     }
 
+    /// normailze in range [0, 2*PI)
+    inline double normalizeAngle(const double angle) {
+        int parts = angle / (2 * M_PI);
+        if (angle < 0.0)
+            parts -= 1;
+        return angle - 2 * M_PI * parts;
+    }
+
+    template <typename T>
+    double angleFromOX(const T x, const T y) {
+        double value = std::atan( (double) y / x );
+        if (x < 0.0) {
+            value += M_PI;
+        }
+        return normalizeAngle(value);
+    }
+
+    inline bool isInRange( const double angle, const double angleFrom, const double angleTo ) {
+        if (angleFrom < angleTo) {
+            if (angle < angleFrom)
+                return false;
+            if (angle > angleTo)
+                return false;
+            return true;
+        } else {
+            if (angle > angleFrom)
+                return true;
+            if (angle < angleTo)
+                return true;
+            return false;
+        }
+    }
+
 
     /// ========================================================
 

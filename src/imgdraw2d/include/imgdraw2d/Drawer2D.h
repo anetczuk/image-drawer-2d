@@ -59,6 +59,8 @@ namespace imgdraw2d {
 
         void drawLine(const PointD& fromPoint, const PointD& toPoint, const double radius, const std::string& color);
 
+        void drawArc(const PointD& center, const double radius, const double width, const double startAngle, const double range, const std::string& color);
+
         void fillRect(const PointD& bottomLeftPoint, const double width, const double height, const std::string& color);
 
         void fillCircle(const PointD& point, const double radius, const std::string& color);

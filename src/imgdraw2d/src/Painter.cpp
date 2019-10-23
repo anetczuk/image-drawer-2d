@@ -173,6 +173,57 @@ namespace imgdraw2d {
             }
         }
 
+        void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) override {
+            assert( center.x >= 0 );
+            assert( center.y >= 0 );
+
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            if ( std::abs(range) >= 2 * M_PI ) {
+                minAngle = 0.0;
+                maxAngle = 2 * M_PI;
+            } else if ( range > 0.0 ) {
+                minAngle = normalizeAngle(startAngle);
+                maxAngle = normalizeAngle(startAngle + range);
+            } else {
+                minAngle = normalizeAngle(startAngle + range);
+                maxAngle = normalizeAngle(startAngle);
+            }
+
+            const uint32_t maxRadius = radius + width / 2;
+            const uint32_t minRadius = udiff( radius, width / 2 );
+            const uint32_t maxRSquare = maxRadius * maxRadius;
+            const uint32_t minRSquare = minRadius * minRadius;
+            const Image::Pixel pixColor = Image::convertColor( color );
+            const int64_t w = img->width();
+            const int64_t h = img->height();
+            const int64_t startW = udiff( center.x, maxRadius );
+            const int64_t startH = udiff( center.y, maxRadius );
+            const int64_t endW = std::min( w, center.x + maxRadius );
+            const int64_t endH = std::min( h, center.y + maxRadius );
+            for( int64_t i = startW; i<endW; ++i ) {
+                for( int64_t j = startH; j<endH; ++j ) {
+                    const int64_t diffX = i - center.x;
+                    const int64_t diffY = j - center.y;
+
+                    const double currAngle = angleFromOX(diffX, diffY);
+                    if (isInRange(currAngle, minAngle, maxAngle) == false) {
+                        continue ;
+                    }
+
+                    const int64_t distSquare = diffX * diffX + diffY * diffY;
+                    if ( distSquare < minRSquare ) {
+                        continue;
+                    }
+                    if ( distSquare > maxRSquare ) {
+                        continue;
+                    }
+
+                    img->setPixel( i, j, pixColor );
+                }
+            }
+        }
+
         void drawVector(const PointI& startPoint, const PointI& vector, const Image::Pixel& pixColor) {
             PixelDrawer drawer{img, startPoint, pixColor};
             linear( vector, drawer );
@@ -195,23 +246,21 @@ namespace imgdraw2d {
             }
         }
 
-        void fillCircle(const PointI& point, const uint32_t radius, const std::string& color) override {
-            assert( point.x >= 0 );
-            assert( point.y >= 0 );
+        void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {
+            assert( center.x >= 0 );
+            assert( center.y >= 0 );
             const uint32_t rSquare = radius * radius;
             const Image::Pixel pixColor = Image::convertColor( color );
-            const int64_t x = point.x;
-            const int64_t y = point.y;
             const int64_t w = img->width();
             const int64_t h = img->height();
-            const int64_t startW = udiff( x, radius );
-            const int64_t startH = udiff( y, radius );
-            const int64_t endW = std::min( w, x + radius );
-            const int64_t endH = std::min( h, y + radius );
+            const int64_t startW = udiff( center.x, radius );
+            const int64_t startH = udiff( center.y, radius );
+            const int64_t endW = std::min( w, center.x + radius );
+            const int64_t endH = std::min( h, center.y + radius );
             for( int64_t i = startW; i<endW; ++i ) {
                 for( int64_t j = startH; j<endH; ++j ) {
-                    const int64_t diffX = i - x;
-                    const int64_t diffY = j - y;
+                    const int64_t diffX = i - center.x;
+                    const int64_t diffY = j - center.y;
                     const int64_t distSquare = diffX * diffX + diffY * diffY;
                     if ( distSquare < rSquare ) {
                         img->setPixel( i, j, pixColor );
@@ -250,6 +299,11 @@ namespace imgdraw2d {
             throw std::runtime_error("drawLine not implemented");
         }
 
+        void drawArc(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const double /*startAngle*/, const double /*range*/, const std::string& /*color*/) override {
+            //TODO: implement
+            throw std::runtime_error("drawArc not implemented");
+        }
+
         void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
@@ -267,7 +321,7 @@ namespace imgdraw2d {
             }
         }
 
-        void fillCircle(const PointI& /*point*/, const uint32_t /*radius*/, const std::string& /*color*/) override {
+        void fillCircle(const PointI& /*center*/, const uint32_t /*radius*/, const std::string& /*color*/) override {
             //TODO: implement
             throw std::runtime_error("fillCircle not implemented");
         }

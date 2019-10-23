@@ -30,6 +30,81 @@
 using namespace imgdraw2d;
 
 
+BOOST_AUTO_TEST_SUITE( GeometrySuite )
+
+    BOOST_AUTO_TEST_CASE( normalizeAngle_positive ) {
+        const double angle = normalizeAngle( M_PI_2 * 15 );
+        BOOST_CHECK_CLOSE( angle, 3 * M_PI_2, 1.0 );
+    }
+
+    BOOST_AUTO_TEST_CASE( normalizeAngle_negative ) {
+        const double angle = normalizeAngle( -3 * 2 * M_PI - M_PI_2 );
+        BOOST_CHECK_CLOSE( angle, 3 * M_PI_2, 1.0 );
+    }
+
+    BOOST_AUTO_TEST_CASE( angleFromOX_quarters ) {
+        {
+            const double angle = angleFromOX(  1.0,  0.5 );             // 22 deg
+            BOOST_CHECK_CLOSE( angle, 0.46364760900080609, 1.0 );
+        }
+        {
+            const double angle = angleFromOX( -1.0,  0.5 );             // 180 - 22 deg
+            BOOST_CHECK_CLOSE( angle, M_PI - 0.46364760900080609, 1.0 );
+        }
+        {
+            const double angle = angleFromOX( -1.0, -0.5 );             // 180 + 22 deg
+            BOOST_CHECK_CLOSE( angle, M_PI + 0.46364760900080609, 1.0 );
+        }
+        {
+            const double angle = angleFromOX(  1.0, -0.5 );             // 360 - 22 deg
+            BOOST_CHECK_CLOSE( angle, 2 * M_PI - 0.46364760900080609, 1.0 );
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE( isInRange_forward ) {
+        {
+            const bool inside = isInRange( M_PI_4 / 2, M_PI_4, 2 * M_PI - M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, false );
+        }
+        {
+            const bool inside = isInRange( 2 * M_PI - M_PI_4 / 2, M_PI_4, 2 * M_PI - M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, false );
+        }
+        {
+            const bool inside = isInRange( M_PI_2, M_PI_4, 2 * M_PI - M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, true );
+        }
+        {
+            const bool inside = isInRange( M_PI + M_PI_2, M_PI_4, 2 * M_PI - M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, true );
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE( isInRange_backward ) {
+        {
+            const bool inside = isInRange( M_PI_4 / 2, 2 * M_PI - M_PI_4, M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, true );
+        }
+        {
+            const bool inside = isInRange( 2 * M_PI - M_PI_4 / 2, 2 * M_PI - M_PI_4, M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, true );
+        }
+        {
+            const bool inside = isInRange( M_PI_2, 2 * M_PI - M_PI_4, M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, false );
+        }
+        {
+            const bool inside = isInRange( M_PI + M_PI_2, 2 * M_PI - M_PI_4, M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, false );
+        }
+    }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+//// ===================================================================================
+
+
 BOOST_AUTO_TEST_SUITE( LinearSuite )
 
     BOOST_AUTO_TEST_CASE( createFromOrthogonal_OX_1 ) {

@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.fillCircle( 200, 200, 100, "red" );
 
-        IMAGE_CHECK( image, "painter/fillCircle" );
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
     BOOST_AUTO_TEST_CASE( fillRect ) {
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.fillRect( 100, 100, 200, 200, "blue" );
 
-        IMAGE_CHECK( image, "painter/fillRect" );
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
     BOOST_AUTO_TEST_CASE( drawLine_horizontal_1 ) {
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.drawLine( 20, 20, 200, 120, 1, "blue" );
 
-        IMAGE_CHECK( image, "painter/drawLine_horizontal_1" );
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
     BOOST_AUTO_TEST_CASE( drawLine_horizontal_10 ) {
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.drawLine( 20, 20, 120, 20, 10, "blue" );
 
-        IMAGE_CHECK( image, "painter/drawLine_horizontal_10" );
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
     BOOST_AUTO_TEST_CASE( drawLine_vertical_1 ) {
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.drawLine( 20, 20, 120, 200, 1, "blue" );
 
-        IMAGE_CHECK( image, "painter/drawLine_vertical_1" );
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
     BOOST_AUTO_TEST_CASE( drawLine_vertical_10 ) {
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.drawLine( 20, 20, 20, 120, 10, "blue" );
 
-        IMAGE_CHECK( image, "painter/drawLine_vertical_10" );
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
     BOOST_AUTO_TEST_CASE( drawLine_diagonal_1 ) {
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.drawLine( 20, 20, 120, 120, 1, "blue" );
 
-        IMAGE_CHECK( image, "painter/drawLine_diagonal_1" );
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
     BOOST_AUTO_TEST_CASE( drawLine_diagonal_10 ) {
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.drawLine( 20, 20, 120, 120, 10, "blue" );
 
-        IMAGE_CHECK( image, "painter/drawLine_diagonal_10" );
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
     BOOST_AUTO_TEST_CASE( drawLine_diagonal_10_negative ) {
@@ -100,7 +100,105 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         Painter painter( image );
         painter.drawLine( 120, 120, 20, 20, 10, "blue" );
 
-        IMAGE_CHECK( image, "painter/drawLine_diagonal_10_negative" );
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_full_positive ) {
+        {
+            Image image(140, 140);
+            Painter painter( image );
+            painter.drawArc( PointI{70, 70}, 40, 6,  0.5, 2 * M_PI, "blue" );
+
+            IMAGE_CHECK( image, "painter/drawArc_full_positive_a" );
+        }
+        {
+            Image image(140, 140);
+            Painter painter( image );
+            painter.drawArc( PointI{70, 70}, 40, 6, -0.5, 2 * M_PI, "blue" );
+
+            IMAGE_CHECK( image, "painter/drawArc_full_positive_b" );
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_full_negative ) {
+        {
+            Image image(140, 140);
+            Painter painter( image );
+            painter.drawArc( PointI{70, 70}, 40, 6,  0.5, - 2 * M_PI, "blue" );
+
+            IMAGE_CHECK( image, "painter/drawArc_full_negative_a" );
+        }
+        {
+            Image image(140, 140);
+            Painter painter( image );
+            painter.drawArc( PointI{70, 70}, 40, 6, -0.5, - 2 * M_PI, "blue" );
+
+            IMAGE_CHECK( image, "painter/drawArc_full_negative_b" );
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_1q ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, M_PI_4 / 2, M_PI_4, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_2q ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, M_PI_2 + M_PI_4 / 2, M_PI_4, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_3q ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, M_PI + M_PI_4 / 2, M_PI_4, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_4q ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, 3 * M_PI_2 + M_PI_4 / 2, M_PI_4, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_negative_1 ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, M_PI + M_PI_4, -M_PI_2, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_negative_2 ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, M_PI_4, -M_PI_2, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_positive_1 ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, M_PI - M_PI_4, M_PI_2, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_positive_2 ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, -M_PI_4, M_PI_2, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
     }
 
 BOOST_AUTO_TEST_SUITE_END()
