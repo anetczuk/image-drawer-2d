@@ -150,6 +150,9 @@ namespace imgdraw2d {
         if ( color.compare( "blue" ) == 0 ) {
             return Image::Pixel(0, 0, 255, 255);
         }
+        if ( color.compare( "orange" ) == 0 ) {
+            return Image::Pixel(255, 165, 0, 255);
+        }
         if ( color.compare( "black" ) == 0 ) {
             return Image::Pixel(0, 0, 0, 255);
         }
