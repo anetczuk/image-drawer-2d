@@ -56,9 +56,9 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
-        result->save("tests/diff/blue_diff.png");
+        result->save("tests/comparator/blue_diff.png");
 
-        const Image data("data/diff/blue_diff.png");
+        const Image data("data/comparator/blue_diff.png");
         BOOST_CHECK_EQUAL( data.empty(), false );
 
         BOOST_CHECK( result->equals( data ) );
@@ -75,9 +75,45 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
-        result->save("tests/diff/red_blue_diff.png");
+        result->save("tests/comparator/red_blue_diff.png");
 
-        const Image data("data/diff/red_blue_diff.png");
+        const Image data("data/comparator/red_blue_diff.png");
+        BOOST_REQUIRE_EQUAL( data.empty(), false );
+
+        BOOST_CHECK_EQUAL( result->equals( data ), true );
+    }
+
+    BOOST_AUTO_TEST_CASE( makeDiff_black ) {
+        const Image imageA("data/black.png");
+        BOOST_CHECK_EQUAL( imageA.empty(), false );
+
+        const Image image_empty;
+
+        const ImagePtr result = ImageComparator::compare(imageA, image_empty);
+        BOOST_REQUIRE( result != nullptr );
+        BOOST_REQUIRE_EQUAL( result->empty(), false );
+
+        result->save("tests/comparator/black.diff.png");
+
+        const Image data("data/comparator/black.diff.png");
+        BOOST_REQUIRE_EQUAL( data.empty(), false );
+
+        BOOST_CHECK_EQUAL( result->equals( data ), true );
+    }
+
+    BOOST_AUTO_TEST_CASE( makeDiff_white ) {
+        const Image imageA("data/white.png");
+        BOOST_CHECK_EQUAL( imageA.empty(), false );
+
+        const Image image_empty;
+
+        const ImagePtr result = ImageComparator::compare(imageA, image_empty);
+        BOOST_REQUIRE( result != nullptr );
+        BOOST_REQUIRE_EQUAL( result->empty(), false );
+
+        result->save("tests/comparator/white.diff.png");
+
+        const Image data("data/comparator/white.diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
 
         BOOST_CHECK_EQUAL( result->equals( data ), true );
@@ -94,9 +130,9 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
-        result->save("tests/diff/emptyA_diff.png");
+        result->save("tests/comparator/emptyA_diff.png");
 
-        const Image data("data/diff/emptyA_diff.png");
+        const Image data("data/comparator/emptyA_diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
 
         BOOST_CHECK( result->equals( data ) );
@@ -113,9 +149,9 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
-        result->save("tests/diff/emptyB_diff.png");
+        result->save("tests/comparator/emptyB_diff.png");
 
-        const Image data("data/diff/emptyB_diff.png");
+        const Image data("data/comparator/emptyB_diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
 
         BOOST_CHECK( result->equals( data ) );
@@ -131,9 +167,9 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
 
-        result->save("tests/diff/emptyC_diff.png");
+        result->save("tests/comparator/emptyC_diff.png");
 
-        const Image data("data/diff/emptyC_diff.png");
+        const Image data("data/comparator/emptyC_diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
 
         BOOST_CHECK( result->equals( data ) );
@@ -149,9 +185,9 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
 
-        result->save("tests/diff/chess_custom_diff.png");
+        result->save("tests/comparator/chess_custom_diff.png");
 
-        const Image data("data/diff/chess_custom_diff.png");
+        const Image data("data/comparator/chess_custom_diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
 
         BOOST_CHECK( result->equals( data ) );
@@ -167,9 +203,27 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
 
-        result->save("tests/diff/chess_min_diff.png");
+        result->save("tests/comparator/chess_min_diff.png");
 
-        const Image data("data/diff/chess_min_diff.png");
+        const Image data("data/comparator/chess_min_diff.png");
+        BOOST_REQUIRE_EQUAL( data.empty(), false );
+
+        BOOST_CHECK( result->equals( data ) );
+    }
+
+    BOOST_AUTO_TEST_CASE( makeDiff_diff_sizes ) {
+        Image imageA(100, 100);
+        imageA.fill("red");
+
+        Image imageB(80, 80);
+        imageB.fill("red");
+
+        const ImagePtr result = ImageComparator::compare(imageA, imageB);
+        BOOST_REQUIRE( result != nullptr );
+
+        result->save("tests/comparator/diff_sizes.diff.png");
+
+        const Image data("data/comparator/diff_sizes.diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
 
         BOOST_CHECK( result->equals( data ) );

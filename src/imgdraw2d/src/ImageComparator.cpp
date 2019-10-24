@@ -58,6 +58,22 @@ namespace imgdraw2d {
         return chessPtr;
     }
 
+    inline bool isDifferent(const Image& imageA, const Image& imageB, const uint32_t x, const uint32_t y) {
+        if (x >= imageA.width()) return true;
+        if (x >= imageB.width()) return true;
+        if (y >= imageA.height()) return true;
+        if (y >= imageB.height()) return true;
+
+        const Image::Pixel pixA = imageA.pixel(x, y);
+        const Image::Pixel pixB = imageB.pixel(x, y);
+        if (pixA.red != pixB.red) return true;
+        if (pixA.green != pixB.green) return true;
+        if (pixA.blue != pixB.blue) return true;
+        if (pixA.alpha != pixB.alpha) return true;
+
+        return false;
+    }
+
     ImagePtr ImageComparator::compare(const Image& imgA, const Image& imgB) {
         if(imgA.empty() && imgB.empty()) {
             ImagePtr emptyDiff( new Image(2, 1) );
@@ -90,8 +106,7 @@ namespace imgdraw2d {
         threshold.fillTransparent();
         for (uint32_t wo=0; wo<widthMax; wo++) {
             for (uint32_t ho=0; ho<heightMax; ho++) {
-                const Image::Pixel color = diff.pixel(wo, ho);
-                if ( color.red > 0 || color.green > 0 || color.blue > 0 ) {
+                if ( isDifferent(imgA, imgB, wo, ho) ) {
                     threshold.setPixelColor(wo, ho, "white");
                 } else {
                     threshold.setPixelColor(wo, ho, "black");
