@@ -27,3 +27,8 @@ install( TARGETS ${TARGET_NAME}
          ARCHIVE DESTINATION lib
          PUBLIC_HEADER DESTINATION include/${TARGET_NAME}
 )
+
+install( FILES Findimgdraw2d.cmake 
+         DESTINATION cmake/Modules
+         RENAME "Find${TARGET_NAME}.cmake"
+)
