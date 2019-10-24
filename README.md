@@ -45,6 +45,21 @@ where:
 - ```path_to_install_dir``` is directory where compilation artefacts (binaries and headers) will be deployed
 
 
+## Using library
+
+To use library in project append library install directory path to ```CMAKE_MODULE_PATH``` variable amd then use ```find_package``` function as follows:
+```
+list(APPEND CMAKE_MODULE_PATH "<path_to_install_dir>/cmake/Modules")
+find_package( imgdraw2d )
+
+message("imgdraw2d library: ${imgdraw2d_FOUND} ${imgdraw2d_INCLUDE_DIR} ${imgdraw2d_LIBRARY}")
+```
+After that three new variables will be available:
+- ```imgdraw2d_FOUND``` boolean indicating if library has been found
+- ```imgdraw2d_INCLUDE_DIR``` path to include directory
+- ```imgdraw2d_LIBRARY``` path to binary file
+
+
 ## ToDo
 
 - write text on image

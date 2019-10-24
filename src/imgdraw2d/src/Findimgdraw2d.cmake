@@ -13,23 +13,23 @@ endif ()
 ## Put here path to custom location
 
 find_path(imgdraw2d_INCLUDE_DIR imgdraw2d/Drawer2D.h
-    HINTS "$ENV{imgdraw2d_INCLUDE_PATH}"
-    PATHS ${EXTERNAL_DIR}/include
+    HINTS "$ENV{imgdraw2d_DIR} ${imgdraw2d_DIR}"
+    PATHS ${CMAKE_MODULE_PATH}
+    PATH_SUFFIXES include ../../include
 )
 
 FIND_LIBRARY(imgdraw2d_LIBRARY
   NAMES imgdraw2d
-  PATHS ${EXTERNAL_DIR}
+  HINTS "$ENV{imgdraw2d_DIR} ${imgdraw2d_DIR}"
+  PATHS ${CMAKE_MODULE_PATH}
   NO_DEFAULT_PATH
-  PATH_SUFFIXES lib
+  PATH_SUFFIXES lib ../../lib
 )
 
 set(imgdraw2d_FOUND FALSE)
 if (imgdraw2d_INCLUDE_DIR AND imgdraw2d_LIBRARY)
     set(imgdraw2d_FOUND TRUE)
 endif()
-
-## message( STATUS "imgdraw2d path: ${imgdraw2d_INCLUDE_DIR}" )
 
 
 if (imgdraw2d_FOUND)
