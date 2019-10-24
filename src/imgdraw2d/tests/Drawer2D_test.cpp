@@ -115,4 +115,14 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         IMAGE_CHECK_CASE( image, "drawer2d" );
     }
 
+    BOOST_AUTO_TEST_CASE( setBackground ) {
+        Drawer2D drawer(50.0);
+        drawer.setBackground("white");
+        drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
+        drawer.fillCircle( PointD{5.0, 5.0}, 1.0, "green" );
+        Image& image = drawer.image();
+
+        IMAGE_CHECK_CASE( image, "drawer2d" );
+    }
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -81,11 +81,15 @@ namespace imgdraw2d {
 
     void Image::fill(const std::string& color) {
         const Pixel pixColor = convertColor(color);
+        fill( pixColor );
+    }
+
+    void Image::fill(const Pixel& color) {
         const uint32_t w = width();
         const uint32_t h = height();
         for( uint32_t x = 0; x<w; ++x ) {
             for( uint32_t y = 0; y<h; ++y ) {
-                img.set_pixel( x, y, pixColor );
+                img.set_pixel( x, y, color );
             }
         }
     }

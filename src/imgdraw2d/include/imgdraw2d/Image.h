@@ -79,6 +79,8 @@ namespace imgdraw2d {
 
         void fill(const std::string& color);
 
+        void fill(const Pixel& color);
+
         void fillTransparent();
 
         void setPixel(const std::size_t x, const std::size_t y, const Pixel& color);

@@ -36,6 +36,8 @@ namespace imgdraw2d {
         RectD sizeBox;
         double scale;
 
+        Image::Pixel backgroundColor;
+
 
     public:
 
@@ -54,6 +56,8 @@ namespace imgdraw2d {
         void save(const std::string& path) {
             img->save(path);
         }
+
+        void setBackground(const std::string& color);
 
         void drawImage(const PointD& topLeftPoint, const Image& source);
 

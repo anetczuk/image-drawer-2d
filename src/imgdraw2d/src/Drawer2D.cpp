@@ -29,11 +29,19 @@ static const double MARGIN = 0.5;
 
 namespace imgdraw2d {
 
-    Drawer2D::Drawer2D(const double scale): img( new Image() ), painter( *img ), sizeBox{ {0.0, 0.0}, {0.0, 0.0} }, scale(scale) {
+    Drawer2D::Drawer2D(const double scale):
+            img( new Image() ), painter( *img ),
+            sizeBox{ {0.0, 0.0}, {0.0, 0.0} }, scale(scale),
+            backgroundColor(0, 0, 0, 0)                             /// transparent color
+    {
     }
 
     Drawer2D::Drawer2D(const RectD& size, const double scale): Drawer2D(scale) {
         resize(size);
+    }
+
+    void Drawer2D::setBackground(const std::string& color) {
+        backgroundColor = Image::convertColor( color );
     }
 
     void Drawer2D::drawImage(const PointD& topLeftPoint, const Image& source) {
@@ -124,6 +132,7 @@ namespace imgdraw2d {
         const size_t w = scale * ( 2 * MARGIN + boxW );
         const size_t h = scale * ( 2 * MARGIN + boxH );
         img->resize(w, h);
+        img->fill( backgroundColor );
     }
 
 } /* namespace imgdraw2d */
