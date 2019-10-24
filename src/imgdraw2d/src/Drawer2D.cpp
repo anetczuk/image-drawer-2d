@@ -71,6 +71,11 @@ namespace imgdraw2d {
     }
 
     void Drawer2D::fillRect(const PointD& bottomLeftPoint, const double width, const double height, const std::string& color) {
+        const Image::Pixel pixColor = Image::convertColor( color );
+        fillRect(bottomLeftPoint, width, height, pixColor);
+    }
+
+    void Drawer2D::fillRect(const PointD& bottomLeftPoint, const double width, const double height, const Image::Pixel& color) {
         const PointD topRight = bottomLeftPoint + PointD{width, height};
         const RectD box = RectD::minmax( bottomLeftPoint, topRight );
         resize(box);
@@ -104,6 +109,7 @@ namespace imgdraw2d {
         if (img->empty()) {
             sizeBox = box;
             resizeImage();
+            img->fill( backgroundColor );
             return ;
         }
 
@@ -114,6 +120,7 @@ namespace imgdraw2d {
             oldImg.swap( img );
             resetImage();
             resizeImage();
+            img->fill( backgroundColor );
 
             const PointD topLeft = PointD{ oldBox.a.x - MARGIN, oldBox.b.y + MARGIN };
             const Image* source = oldImg.get();
@@ -129,10 +136,9 @@ namespace imgdraw2d {
     void Drawer2D::resizeImage() {
         const double boxW = sizeBox.width();
         const double boxH = sizeBox.height();
-        const size_t w = scale * ( 2 * MARGIN + boxW );
-        const size_t h = scale * ( 2 * MARGIN + boxH );
+        const std::size_t w = scale * ( 2 * MARGIN + boxW );
+        const std::size_t h = scale * ( 2 * MARGIN + boxH );
         img->resize(w, h);
-        img->fill( backgroundColor );
     }
 
 } /* namespace imgdraw2d */

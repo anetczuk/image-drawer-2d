@@ -114,16 +114,24 @@ namespace imgdraw2d {
         return angle - 2 * M_PI * parts;
     }
 
-    template <typename T>
-    double angleFromOX(const T x, const T y) {
-        double value = std::atan( (double) y / x );
-        if (x < 0.0) {
+    inline double angleFromOXByTan(const double tanAngle, const bool positiveX) {
+        double value = std::atan( tanAngle );
+        if (positiveX == false) {
             value += M_PI;
         }
         return normalizeAngle(value);
     }
 
-    inline bool isInRange( const double angle, const double angleFrom, const double angleTo ) {
+    template <typename T>
+    double angleFromOX(const T x, const T y) {
+        if (x == 0 && y == 0) {
+            return M_PI_2;
+        }
+        const double tanAngle = (double) y / x;
+        return angleFromOXByTan( tanAngle, x >= 0.0 );
+    }
+
+    inline bool isInRangeAngle( const double angle, const double angleFrom, const double angleTo ) {
         if (angleFrom < angleTo) {
             if (angle < angleFrom)
                 return false;
@@ -138,6 +146,106 @@ namespace imgdraw2d {
             return false;
         }
     }
+
+
+    /// ========================================================
+
+
+    struct Tangens {
+        double value;
+        bool posX;
+
+
+        bool operator>(const Tangens& other) const {
+            const std::size_t currQ = quarter();
+            const std::size_t otherQ = other.quarter();
+            if (currQ == otherQ) {
+                return (value > other.value);
+            }
+            return (currQ > otherQ);
+        }
+        bool operator>=(const Tangens& other) const {
+            const std::size_t currQ = quarter();
+            const std::size_t otherQ = other.quarter();
+            if (currQ == otherQ) {
+                return (value >= other.value);
+            }
+            return (currQ > otherQ);
+        }
+
+        bool operator<(const Tangens& other) const {
+            const std::size_t currQ = quarter();
+            const std::size_t otherQ = other.quarter();
+            if (currQ == otherQ) {
+                return (value < other.value);
+            }
+            return (currQ < otherQ);
+        }
+        bool operator<=(const Tangens& other) const {
+            const std::size_t currQ = quarter();
+            const std::size_t otherQ = other.quarter();
+            if (currQ == otherQ) {
+                return (value <= other.value);
+            }
+            return (currQ < otherQ);
+        }
+
+        std::size_t quarter() const {
+            if (posX) {
+                if (value < 0.0) {
+                    return 4;
+                } else {
+                    return 1;
+                }
+            } else {
+                if (value < 0.0) {
+                    return 2;
+                } else {
+                    return 3;
+                }
+            }
+        }
+
+        bool isInRange(const Tangens& minTan, const Tangens& maxTan) const {
+            if (maxTan >= minTan) {
+                if (*this < minTan)
+                    return false;
+                if (*this > maxTan)
+                    return false;
+                return true;
+            } else {
+                if (*this > minTan)
+                    return true;
+                if (*this < maxTan)
+                    return true;
+                return false;
+            }
+        }
+
+
+        static Tangens fromAngle(const double angleNormalized) {
+            const double value = std::tan( angleNormalized );
+            if (angleNormalized < M_PI_2) {
+                return Tangens{value, true};
+            }
+            if (angleNormalized < 3 * M_PI_2) {
+                return Tangens{value, false};
+            }
+            return Tangens{value, true};
+        }
+
+        static Tangens fromCoords(const double x, const double y) {
+            const double value = y / x;
+            if (std::isnan(value)) {
+                return Tangens{ std::tan(M_PI_2), true};
+            }
+            if (x < 0.0) {
+                return Tangens{value, false};
+            } else {
+                return Tangens{value, true};
+            }
+        }
+    };
 
 
     /// ========================================================

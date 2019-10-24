@@ -67,6 +67,8 @@ namespace imgdraw2d {
 
         void fillRect(const PointD& bottomLeftPoint, const double width, const double height, const std::string& color);
 
+        void fillRect(const PointD& bottomLeftPoint, const double width, const double height, const Image::Pixel& color);
+
         void fillCircle(const PointD& point, const double radius, const std::string& color);
 
 

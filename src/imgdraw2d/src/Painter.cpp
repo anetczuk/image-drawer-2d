@@ -190,6 +190,9 @@ namespace imgdraw2d {
                 maxAngle = normalizeAngle(startAngle);
             }
 
+//            const Tangens minTan = Tangens::fromAngle( minAngle );
+//            const Tangens maxTan = Tangens::fromAngle( maxAngle );
+
             const uint32_t maxRadius = radius + width / 2;
             const uint32_t minRadius = udiff( radius, width / 2 );
             const uint32_t maxRSquare = maxRadius * maxRadius;
@@ -206,10 +209,16 @@ namespace imgdraw2d {
                     const int64_t diffX = i - center.x;
                     const int64_t diffY = j - center.y;
 
+                    //TODO: try to change "angleFromOX" to not to use atan
                     const double currAngle = angleFromOX(diffX, diffY);
-                    if (isInRange(currAngle, minAngle, maxAngle) == false) {
+                    if (isInRangeAngle(currAngle, minAngle, maxAngle) == false) {
                         continue ;
                     }
+
+//                    const Tangens currTan = Tangens::fromCoords( diffX, diffY );
+//                    if ( currTan.isInRange(minTan, maxTan) == false) {
+//                        continue ;
+//                    }
 
                     const int64_t distSquare = diffX * diffX + diffY * diffY;
                     if ( distSquare < minRSquare ) {
@@ -229,10 +238,9 @@ namespace imgdraw2d {
             linear( vector, drawer );
         }
 
-        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) override {
+        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
-            const Image::Pixel pixColor = Image::convertColor( color );
             const int64_t x = point.x;
             const int64_t y = point.y;
             const int64_t w = img->width();
@@ -304,10 +312,9 @@ namespace imgdraw2d {
             throw std::runtime_error("drawArc not implemented");
         }
 
-        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) override {
+        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
-            const Image::Pixel pixColor = Image::convertColor( color );
             const int64_t x = point.x;
             const int64_t y = point.y;
             const int64_t w = img->width();

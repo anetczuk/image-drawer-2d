@@ -46,7 +46,12 @@ namespace imgdraw2d {
 
             //TODO: draw clothoid
 
-            virtual void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) = 0;
+            void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) {
+                const Image::Pixel pixColor = Image::convertColor(color);
+                fillRect( point, width, height, pixColor );
+            }
+
+            virtual void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) = 0;
 
             virtual void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) = 0;
 
@@ -146,8 +151,8 @@ namespace imgdraw2d {
             worker->drawArc(center, radius, width, startAngle, range, color);
         }
 
-        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) override {
-            worker->fillRect(point, width, height, color);
+        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
+            worker->fillRect(point, width, height, pixColor);
         }
 
         void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {

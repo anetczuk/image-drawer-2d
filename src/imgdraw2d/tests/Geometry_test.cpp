@@ -32,6 +32,25 @@ using namespace imgdraw2d;
 
 BOOST_AUTO_TEST_SUITE( GeometrySuite )
 
+    BOOST_AUTO_TEST_CASE( tangens ) {
+        {
+            const double val = std::tan( M_PI_4 / 2.0 );                // 22 deg
+            BOOST_CHECK_CLOSE( val, 0.41421356237309503, 1.0 );
+        }
+        {
+            const double val = std::tan( M_PI_4 / 2.0 +     M_PI_2 );
+            BOOST_CHECK_CLOSE( val, -2.4142135623730954, 1.0 );
+        }
+        {
+            const double val = std::tan( M_PI_4 / 2.0 + 2 * M_PI_2 );
+            BOOST_CHECK_CLOSE( val, 0.41421356237309487, 1.0 );
+        }
+        {
+            const double val = std::tan( M_PI_4 / 2.0 + 3 * M_PI_2 );
+            BOOST_CHECK_CLOSE( val, -2.4142135623730954, 1.0 );
+        }
+    }
+
     BOOST_AUTO_TEST_CASE( normalizeAngle_positive ) {
         const double angle = normalizeAngle( M_PI_2 * 15 );
         BOOST_CHECK_CLOSE( angle, 3 * M_PI_2, 1.0 );
@@ -61,40 +80,133 @@ BOOST_AUTO_TEST_SUITE( GeometrySuite )
         }
     }
 
-    BOOST_AUTO_TEST_CASE( isInRange_forward ) {
+    BOOST_AUTO_TEST_CASE( isInRangeAngle_forward ) {
         {
-            const bool inside = isInRange( M_PI_4 / 2, M_PI_4, 2 * M_PI - M_PI_4 );
+            const bool inside = isInRangeAngle( M_PI_4 / 2, M_PI_4, 2 * M_PI - M_PI_4 );
             BOOST_CHECK_EQUAL( inside, false );
         }
         {
-            const bool inside = isInRange( 2 * M_PI - M_PI_4 / 2, M_PI_4, 2 * M_PI - M_PI_4 );
+            const bool inside = isInRangeAngle( 2 * M_PI - M_PI_4 / 2, M_PI_4, 2 * M_PI - M_PI_4 );
             BOOST_CHECK_EQUAL( inside, false );
         }
         {
-            const bool inside = isInRange( M_PI_2, M_PI_4, 2 * M_PI - M_PI_4 );
+            const bool inside = isInRangeAngle( M_PI_2, M_PI_4, 2 * M_PI - M_PI_4 );
             BOOST_CHECK_EQUAL( inside, true );
         }
         {
-            const bool inside = isInRange( M_PI + M_PI_2, M_PI_4, 2 * M_PI - M_PI_4 );
+            const bool inside = isInRangeAngle( M_PI + M_PI_2, M_PI_4, 2 * M_PI - M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, true );
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE( isInRangeAngle_backward ) {
+        {
+            const bool inside = isInRangeAngle( M_PI_4 / 2, 2 * M_PI - M_PI_4, M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, true );
+        }
+        {
+            const bool inside = isInRangeAngle( 2 * M_PI - M_PI_4 / 2, 2 * M_PI - M_PI_4, M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, true );
+        }
+        {
+            const bool inside = isInRangeAngle( M_PI_2, 2 * M_PI - M_PI_4, M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, false );
+        }
+        {
+            const bool inside = isInRangeAngle( M_PI + M_PI_2, 2 * M_PI - M_PI_4, M_PI_4 );
+            BOOST_CHECK_EQUAL( inside, false );
+        }
+    }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+//// ===================================================================================
+
+
+BOOST_AUTO_TEST_SUITE( TangensSuite )
+
+    BOOST_AUTO_TEST_CASE( quarter01 ) {
+        {
+            const Tangens currTan = Tangens::fromCoords(  1, 1 );
+            const std::size_t quarter = currTan.quarter();
+            BOOST_CHECK_EQUAL( quarter, 1 );
+        }
+        {
+            const Tangens currTan = Tangens::fromCoords( -1, 1 );
+            const std::size_t quarter = currTan.quarter();
+            BOOST_CHECK_EQUAL( quarter, 2 );
+        }
+        {
+            const Tangens currTan = Tangens::fromCoords( -1, -1 );
+            const std::size_t quarter = currTan.quarter();
+            BOOST_CHECK_EQUAL( quarter, 3 );
+        }
+        {
+            const Tangens currTan = Tangens::fromCoords(  1, -1 );
+            const std::size_t quarter = currTan.quarter();
+            BOOST_CHECK_EQUAL( quarter, 4 );
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE( isInRange_forward ) {
+        {
+            const Tangens currTan = Tangens::fromAngle( M_PI_4 / 2 );
+            const Tangens minTan  = Tangens::fromAngle( M_PI_4 );
+            const Tangens maxTan  = Tangens::fromAngle( 2 * M_PI - M_PI_4 );
+            const bool inside = currTan.isInRange( minTan, maxTan );
+            BOOST_CHECK_EQUAL( inside, false );
+        }
+        {
+            const Tangens currTan = Tangens::fromAngle( 2 * M_PI - M_PI_4 / 2 );
+            const Tangens minTan  = Tangens::fromAngle( M_PI_4 );
+            const Tangens maxTan  = Tangens::fromAngle( 2 * M_PI - M_PI_4 );
+            const bool inside = currTan.isInRange( minTan, maxTan );
+            BOOST_CHECK_EQUAL( inside, false );
+        }
+        {
+            const Tangens currTan = Tangens::fromAngle( M_PI_2 );
+            const Tangens minTan  = Tangens::fromAngle( M_PI_4 );
+            const Tangens maxTan  = Tangens::fromAngle( 2 * M_PI - M_PI_4 );
+            const bool inside = currTan.isInRange( minTan, maxTan );
+            BOOST_CHECK_EQUAL( inside, true );
+        }
+        {
+            const Tangens currTan = Tangens::fromAngle( M_PI + M_PI_2 );
+            const Tangens minTan  = Tangens::fromAngle( M_PI_4 );
+            const Tangens maxTan  = Tangens::fromAngle( 2 * M_PI - M_PI_4 );
+            const bool inside = currTan.isInRange( minTan, maxTan );
             BOOST_CHECK_EQUAL( inside, true );
         }
     }
 
     BOOST_AUTO_TEST_CASE( isInRange_backward ) {
         {
-            const bool inside = isInRange( M_PI_4 / 2, 2 * M_PI - M_PI_4, M_PI_4 );
+            const Tangens currTan = Tangens::fromAngle( M_PI_4 / 2 );
+            const Tangens minTan  = Tangens::fromAngle( 2 * M_PI - M_PI_4 );
+            const Tangens maxTan  = Tangens::fromAngle( M_PI_4 );
+            const bool inside = currTan.isInRange( minTan, maxTan );
             BOOST_CHECK_EQUAL( inside, true );
         }
         {
-            const bool inside = isInRange( 2 * M_PI - M_PI_4 / 2, 2 * M_PI - M_PI_4, M_PI_4 );
+            const Tangens currTan = Tangens::fromAngle( 2 * M_PI - M_PI_4 / 2 );
+            const Tangens minTan  = Tangens::fromAngle( 2 * M_PI - M_PI_4 );
+            const Tangens maxTan  = Tangens::fromAngle( M_PI_4 );
+            const bool inside = currTan.isInRange( minTan, maxTan );
             BOOST_CHECK_EQUAL( inside, true );
         }
         {
-            const bool inside = isInRange( M_PI_2, 2 * M_PI - M_PI_4, M_PI_4 );
+            const Tangens currTan = Tangens::fromAngle( M_PI_2 );
+            const Tangens minTan  = Tangens::fromAngle( 2 * M_PI - M_PI_4 );
+            const Tangens maxTan  = Tangens::fromAngle( M_PI_4 );
+            const bool inside = currTan.isInRange( minTan, maxTan );
             BOOST_CHECK_EQUAL( inside, false );
         }
         {
-            const bool inside = isInRange( M_PI + M_PI_2, 2 * M_PI - M_PI_4, M_PI_4 );
+            const Tangens currTan = Tangens::fromAngle( M_PI + M_PI_2 );
+            const Tangens minTan  = Tangens::fromAngle( 2 * M_PI - M_PI_4 );
+            const Tangens maxTan  = Tangens::fromAngle( M_PI_4 );
+            const bool inside = currTan.isInRange( minTan, maxTan );
             BOOST_CHECK_EQUAL( inside, false );
         }
     }

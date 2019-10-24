@@ -79,6 +79,11 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         IMAGE_CHECK_CASE( image, "drawer2d" );
     }
 
+//    BOOST_AUTO_TEST_CASE( drawArc_big ) {
+//        Drawer2D drawer(60.0);
+//        drawer.drawArc( PointD{10.0, 10.0}, 20.0, 10.0, 0.0, M_PI, "blue" );
+//    }
+
     BOOST_AUTO_TEST_CASE( fillCircle_positive ) {
         Drawer2D drawer(100.0);
         drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
