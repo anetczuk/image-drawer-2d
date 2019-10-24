@@ -79,9 +79,17 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         IMAGE_CHECK_CASE( image, "drawer2d" );
     }
 
-    BOOST_AUTO_TEST_CASE( fillCircle ) {
+    BOOST_AUTO_TEST_CASE( fillCircle_positive ) {
         Drawer2D drawer(100.0);
         drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
+        Image& image = drawer.image();
+
+        IMAGE_CHECK_CASE( image, "drawer2d" );
+    }
+
+    BOOST_AUTO_TEST_CASE( fillCircle_negative ) {
+        Drawer2D drawer(100.0);
+        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "red" );
         Image& image = drawer.image();
 
         IMAGE_CHECK_CASE( image, "drawer2d" );
@@ -99,6 +107,24 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         Drawer2D drawer;
         drawer.drawLine( PointD{ 2.0, 2.0}, PointD{10.0,  2.0}, 0.1, "blue" );
         drawer.drawLine( PointD{10.0, 2.0}, PointD{10.0, 10.0}, 0.1, "red" );
+        Image& image = drawer.image();
+
+        IMAGE_CHECK_CASE( image, "drawer2d" );
+    }
+
+    BOOST_AUTO_TEST_CASE( resize_positive ) {
+        Drawer2D drawer;
+        drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0, "red" );
+        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "green" );
+        Image& image = drawer.image();
+
+        IMAGE_CHECK_CASE( image, "drawer2d" );
+    }
+
+    BOOST_AUTO_TEST_CASE( resize_negative ) {
+        Drawer2D drawer;
+        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "green" );
+        drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0, "red" );
         Image& image = drawer.image();
 
         IMAGE_CHECK_CASE( image, "drawer2d" );
