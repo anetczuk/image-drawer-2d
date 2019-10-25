@@ -62,6 +62,11 @@ BOOST_AUTO_TEST_SUITE( ImageSuite )
         BOOST_CHECK_EQUAL(object.height(), 0);
     }
 
+    BOOST_AUTO_TEST_CASE( save_empty ) {
+        Image object;
+        object.save( "empty.png" );
+    }
+
     BOOST_AUTO_TEST_CASE( save_load ) {
         Image object(10, 10);
         BOOST_CHECK_EQUAL(object.width(), 10);

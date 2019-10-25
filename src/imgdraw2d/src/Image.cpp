@@ -125,6 +125,14 @@ namespace imgdraw2d {
                 boost::filesystem::create_directories(fileDir);
             boost::filesystem::ofstream output( filePath );
         }
+
+        if (img.get_width() < 1 || img.get_height() < 1) {
+            RawImage tmp( (png::uint_32) 1, (png::uint_32) 1 );
+            tmp.write(path);
+            return ;
+        }
+
+
         img.write(path);
     }
 
