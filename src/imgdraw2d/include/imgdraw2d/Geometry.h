@@ -24,6 +24,7 @@
 #ifndef IMGDRAW2D_INCLUDE_GEOMETRY_H_
 #define IMGDRAW2D_INCLUDE_GEOMETRY_H_
 
+#include <ostream>
 #include <cstdint>
 #include <cmath>
 #include <algorithm>
@@ -44,6 +45,14 @@ namespace imgdraw2d {
         }
 
         Point(T x, T y): x(x), y(y) {
+        }
+
+        bool operator==(const Point<T>& other) const {
+            if (x != other.x)
+                return false;
+            if (y != other.y)
+                return false;
+            return true;
         }
 
         T operator[](const std::size_t n) const {
@@ -101,30 +110,6 @@ namespace imgdraw2d {
         return (double) value * vector.y / vector.x;
     }
     
-    /// value:
-    ///     positive -- left side,
-    ///     negative -- right side,
-    ///     zero     -- on vector
-    template <typename T>
-    inline double pointPosition(const Point<T>& baseVector, const Point<T>& point) {
-        if (baseVector.x > 0) {
-            const double base = linearY( baseVector, point.x );
-            return point.y - base;
-        } else if (baseVector.x < 0) {
-            const double base = linearY( baseVector, point.x );
-            return -(point.y - base);
-
-        } else if (baseVector.y > 0) {
-            const double base = linearX( baseVector, point.y );
-            return -(point.x - base);
-        } else if (baseVector.y < 0) {
-            const double base = linearX( baseVector, point.y );
-            return point.x - base;
-        }
-
-        return 0;
-    }
-
     /// normailze in range [0, 2*PI)
     inline double normalizeAngle(const double angle) {
         int parts = angle / (2 * M_PI);
@@ -165,6 +150,84 @@ namespace imgdraw2d {
             return false;
         }
     }
+
+    inline PointI rotateVector(const PointI& vector, const double angle) {
+        const double cosA = cos(angle);
+        const double sinA = sin(angle);
+        const double x = vector[0];
+        const double y = vector[1];
+        return PointI( x*cosA - y*sinA, x*sinA + y*cosA );
+    }
+
+
+    /// ========================================================
+
+
+    struct RayI {
+
+        PointI vector;
+        double xFactor;
+        double yFactor;
+
+
+        RayI(const PointI& vector): vector(vector), xFactor(0.0), yFactor(0.0) {
+            if (vector.x != 0) {
+                yFactor = (double) vector.y / vector.x;
+            }
+            if (vector.y != 0) {
+                xFactor = (double) vector.x / vector.y;
+            }
+        }
+
+        /// value:
+        ///     positive -- left side,
+        ///     negative -- right side,
+        ///     zero     -- on vector
+        double side( const PointI& point ) const {
+            if (vector.x > 0) {
+                const double xBase = yFactor * point.x;
+                return point.y - xBase;
+            } else if (vector.x < 0) {
+                const double xBase = yFactor * point.x;
+                return -(point.y - xBase);
+            }
+
+            if (vector.y > 0) {
+                const double yBase = xFactor * point.y;
+                return -(point.x - yBase);
+            } else if (vector.y < 0) {
+                const double yBase = xFactor * point.y;
+                return point.x - yBase;
+            }
+
+            return 0.0;
+        }
+
+        /// value:
+        ///     positive -- left side,
+        ///     negative -- right side,
+        ///     zero     -- on vector
+        double side( const int64_t px, const int64_t py ) const {
+            if (vector.x > 0) {
+                const double xBase = yFactor * px;
+                return py - xBase;
+            } else if (vector.x < 0) {
+                const double xBase = yFactor * px;
+                return -(py - xBase);
+            }
+
+            if (vector.y > 0) {
+                const double yBase = xFactor * py;
+                return -(px - yBase);
+            } else if (vector.y < 0) {
+                const double yBase = xFactor * py;
+                return px - yBase;
+            }
+
+            return 0.0;
+        }
+
+    };
 
 
     /// ========================================================
@@ -417,5 +480,17 @@ namespace imgdraw2d {
     };
 
 } /* namespace imgdraw2d */
+
+
+namespace std {
+
+    template <typename T>
+    inline ostream& operator<< (ostream& os, const imgdraw2d::Point<T>& point) {
+        os << "[" << point[0] << ", " << point[1] << "]";
+        return os;
+    }
+
+}
+
 
 #endif /* IMGDRAW2D_INCLUDE_GEOMETRY_H_ */

@@ -111,11 +111,9 @@ namespace imgdraw2d {
             drawImage( topLeftPoint[0], topLeftPoint[1], source );
         }
 
-        //TODO: change radius to width
         void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const std::string& color) {
-            RectD box = RectD::minmax( fromPoint, toPoint );
-            box.expand( width / 2.0 );
-            resize(box);
+            expand( fromPoint, toPoint, width / 2.0 );
+
             const PointI from = transformPoint(fromPoint);
             const PointI to = transformPoint(toPoint);
             const uint32_t w = width * scale;
@@ -124,10 +122,11 @@ namespace imgdraw2d {
 
         void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
             expand( center, radius + width / 2.0 );
+
             const PointI point = transformPoint(center);
             const uint32_t rad = radius * scale;
             const uint32_t w = width * scale;
-            const double angle = 2 * M_PI - normalizeAngle( startAngle );
+            const double angle = -normalizeAngle( startAngle );
             painter.drawArc( point, rad, w, angle, -range, color );
         }
 
@@ -136,11 +135,11 @@ namespace imgdraw2d {
             fillRect(bottomLeftPoint, width, height, pixColor);
         }
 
-        void fillRect(const PointT& bottomLeftPoint, const double width, const double height, const Image::Pixel& color) {
-            const PointT topRight = bottomLeftPoint + PointT(width, height);
-            const RectD box = RectD::minmax( bottomLeftPoint, topRight );
-            resize(box);
-            const PointD topLeft = bottomLeftPoint + PointT(0.0, height);
+        void fillRect(const PointT& bottomLeft, const double width, const double height, const Image::Pixel& color) {
+            const PointT topRight = bottomLeft + PointT(width, height);
+            expand( bottomLeft, topRight );
+
+            const PointD topLeft = bottomLeft + PointT(0.0, height);
             const PointI point = transformPoint(topLeft);
             const uint32_t w = width * scale;
             const uint32_t h = height * scale;
@@ -149,6 +148,7 @@ namespace imgdraw2d {
 
         void fillCircle(const PointT& center, const double radius, const std::string& color) {
             expand(center, radius);
+
             const PointI point = transformPoint(center);
             const uint32_t rad = radius * scale;
             painter.fillCircle( point, rad, color );
@@ -169,6 +169,17 @@ namespace imgdraw2d {
             resize(box);
         }
 
+        void expand(const PointT& bottomLeft, const PointT& topRight) {
+            const RectD box = RectD::minmax( bottomLeft, topRight );
+            resize(box);
+        }
+
+        void expand(const PointT& fromPoint, const PointT& toPoint, const double radius) {
+            RectD box = RectD::minmax( fromPoint, toPoint );
+            box.expand( radius );
+            resize(box);
+        }
+
     };
 
 
@@ -176,5 +187,6 @@ namespace imgdraw2d {
 
 
 } /* namespace imgdraw2d */
+
 
 #endif /* IMGDRAW2D_INCLUDE_DRAWER2D_H_ */

@@ -23,6 +23,7 @@
 
 #include "imgdraw2d/Painter.h"
 
+#include <chrono>
 #include <cmath>
 
 
@@ -146,6 +147,7 @@ namespace imgdraw2d {
 
             const PointI lineVector = toPoint - fromPoint;
             const PointI orthoVector = lineVector.ortho();
+            const RayI orthoRay( orthoVector );
 
             const uint32_t radius = width / 2;
             RectI box = RectI::minmax(fromPoint, toPoint);
@@ -156,12 +158,12 @@ namespace imgdraw2d {
             for( int64_t i=box.a.x; i<=box.b.x; ++i ) {
                 for( int64_t j=box.a.y; j<=box.b.y; ++j ) {
                     const PointI currVector = PointI{i, j} - fromPoint;
-                    const int64_t side1 = pointPosition(orthoVector, currVector);
+                    const int64_t side1 = orthoRay.side( currVector );
                     if (side1 < 0) {
                         continue;
                     }
                     const PointI toVector = currVector - lineVector;
-                    const int64_t side2 = pointPosition(orthoVector, toVector);
+                    const int64_t side2 = orthoRay.side( toVector );
                     if (side2 > 0) {
                         continue;
                     }
@@ -174,16 +176,30 @@ namespace imgdraw2d {
             }
         }
 
+        RectI getBBox(const PointI& center, const uint32_t radius) {
+            const int64_t w = img->width();
+            const int64_t h = img->height();
+            const int64_t startW = udiff( center.x, radius );
+            const int64_t startH = udiff( center.y, radius );
+            const int64_t endW = std::min( w-1, center.x + radius );
+            const int64_t endH = std::min( h-1, center.y + radius );
+            return RectI( PointI(startW, startH), PointI(endW, endH) );
+        }
+
         void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) override {
+            if ( std::abs(range) >= 2 * M_PI ) {
+                drawRing( center, radius, width, color );
+                return ;
+            }
+
+//            std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
             assert( center.x >= 0 );
             assert( center.y >= 0 );
 
             double minAngle = 0.0;
             double maxAngle = 0.0;
-            if ( std::abs(range) >= 2 * M_PI ) {
-                minAngle = 0.0;
-                maxAngle = 2 * M_PI;
-            } else if ( range > 0.0 ) {
+            if ( range > 0.0 ) {
                 minAngle = normalizeAngle(startAngle);
                 maxAngle = normalizeAngle(startAngle + range);
             } else {
@@ -191,35 +207,80 @@ namespace imgdraw2d {
                 maxAngle = normalizeAngle(startAngle);
             }
 
-//            const Tangens minTan = Tangens::fromAngle( minAngle );
-//            const Tangens maxTan = Tangens::fromAngle( maxAngle );
+            const bool sum = (range > M_PI);
+
+            const Image::Pixel pixColor = Image::convertColor( color );
 
             const uint32_t maxRadius = radius + width / 2;
             const uint32_t minRadius = udiff( radius, width / 2 );
             const uint32_t maxRSquare = maxRadius * maxRadius;
             const uint32_t minRSquare = minRadius * minRadius;
-            const Image::Pixel pixColor = Image::convertColor( color );
-            const int64_t w = img->width();
-            const int64_t h = img->height();
-            const int64_t startW = udiff( center.x, maxRadius );
-            const int64_t startH = udiff( center.y, maxRadius );
-            const int64_t endW = std::min( w, center.x + maxRadius );
-            const int64_t endH = std::min( h, center.y + maxRadius );
-            for( int64_t i = startW; i<endW; ++i ) {
-                for( int64_t j = startH; j<endH; ++j ) {
+
+            const RectI boundingBox = getBBox( center, maxRadius );
+
+            const PointI fromVector = rotateVector( PointI(1000, 0), minAngle );
+            const PointI toVector   = rotateVector( PointI(1000, 0), maxAngle );
+
+            const RayI fromRay( fromVector );
+            const RayI toRay( toVector );
+
+            for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
+                for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
                     const int64_t diffX = i - center.x;
                     const int64_t diffY = j - center.y;
 
-                    //TODO: try to change "angleFromOX" to not to use atan
-                    const double currAngle = angleFromOX(diffX, diffY);
-                    if (isInRangeAngle(currAngle, minAngle, maxAngle) == false) {
-                        continue ;
+                    if (sum) {
+                        const double fromSide = fromRay.side( diffX, diffY );
+                        if ( fromSide < 0.0 ) {
+                            const double toSide = toRay.side( diffX, diffY );
+                            if ( toSide > 0.0 ) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        const double fromSide = fromRay.side( diffX, diffY );
+                        if (fromSide <= 0.0) {
+                            continue;
+                        }
+                        const double toSide = toRay.side( diffX, diffY );
+                        if (toSide >= 0.0) {
+                            continue;
+                        }
                     }
 
-//                    const Tangens currTan = Tangens::fromCoords( diffX, diffY );
-//                    if ( currTan.isInRange(minTan, maxTan) == false) {
-//                        continue ;
-//                    }
+                    const int64_t distSquare = diffX * diffX + diffY * diffY;
+                    if ( distSquare < minRSquare ) {
+                        continue;
+                    }
+                    if ( distSquare > maxRSquare ) {
+                        continue;
+                    }
+
+                    img->setPixel( i, j, pixColor );
+                }
+            }
+
+//            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+//            std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
+        }
+
+        void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) override {
+            assert( center.x >= 0 );
+            assert( center.y >= 0 );
+
+            const Image::Pixel pixColor = Image::convertColor( color );
+
+            const uint32_t maxRadius = radius + width / 2;
+            const uint32_t minRadius = udiff( radius, width / 2 );
+            const uint32_t maxRSquare = maxRadius * maxRadius;
+            const uint32_t minRSquare = minRadius * minRadius;
+
+            const RectI boundingBox = getBBox( center, maxRadius );
+
+            for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
+                for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+                    const int64_t diffX = i - center.x;
+                    const int64_t diffY = j - center.y;
 
                     const int64_t distSquare = diffX * diffX + diffY * diffY;
                     if ( distSquare < minRSquare ) {
@@ -259,15 +320,13 @@ namespace imgdraw2d {
             assert( center.x >= 0 );
             assert( center.y >= 0 );
             const uint32_t rSquare = radius * radius;
+
             const Image::Pixel pixColor = Image::convertColor( color );
-            const int64_t w = img->width();
-            const int64_t h = img->height();
-            const int64_t startW = udiff( center.x, radius );
-            const int64_t startH = udiff( center.y, radius );
-            const int64_t endW = std::min( w, center.x + radius );
-            const int64_t endH = std::min( h, center.y + radius );
-            for( int64_t i = startW; i<endW; ++i ) {
-                for( int64_t j = startH; j<endH; ++j ) {
+
+            const RectI boundingBox = getBBox( center, radius );
+
+            for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
+                for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
                     const int64_t diffX = i - center.x;
                     const int64_t diffY = j - center.y;
                     const int64_t distSquare = diffX * diffX + diffY * diffY;
@@ -311,6 +370,11 @@ namespace imgdraw2d {
         void drawArc(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const double /*startAngle*/, const double /*range*/, const std::string& /*color*/) override {
             //TODO: implement
             throw std::runtime_error("drawArc not implemented");
+        }
+
+        void drawRing(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const std::string& /*color*/) override {
+            //TODO: implement
+            throw std::runtime_error("drawRing not implemented");
         }
 
         void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {

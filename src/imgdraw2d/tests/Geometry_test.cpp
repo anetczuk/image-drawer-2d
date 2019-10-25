@@ -118,6 +118,29 @@ BOOST_AUTO_TEST_SUITE( GeometrySuite )
         }
     }
 
+    BOOST_AUTO_TEST_CASE( rotateVector_01 ) {
+        {
+            const PointI vector( 100, 0 );
+            const PointI output = rotateVector( vector, 0.0 );
+            BOOST_CHECK_EQUAL( output, PointI( 100, 0 ) );
+        }
+        {
+            const PointI vector( 100, 0 );
+            const PointI output = rotateVector( vector, M_PI_2 );
+            BOOST_CHECK_EQUAL( output, PointI( 0,  100 ) );
+        }
+        {
+            const PointI vector( 100, 0 );
+            const PointI output = rotateVector( vector, -M_PI_2 );
+            BOOST_CHECK_EQUAL( output, PointI( 0, -100 ) );
+        }
+        {
+            const PointI vector( 100, 0 );
+            const PointI output = rotateVector( vector, M_PI );
+            BOOST_CHECK_EQUAL( output, PointI( -100, 0 ) );
+        }
+    }
+
 BOOST_AUTO_TEST_SUITE_END()
 
 
