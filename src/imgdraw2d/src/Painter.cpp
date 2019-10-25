@@ -141,12 +141,13 @@ namespace imgdraw2d {
             }
         }
 
-        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) override {
+        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const std::string& color) override {
             const Image::Pixel pixColor = Image::convertColor( color );
 
             const PointI lineVector = toPoint - fromPoint;
             const PointI orthoVector = lineVector.ortho();
 
+            const uint32_t radius = width / 2;
             RectI box = RectI::minmax(fromPoint, toPoint);
             box.expand( radius );
 
@@ -302,7 +303,7 @@ namespace imgdraw2d {
             }
         }
 
-        void drawLine(const PointI& /*fromPoint*/, const PointI& /*toPoint*/, const uint32_t /*radius*/, const std::string& /*color*/) override {
+        void drawLine(const PointI& /*fromPoint*/, const PointI& /*toPoint*/, const uint32_t /*width*/, const std::string& /*color*/) override {
             //TODO: implement
             throw std::runtime_error("drawLine not implemented");
         }

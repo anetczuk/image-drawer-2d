@@ -40,7 +40,7 @@ namespace imgdraw2d {
 
             virtual void drawImage(const PointI& point, const Image& source) = 0;
 
-            virtual void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) = 0;
+            virtual void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const std::string& color) = 0;
 
             virtual void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) = 0;
 
@@ -83,8 +83,8 @@ namespace imgdraw2d {
                 drawImage( PointI{x, y}, source );
             }
 
-            void drawLine(const uint32_t fromX, const uint32_t fromY, const uint32_t toX, const uint32_t toY, const uint32_t radius, const std::string& color) {
-                drawLine( PointI{fromX, fromY}, PointI{toX, toY}, radius, color );
+            void drawLine(const uint32_t fromX, const uint32_t fromY, const uint32_t toX, const uint32_t toY, const uint32_t width, const std::string& color) {
+                drawLine( PointI{fromX, fromY}, PointI{toX, toY}, width, color );
             }
 
             void fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) {
@@ -143,8 +143,8 @@ namespace imgdraw2d {
             worker->drawImage(point, source);
         }
 
-        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t radius, const std::string& color) override {
-            worker->drawLine(fromPoint, toPoint, radius, color);
+        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const std::string& color) override {
+            worker->drawLine(fromPoint, toPoint, width, color);
         }
 
         void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) override {

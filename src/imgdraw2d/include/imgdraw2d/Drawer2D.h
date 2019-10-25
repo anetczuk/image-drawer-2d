@@ -112,14 +112,14 @@ namespace imgdraw2d {
         }
 
         //TODO: change radius to width
-        void drawLine(const PointT& fromPoint, const PointT& toPoint, const double radius, const std::string& color) {
+        void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const std::string& color) {
             RectD box = RectD::minmax( fromPoint, toPoint );
-            box.expand(radius);
+            box.expand( width / 2.0 );
             resize(box);
             const PointI from = transformPoint(fromPoint);
             const PointI to = transformPoint(toPoint);
-            const uint32_t rad = radius * scale;
-            painter.drawLine( from, to, rad, color );
+            const uint32_t w = width * scale;
+            painter.drawLine( from, to, w, color );
         }
 
         void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {

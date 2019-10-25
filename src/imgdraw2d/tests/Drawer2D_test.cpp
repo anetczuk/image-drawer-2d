@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawLine_1 ) {
         Drawer2DD drawer;
-        drawer.drawLine( PointD{1.0, 1.0}, PointD{10.0, 6.0}, 0.1, "blue" );
+        drawer.drawLine( PointD{1.0, 1.0}, PointD{10.0, 6.0}, 0.2, "blue" );
         Image& image = drawer.image();
 
         IMAGE_CHECK_CASE( image, "drawer2d" );
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawLine_negative_short ) {
         Drawer2DD drawer(200.0);
-        drawer.drawLine( PointD{ -9.70711, -9.70711}, PointD{ -9.0, -9.0}, 0.1, "blue" );
+        drawer.drawLine( PointD{ -9.70711, -9.70711}, PointD{ -9.0, -9.0}, 0.2, "blue" );
         Image& image = drawer.image();
 
         IMAGE_CHECK_CASE( image, "drawer2d" );
@@ -118,8 +118,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( resize ) {
         Drawer2DD drawer;
-        drawer.drawLine( PointD{ 2.0, 2.0}, PointD{10.0,  2.0}, 0.1, "blue" );
-        drawer.drawLine( PointD{10.0, 2.0}, PointD{10.0, 10.0}, 0.1, "red" );
+        drawer.drawLine( PointD{ 2.0, 2.0}, PointD{10.0,  2.0}, 0.2, "blue" );
+        drawer.drawLine( PointD{10.0, 2.0}, PointD{10.0, 10.0}, 0.2, "red" );
         Image& image = drawer.image();
 
         IMAGE_CHECK_CASE( image, "drawer2d" );
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( example ) {
         Drawer2DD drawer(20.0);
-        drawer.drawLine( PointD{0.0, 0.0}, PointD{10.0, 0.0}, 0.5, "red" );
+        drawer.drawLine( PointD{0.0, 0.0}, PointD{10.0, 0.0}, 1.0, "red" );
         drawer.drawArc( PointD{5.0, 5.0}, 5.0, 1.0, 0.0, M_PI, "blue" );
         drawer.fillRect( PointD{3.0, 3.0}, 4.0, 4.0, "green" );
         drawer.fillCircle( PointD{5.0, 14.0}, 2.0, "orange" );
