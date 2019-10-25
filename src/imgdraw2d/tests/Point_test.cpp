@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_SUITE( PointSuite )
         Image image;
         draw(image, strip);
 
-        image.save("tests/point_strip.png");
+        image.save("outimg/point_strip.png");
 
 //        const bool loaded = object.loadImage("not_found.png");
 //        BOOST_CHECK_EQUAL( loaded, false );

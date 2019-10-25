@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_SUITE( ImageSuite )
 
     BOOST_AUTO_TEST_CASE( load_valid ) {
         Image object;
-        const bool loaded = object.load("data/blue.png");
+        const bool loaded = object.load("refimg/blue.png");
 
         BOOST_REQUIRE_EQUAL( loaded, true );
         BOOST_CHECK_EQUAL( object.empty(), false );
@@ -96,11 +96,11 @@ BOOST_AUTO_TEST_SUITE( ImageSuite )
 
     BOOST_AUTO_TEST_CASE( compare_differ ) {
         Image object1;
-        object1.load("data/red.png");
+        object1.load("refimg/red.png");
         BOOST_CHECK_EQUAL( object1.empty(), false );
 
         Image object2;
-        object2.load("data/blue.png");
+        object2.load("refimg/blue.png");
         BOOST_CHECK_EQUAL( object2.empty(), false );
 
         BOOST_CHECK_EQUAL( (object1 == object2), false );
