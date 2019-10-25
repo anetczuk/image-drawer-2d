@@ -39,6 +39,14 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         IMAGE_CHECK_CASE( image, "drawer2d" );
     }
 
+    BOOST_AUTO_TEST_CASE( drawLine_negative_short ) {
+        Drawer2D drawer(200.0);
+        drawer.drawLine( PointD{ -9.70711, -9.70711}, PointD{ -9.0, -9.0}, 0.1, "blue" );
+        Image& image = drawer.image();
+
+        IMAGE_CHECK_CASE( image, "drawer2d" );
+    }
+
     BOOST_AUTO_TEST_CASE( drawArc_full ) {
         Drawer2D drawer;
         drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, 2 * M_PI, "blue" );

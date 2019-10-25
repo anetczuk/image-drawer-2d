@@ -297,7 +297,7 @@ namespace imgdraw2d {
             return minmax(p1.x, p1.y, p2.x, p2.y);
         }
 
-        static Rect<T> minmax(const int64_t x1, const int64_t y1, const int64_t x2, const int64_t y2) {
+        static Rect<T> minmax(const T x1, const T y1, const T x2, const T y2) {
             Rect<T> ret;
             ret.a.x = std::min(x1, x2);
             ret.a.y = std::min(y1, y2);
