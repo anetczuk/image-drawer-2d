@@ -105,6 +105,20 @@ namespace imgdraw2d {
         img.set_pixel( x, y, color );
     }
 
+    void Image::pasteImage(const std::size_t x, const std::size_t y, const Image& source ) {
+        const std::size_t w = img.get_width();
+        const std::size_t h = img.get_height();
+        const std::size_t endW = std::min(w, x + source.width() );
+        const std::size_t endH = std::min(h, y + source.height() );
+
+        for( std::size_t i = x; i<endW; ++i ) {
+            for( std::size_t j = y; j<endH; ++j ) {
+                const Image::Pixel src = source.pixel( i-x, j-y );
+                img.set_pixel( i, j, src );
+            }
+        }
+    }
+
     void Image::setPixelColor(const std::size_t x, const std::size_t y, const std::string& color) {
         const Image::Pixel pixColor = convertColor(color);
         img.set_pixel(x, y, pixColor);

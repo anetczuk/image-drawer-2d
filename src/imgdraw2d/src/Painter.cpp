@@ -126,20 +126,7 @@ namespace imgdraw2d {
         }
 
         void drawImage(const PointI& point, const Image& source) override {
-            assert( point.x >= 0 );
-            assert( point.y >= 0 );
-            const int64_t x = point.x;
-            const int64_t y = point.y;
-            const int64_t w = img->width();
-            const int64_t h = img->height();
-            const int64_t endW = std::min(w, x + source.width() );
-            const int64_t endH = std::min(h, y + source.height() );
-            for( int64_t i = x; i<endW; ++i ) {
-                for( int64_t j = y; j<endH; ++j ) {
-                    const Image::Pixel src = source.pixel( i-x, j-y );
-                    img->setPixel( i, j, src );
-                }
-            }
+            img->pasteImage(point.x, point.y, source);
         }
 
         void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const std::string& color) override {

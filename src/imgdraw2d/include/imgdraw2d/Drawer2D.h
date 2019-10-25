@@ -31,20 +31,16 @@ namespace imgdraw2d {
 
     class Drawer2DBase {
 
-        static const double MARGIN;
-
-
-    protected:
-
         ImagePtr img;
-        Painter painter;
         RectD sizeBox;
-        double scale;
-
         Image::Pixel backgroundColor;
 
 
     public:
+
+        Painter painter;
+        double scale;
+
 
         Drawer2DBase(const double scale = 10.0);
 
@@ -70,18 +66,13 @@ namespace imgdraw2d {
             backgroundColor = color;
         }
 
-        void drawImage(const double top, const double left, const Image& source) {
-            const PointI from = transformCoords(top, left);
-            painter.drawImage( from, source );
-        }
-
 
         PointI transformCoords(const double x, const double y) const;
 
+        void resize(const RectD& box);
+
 
     protected:
-
-        void resize(const RectD& box);
 
         void resetImage();
 
@@ -94,40 +85,58 @@ namespace imgdraw2d {
 
 
     template <typename PointT>
-    class Drawer2D: public Drawer2DBase {
+    class Drawer2D {
     public:
 
-        Drawer2D(const double scale = 10.0): Drawer2DBase(scale) {
+        Drawer2DBase base;
+
+
+        Drawer2D(const double scale = 10.0): base(scale) {
         }
 
         Drawer2D(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT):
-            Drawer2DBase(size, scale, backgroundColor)
+            base(size, scale, backgroundColor)
         {
         }
 
-        using Drawer2DBase::drawImage;
+        const Image& image() const {
+            return base.image();
+        }
+
+        Image& image() {
+            return base.image();
+        }
+
+        void setBackground(const std::string& color) {
+            base.setBackground( color );
+        }
+
+        void setBackground(const Image::Pixel& color) {
+            base.setBackground( color );
+        }
 
         void drawImage(const PointT& topLeftPoint, const Image& source) {
-            drawImage( topLeftPoint[0], topLeftPoint[1], source );
+            const PointI from = base.transformCoords(topLeftPoint[0], topLeftPoint[1]);
+            base.painter.drawImage( from, source );
         }
 
         void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const std::string& color) {
             expand( fromPoint, toPoint, width / 2.0 );
 
-            const PointI from = transformPoint(fromPoint);
-            const PointI to = transformPoint(toPoint);
-            const uint32_t w = width * scale;
-            painter.drawLine( from, to, w, color );
+            const PointI from = base.transformCoords( fromPoint[0], fromPoint[1] );
+            const PointI to   = base.transformCoords( toPoint[0], toPoint[1] );
+            const uint32_t w = width * base.scale;
+            base.painter.drawLine( from, to, w, color );
         }
 
         void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
             expand( center, radius + width / 2.0 );
 
-            const PointI point = transformPoint(center);
-            const uint32_t rad = radius * scale;
-            const uint32_t w = width * scale;
+            const PointI point = base.transformCoords( center[0], center[1] );
+            const uint32_t rad = radius * base.scale;
+            const uint32_t w = width * base.scale;
             const double angle = -normalizeAngle( startAngle );
-            painter.drawArc( point, rad, w, angle, -range, color );
+            base.painter.drawArc( point, rad, w, angle, -range, color );
         }
 
         void fillRect(const PointT& bottomLeftPoint, const double width, const double height, const std::string& color) {
@@ -139,24 +148,19 @@ namespace imgdraw2d {
             const PointT topRight = bottomLeft + PointT(width, height);
             expand( bottomLeft, topRight );
 
-            const PointD topLeft = bottomLeft + PointT(0.0, height);
-            const PointI point = transformPoint(topLeft);
-            const uint32_t w = width * scale;
-            const uint32_t h = height * scale;
-            painter.fillRect( point, w, h, color );
+            const PointT topLeft = bottomLeft + PointT(0.0, height);
+            const PointI point = base.transformCoords( topLeft[0], topLeft[1] );
+            const uint32_t w = width * base.scale;
+            const uint32_t h = height * base.scale;
+            base.painter.fillRect( point, w, h, color );
         }
 
         void fillCircle(const PointT& center, const double radius, const std::string& color) {
             expand(center, radius);
 
-            const PointI point = transformPoint(center);
-            const uint32_t rad = radius * scale;
-            painter.fillCircle( point, rad, color );
-        }
-
-
-        PointI transformPoint(const PointT& point) const {
-            return transformCoords( point[0], point[1] );
+            const PointI point = base.transformCoords( center[0], center[1] );
+            const uint32_t rad = radius * base.scale;
+            base.painter.fillCircle( point, rad, color );
         }
 
 
@@ -166,18 +170,18 @@ namespace imgdraw2d {
             const PointD centerPoint{ center[0], center[1] };
             RectD box( centerPoint );
             box.expand(radius);
-            resize(box);
+            base.resize(box);
         }
 
         void expand(const PointT& bottomLeft, const PointT& topRight) {
             const RectD box = RectD::minmax( bottomLeft, topRight );
-            resize(box);
+            base.resize(box);
         }
 
         void expand(const PointT& fromPoint, const PointT& toPoint, const double radius) {
             RectD box = RectD::minmax( fromPoint, toPoint );
             box.expand( radius );
-            resize(box);
+            base.resize(box);
         }
 
     };

@@ -26,13 +26,14 @@
 
 namespace imgdraw2d {
 
-    const double Drawer2DBase::MARGIN = 0.5;
+    static const double MARGIN = 0.5;
 
 
     Drawer2DBase::Drawer2DBase(const double scale):
-            img( new Image() ), painter( *img ),
-            sizeBox{ {0.0, 0.0}, {0.0, 0.0} }, scale(scale),
-            backgroundColor(0, 0, 0, 0)                             /// transparent color
+            img( new Image() ),
+            sizeBox{ {0.0, 0.0}, {0.0, 0.0} },
+            backgroundColor(0, 0, 0, 0),                             /// transparent color
+            painter( *img ), scale(scale)
     {
     }
 
@@ -71,7 +72,9 @@ namespace imgdraw2d {
             const double top = oldBox.a.x - MARGIN;
             const double left = oldBox.b.y + MARGIN;
             const Image* source = oldImg.get();
-            drawImage( top, left, *source );
+
+            const PointI from = transformCoords(top, left);
+            img->pasteImage(from.x, from.y, *source);
         }
     }
 
