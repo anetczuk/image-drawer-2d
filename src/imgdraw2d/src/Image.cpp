@@ -30,6 +30,9 @@
 
 namespace imgdraw2d {
 
+    const Image::Pixel Image::TRANSPARENT = Image::convertColor("transparent");
+
+
     Image::Image(const std::string& path): img() {
         if (path.empty() == false)
             img.read(path);

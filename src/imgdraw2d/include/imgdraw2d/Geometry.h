@@ -27,6 +27,7 @@
 #include <cstdint>
 #include <cmath>
 #include <algorithm>
+#include <cassert>
 
 
 namespace imgdraw2d {
@@ -37,6 +38,24 @@ namespace imgdraw2d {
 
         T x;
         T y;
+
+
+        Point(): x(), y() {
+        }
+
+        Point(T x, T y): x(x), y(y) {
+        }
+
+        T operator[](const std::size_t n) const {
+            switch(n) {
+            case 0:  return x;
+            case 1:  return y;
+            default: {
+            	assert( (n < 2) && "bad index" );
+                return -1;
+            }
+            }
+        }
 
         Point<T> operator-() const {
             return Point<T>{ -x, -y };
@@ -259,6 +278,15 @@ namespace imgdraw2d {
         Point<T> b;
 
 
+        Rect(): a(), b() {
+        }
+
+        Rect(const Point<T>& point): a(point), b(point) {
+        }
+
+        Rect(const Point<T>& pointA, const Point<T>& pointB): a(pointA), b(pointB) {
+        }
+
         T width() const {
             return b.x - a.x;
         }
@@ -295,6 +323,11 @@ namespace imgdraw2d {
 
         static Rect<T> minmax(const Point<T>& p1, const Point<T>& p2) {
             return minmax(p1.x, p1.y, p2.x, p2.y);
+        }
+
+        template <typename PointT>
+        static Rect<T> minmax(const PointT& p1, const PointT& p2) {
+            return minmax(p1[0], p1[1], p2[0], p2[1]);
         }
 
         static Rect<T> minmax(const T x1, const T y1, const T x2, const T y2) {

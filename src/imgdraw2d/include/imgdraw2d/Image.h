@@ -45,6 +45,8 @@ namespace imgdraw2d {
         typedef png::basic_rgba_pixel< PixByte > Pixel;
         typedef png::image< Pixel > RawImage;
 
+        static const Pixel TRANSPARENT;
+
 
     protected:
 
