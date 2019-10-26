@@ -72,6 +72,10 @@ namespace imgdraw2d {
                 img = image;
             }
 
+            void setImage(Image& image) {
+                setImage( &image );
+            }
+
             using AbstractPainter::drawImage;
 
             using AbstractPainter::drawLine;
@@ -127,6 +131,8 @@ namespace imgdraw2d {
             ModeWorker::setImage( image );
             worker->setImage( image );
         }
+
+        using painter::ModeWorker::setImage;
 
         void setCompositionMode(const CompositionMode mode);
 

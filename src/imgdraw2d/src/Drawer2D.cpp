@@ -29,20 +29,20 @@ namespace imgdraw2d {
     static const double MARGIN = 0.5;
 
 
-    Drawer2DBase::Drawer2DBase(const double scale):
+    ImageBox::ImageBox(const double scale):
             img( new Image() ),
             sizeBox{ {0.0, 0.0}, {0.0, 0.0} },
             backgroundColor(0, 0, 0, 0),                             /// transparent color
-            painter( *img ), scale(scale)
+            scale(scale)
     {
     }
 
-    Drawer2DBase::Drawer2DBase(const RectD& size, const double scale, const Image::Pixel& backgroundColor): Drawer2DBase(scale) {
+    ImageBox::ImageBox(const RectD& size, const double scale, const Image::Pixel& backgroundColor): ImageBox(scale) {
         setBackground( backgroundColor );
         resize(size);
     }
 
-    PointI Drawer2DBase::transformCoords(const double x, const double y) const {
+    PointI ImageBox::transformCoords(const double x, const double y) const {
         ///flip y coord
         PointD relative{ x - sizeBox.a.x, sizeBox.b.y - y };
         relative.x += MARGIN;
@@ -52,38 +52,37 @@ namespace imgdraw2d {
         return pixelPoint;
     }
 
-    void Drawer2DBase::resize(const RectD& box) {
+    bool ImageBox::resize(const RectD& box) {
         if (img->empty()) {
             sizeBox = box;
             resizeImage();
             img->fill( backgroundColor );
-            return ;
+            return false;
         }
 
         const RectD oldBox = sizeBox;
         const bool changed = sizeBox.expand( box );
-        if (changed) {
-            ImagePtr oldImg;
-            oldImg.swap( img );
-            resetImage();
-            resizeImage();
-            img->fill( backgroundColor );
-
-            const double top = oldBox.a.x - MARGIN;
-            const double left = oldBox.b.y + MARGIN;
-            const Image* source = oldImg.get();
-
-            const PointI from = transformCoords(top, left);
-            img->pasteImage(from.x, from.y, *source);
+        if (changed == false) {
+            return false;
         }
-    }
+        ImagePtr oldImg;
+        oldImg.swap( img );
 
-    void Drawer2DBase::resetImage() {
         img.reset( new Image() );
-        painter.setImage( img.get() );
+
+        resizeImage();
+        img->fill( backgroundColor );
+
+        const double top = oldBox.a.x - MARGIN;
+        const double left = oldBox.b.y + MARGIN;
+        const Image* source = oldImg.get();
+
+        const PointI from = transformCoords(top, left);
+        img->pasteImage(from.x, from.y, *source);
+        return true;
     }
 
-    void Drawer2DBase::resizeImage() {
+    void ImageBox::resizeImage() {
         const double boxW = sizeBox.width();
         const double boxH = sizeBox.height();
         const std::size_t w = scale * ( 2 * MARGIN + boxW );

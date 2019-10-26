@@ -29,7 +29,10 @@
 
 namespace imgdraw2d {
 
-    class Drawer2DBase {
+    /**
+     * Class allowing scaling and image resize.
+     */
+    class ImageBox {
 
         ImagePtr img;
         RectD sizeBox;
@@ -38,13 +41,12 @@ namespace imgdraw2d {
 
     public:
 
-        Painter painter;
         double scale;
 
 
-        Drawer2DBase(const double scale = 10.0);
+        ImageBox(const double scale = 10.0);
 
-        Drawer2DBase(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT);
+        ImageBox(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT);
 
         const Image& image() const {
             return *(img.get());
@@ -69,12 +71,11 @@ namespace imgdraw2d {
 
         PointI transformCoords(const double x, const double y) const;
 
-        void resize(const RectD& box);
+        /// returns true if image instance changed, otherwise false
+        bool resize(const RectD& box);
 
 
     protected:
-
-        void resetImage();
 
         void resizeImage();
 
@@ -88,14 +89,15 @@ namespace imgdraw2d {
     class Drawer2D {
     public:
 
-        Drawer2DBase base;
+        ImageBox base;
+        Painter painter;
 
 
-        Drawer2D(const double scale = 10.0): base(scale) {
+        Drawer2D(const double scale = 10.0): base(scale), painter( base.image() ) {
         }
 
         Drawer2D(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT):
-            base(size, scale, backgroundColor)
+            base(size, scale, backgroundColor), painter( base.image() )
         {
         }
 
@@ -117,7 +119,7 @@ namespace imgdraw2d {
 
         void drawImage(const PointT& topLeftPoint, const Image& source) {
             const PointI from = base.transformCoords(topLeftPoint[0], topLeftPoint[1]);
-            base.painter.drawImage( from, source );
+            painter.drawImage( from, source );
         }
 
         void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const std::string& color) {
@@ -126,7 +128,7 @@ namespace imgdraw2d {
             const PointI from = base.transformCoords( fromPoint[0], fromPoint[1] );
             const PointI to   = base.transformCoords( toPoint[0], toPoint[1] );
             const uint32_t w = width * base.scale;
-            base.painter.drawLine( from, to, w, color );
+            painter.drawLine( from, to, w, color );
         }
 
         void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
@@ -136,7 +138,7 @@ namespace imgdraw2d {
             const uint32_t rad = radius * base.scale;
             const uint32_t w = width * base.scale;
             const double angle = -normalizeAngle( startAngle );
-            base.painter.drawArc( point, rad, w, angle, -range, color );
+            painter.drawArc( point, rad, w, angle, -range, color );
         }
 
         void fillRect(const PointT& bottomLeftPoint, const double width, const double height, const std::string& color) {
@@ -152,7 +154,7 @@ namespace imgdraw2d {
             const PointI point = base.transformCoords( topLeft[0], topLeft[1] );
             const uint32_t w = width * base.scale;
             const uint32_t h = height * base.scale;
-            base.painter.fillRect( point, w, h, color );
+            painter.fillRect( point, w, h, color );
         }
 
         void fillCircle(const PointT& center, const double radius, const std::string& color) {
@@ -160,7 +162,7 @@ namespace imgdraw2d {
 
             const PointI point = base.transformCoords( center[0], center[1] );
             const uint32_t rad = radius * base.scale;
-            base.painter.fillCircle( point, rad, color );
+            painter.fillCircle( point, rad, color );
         }
 
 
@@ -170,18 +172,27 @@ namespace imgdraw2d {
             const PointD centerPoint{ center[0], center[1] };
             RectD box( centerPoint );
             box.expand(radius);
-            base.resize(box);
+            if (base.resize(box)) {
+                Image& img = base.image();
+                painter.setImage( img );
+            }
         }
 
         void expand(const PointT& bottomLeft, const PointT& topRight) {
             const RectD box = RectD::minmax( bottomLeft, topRight );
-            base.resize(box);
+            if (base.resize(box)) {
+                Image& img = base.image();
+                painter.setImage( img );
+            }
         }
 
         void expand(const PointT& fromPoint, const PointT& toPoint, const double radius) {
             RectD box = RectD::minmax( fromPoint, toPoint );
             box.expand( radius );
-            base.resize(box);
+            if (base.resize(box)) {
+                Image& img = base.image();
+                painter.setImage( img );
+            }
         }
 
     };
