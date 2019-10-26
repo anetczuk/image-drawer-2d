@@ -3,11 +3,13 @@
 #
 
 
-if (imgdraw2d_INCLUDE_DIR AND imgdraw2d_LIBRARY)
+set(imgdraw2d_FOUND FALSE)
+if (imgdraw2d_INCLUDE_DIR AND (imgdraw2d_LIBRARY_RELEASE OR imgdraw2d_LIBRARY_DEBUG))
     ## paths configured
-    set (imgdraw2d_FOUND TRUE)
+    set(imgdraw2d_FOUND TRUE)
+    set(imgdraw2d_LIBRARY optimized ${imgdraw2d_LIBRARY_RELEASE} debug ${imgdraw2d_LIBRARY_DEBUG})
     return()
-endif ()
+endif()
 
 
 ## Put here path to custom location
@@ -18,7 +20,7 @@ find_path(imgdraw2d_INCLUDE_DIR imgdraw2d/Drawer2D.h
     PATH_SUFFIXES include ../../include
 )
 
-FIND_LIBRARY(imgdraw2d_LIBRARY
+FIND_LIBRARY(imgdraw2d_LIBRARY_RELEASE
   NAMES imgdraw2d
   HINTS "$ENV{imgdraw2d_DIR} ${imgdraw2d_DIR}"
   PATHS ${CMAKE_MODULE_PATH}
@@ -26,9 +28,18 @@ FIND_LIBRARY(imgdraw2d_LIBRARY
   PATH_SUFFIXES lib ../../lib
 )
 
-set(imgdraw2d_FOUND FALSE)
-if (imgdraw2d_INCLUDE_DIR AND imgdraw2d_LIBRARY)
+FIND_LIBRARY(imgdraw2d_LIBRARY_DEBUG
+  NAMES imgdraw2d_d
+  HINTS "$ENV{imgdraw2d_DIR} ${imgdraw2d_DIR}"
+  PATHS ${CMAKE_MODULE_PATH}
+  NO_DEFAULT_PATH
+  PATH_SUFFIXES lib ../../lib
+)
+
+
+if (imgdraw2d_INCLUDE_DIR AND (imgdraw2d_LIBRARY_RELEASE OR imgdraw2d_LIBRARY_DEBUG))
     set(imgdraw2d_FOUND TRUE)
+    set(imgdraw2d_LIBRARY optimized ${imgdraw2d_LIBRARY_RELEASE} debug ${imgdraw2d_LIBRARY_DEBUG})
 endif()
 
 

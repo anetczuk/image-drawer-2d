@@ -13,6 +13,9 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 
+set(CMAKE_DEBUG_POSTFIX _d)
+
+
 ##
 ## set default compilation standard
 ##
