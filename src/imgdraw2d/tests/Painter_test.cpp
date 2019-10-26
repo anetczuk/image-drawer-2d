@@ -201,10 +201,18 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         IMAGE_CHECK_CASE( image, "painter" );
     }
 
-    BOOST_AUTO_TEST_CASE( drawArc_01 ) {
+    BOOST_AUTO_TEST_CASE( drawArc_positive_range ) {
         Image image(140, 140);
         Painter painter( image );
-        painter.drawArc( PointI{70, 70}, 40, 6, 0.0, 3 * M_PI_2, "blue" );
+        painter.drawArc( PointI{70, 70}, 40, 6, 0.0,  3 * M_PI_2, "blue" );
+
+        IMAGE_CHECK_CASE( image, "painter" );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawArc_negative_range ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawArc( PointI{70, 70}, 40, 6, 0.0, -3 * M_PI_2, "blue" );
 
         IMAGE_CHECK_CASE( image, "painter" );
     }

@@ -194,7 +194,7 @@ namespace imgdraw2d {
                 maxAngle = normalizeAngle(startAngle);
             }
 
-            const bool sum = (range > M_PI);
+            const bool sum = ( std::abs(range) > M_PI );
 
             const Image::Pixel pixColor = Image::convertColor( color );
 
