@@ -30,16 +30,29 @@ namespace imgdraw2d {
 
 
     ImageBox::ImageBox(const double scale):
-            img( new Image() ),
-            sizeBox{ {0.0, 0.0}, {0.0, 0.0} },
+            img(nullptr),
+            sizeBox(),
             backgroundColor(0, 0, 0, 0),                             /// transparent color
             scale(scale)
     {
+        reset();
     }
 
     ImageBox::ImageBox(const RectD& size, const double scale, const Image::Pixel& backgroundColor): ImageBox(scale) {
         setBackground( backgroundColor );
         resize(size);
+    }
+
+    void ImageBox::reset() {
+        img.reset( new Image() );
+        sizeBox = RectD{ {0.0, 0.0}, {0.0, 0.0} };
+    }
+
+    ImagePtr ImageBox::takeImage() {
+        ImagePtr image;
+        img.swap( image );
+        reset();
+        return image;
     }
 
     PointI ImageBox::transformCoords(const double x, const double y) const {

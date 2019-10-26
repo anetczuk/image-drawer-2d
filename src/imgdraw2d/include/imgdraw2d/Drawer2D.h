@@ -48,6 +48,8 @@ namespace imgdraw2d {
 
         ImageBox(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT);
 
+        void reset();
+
         const Image& image() const {
             return *(img.get());
         }
@@ -55,6 +57,8 @@ namespace imgdraw2d {
         Image& image() {
             return *(img.get());
         }
+
+        ImagePtr takeImage();
 
         void save(const std::string& path) {
             img->save(path);
@@ -85,18 +89,17 @@ namespace imgdraw2d {
     /// ==========================================================
 
 
-    template <typename PointT>
-    class Drawer2D {
+    class Drawer2DBase {
     public:
 
         ImageBox base;
         Painter painter;
 
 
-        Drawer2D(const double scale = 10.0): base(scale), painter( base.image() ) {
+        Drawer2DBase(const double scale = 10.0): base(scale), painter( base.image() ) {
         }
 
-        Drawer2D(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT):
+        Drawer2DBase(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT):
             base(size, scale, backgroundColor), painter( base.image() )
         {
         }
@@ -109,12 +112,41 @@ namespace imgdraw2d {
             return base.image();
         }
 
+        ImagePtr takeImage() {
+            ImagePtr oldImage = base.takeImage();
+            Image& img = base.image();
+            painter.setImage( img );
+            return oldImage;
+        }
+
         void setBackground(const std::string& color) {
             base.setBackground( color );
         }
 
         void setBackground(const Image::Pixel& color) {
             base.setBackground( color );
+        }
+
+        void extendImage(const RectD& box) {
+            if (base.resize(box)) {
+                Image& img = base.image();
+                painter.setImage( img );
+            }
+        }
+
+    };
+
+
+    template <typename PointT>
+    class Drawer2D: public Drawer2DBase {
+    public:
+
+        Drawer2D(const double scale = 10.0): Drawer2DBase(scale) {
+        }
+
+        Drawer2D(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT):
+            Drawer2DBase(size, scale, backgroundColor)
+        {
         }
 
         void drawImage(const PointT& topLeftPoint, const Image& source) {
@@ -172,27 +204,18 @@ namespace imgdraw2d {
             const PointD centerPoint{ center[0], center[1] };
             RectD box( centerPoint );
             box.expand(radius);
-            if (base.resize(box)) {
-                Image& img = base.image();
-                painter.setImage( img );
-            }
+            extendImage(box);
         }
 
         void expand(const PointT& bottomLeft, const PointT& topRight) {
             const RectD box = RectD::minmax( bottomLeft, topRight );
-            if (base.resize(box)) {
-                Image& img = base.image();
-                painter.setImage( img );
-            }
+            extendImage(box);
         }
 
         void expand(const PointT& fromPoint, const PointT& toPoint, const double radius) {
             RectD box = RectD::minmax( fromPoint, toPoint );
             box.expand( radius );
-            if (base.resize(box)) {
-                Image& img = base.image();
-                painter.setImage( img );
-            }
+            extendImage(box);
         }
 
     };
