@@ -57,69 +57,12 @@ namespace imgdraw2d {
         return value - subtractor;
     }
 
-//    /// functor -- functor or function pointer
-//    template <typename Functor>
-//    static void linear(const PointI& vector, Functor& functor) {
-//        if (std::abs(vector.x) > std::abs(vector.y)) {
-//            int64_t from = 0;
-//            int64_t to = 0;
-//            if (vector.x > 0) {
-//                from = 0;
-//                to = vector.x;
-//            } else {
-//                from = vector.x;
-//                to = 0;
-//            }
-//            for( int64_t i = from; i<=to; ++i ) {
-//                const int64_t j = linearY(vector, i);
-//                functor(i, j);
-//            }
-//        } else {
-//            int64_t from = 0;
-//            int64_t to = 0;
-//            if (vector.y > 0) {
-//                from = 0;
-//                to = vector.y;
-//            } else {
-//                from = vector.y;
-//                to = 0;
-//            }
-//            for( int64_t j = from; j<=to; ++j ) {
-//                const int64_t i = linearX(vector, j);
-//                functor(i, j);
-//            }
-//        }
-//    }
-//
-//    struct PixelDrawer {
-//        Image* img;
-//        const PointI& startPoint;
-//        const Image::Pixel& pixColor;
-//
-//        void operator()(const int64_t x, const int64_t y) {
-//            img->setPixel( startPoint.x + x, startPoint.y + y, pixColor );
-//        }
-//    };
-
 
     /// ======================================================================================
 
 
     class DestinationModeWorker: public painter::ModeWorker {
     public:
-
-//        struct VectorDrawer {
-//            DestinationModeWorker* worker;
-//            const PointI& startPoint;
-//            const PointI& vector;
-//            const Image::Pixel& pixColor;
-//
-//            void operator()(const int64_t x, const int64_t y) {
-//                const PointI currStartPoint{ startPoint.x + x, startPoint.y + y };
-//                worker->drawVector(currStartPoint, vector, pixColor);
-//            }
-//        };
-
 
         DestinationModeWorker(Image* image): ModeWorker(image) {
         }
@@ -163,7 +106,13 @@ namespace imgdraw2d {
             }
         }
 
-        RectI getBBox(const PointI& center, const uint32_t radius) {
+        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
+            assert( point.x >= 0 );
+            assert( point.y >= 0 );
+            img->fillRect( point.x, point.y, point.x + width, point.y + height, pixColor );
+        }
+
+        RectI getBBoxOnCircle(const PointI& center, const uint32_t radius) {
             const int64_t w = img->width();
             const int64_t h = img->height();
             const int64_t startW = udiff( center.x, radius );
@@ -171,6 +120,58 @@ namespace imgdraw2d {
             const int64_t endW = std::min( w-1, center.x + radius );
             const int64_t endH = std::min( h-1, center.y + radius );
             return RectI( PointI(startW, startH), PointI(endW, endH) );
+        }
+
+        RectI getBBoxInCircle(const PointI& center, const uint32_t radius) {
+            const uint32_t squareWidth = std::sqrt( 2 ) * radius;
+            const uint32_t side = squareWidth / 2;
+            const int64_t w = img->width();
+            const int64_t h = img->height();
+            const int64_t startW = udiff( center.x, side );
+            const int64_t startH = udiff( center.y, side );
+            const int64_t endW = std::min( w-1, center.x + side );
+            const int64_t endH = std::min( h-1, center.y + side );
+            return RectI( PointI(startW, startH), PointI(endW, endH) );
+        }
+
+        void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {
+            assert( center.x >= 0 );
+            assert( center.y >= 0 );
+
+            const Image::Pixel pixColor = Image::convertColor( color );
+
+            const RectI outerBox = getBBoxOnCircle( center, radius );
+            const RectI innerBox = getBBoxInCircle( center, radius );
+
+            /// fill edges
+            CircleCondition circle( radius );
+            drawCircleEdges(center, outerBox, innerBox, pixColor, circle );
+
+            /// fill inner square
+            img->fillRect( innerBox.a.x, innerBox.a.y, innerBox.b.x, innerBox.b.y, pixColor );
+        }
+
+        void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) override {
+            const uint32_t minRadius = udiff( radius, width / 2 );
+            const uint32_t maxRadius = radius + width / 2;
+            if (minRadius == 0) {
+                fillCircle( center, maxRadius, color );
+                return ;
+            }
+
+            assert( center.x >= 0 );
+            assert( center.y >= 0 );
+
+            const Image::Pixel pixColor = Image::convertColor( color );
+
+            const RectI outerBox  = getBBoxOnCircle( center, maxRadius );
+            const RectI middleBox = getBBoxInCircle( center, maxRadius );
+            const RectI innerBox  = getBBoxInCircle( center, minRadius );
+
+            /// fill edges
+            RingCondition circle( minRadius, maxRadius );
+            drawCircleEdges(center, outerBox, middleBox, pixColor, circle );
+            drawRectEdges(center, middleBox, innerBox, pixColor, circle );
         }
 
         void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) override {
@@ -198,10 +199,6 @@ namespace imgdraw2d {
 
             const uint32_t maxRadius = radius + width / 2;
             const uint32_t minRadius = udiff( radius, width / 2 );
-            const uint32_t maxRSquare = maxRadius * maxRadius;
-            const uint32_t minRSquare = minRadius * minRadius;
-
-            const RectI boundingBox = getBBox( center, maxRadius );
 
             const PointI fromVector = rotateVector( PointI(1000, 0), minAngle );
             const PointI toVector   = rotateVector( PointI(1000, 0), maxAngle );
@@ -209,116 +206,198 @@ namespace imgdraw2d {
             const RayI fromRay( fromVector );
             const RayI toRay( toVector );
 
-            for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+            const RectI outerBox  = getBBoxOnCircle( center, maxRadius );
+            const RectI middleBox = getBBoxInCircle( center, maxRadius );
+            const RectI innerBox  = getBBoxInCircle( center, minRadius );
+
+            /// fill edges
+            ArcCondition circle( minRadius, maxRadius, fromRay, toRay, sum );
+            drawCircleEdges(center, outerBox, middleBox, pixColor, circle );
+            drawRectEdges(center, middleBox, innerBox, pixColor, circle );
+        }
+
+
+        /// ===================================================================================
+
+
+        struct CircleCondition {
+            uint32_t rSquare;
+
+            CircleCondition(const uint32_t radius): rSquare(radius * radius) {
+            }
+
+            bool operator()(const int64_t x, const int64_t y) {
+                const int64_t distSquare = x * x + y * y;
+                return !( distSquare > rSquare );
+            }
+        };
+
+        struct RingCondition {
+            uint32_t minSquare;
+            uint32_t maxSquare;
+
+            RingCondition(const uint32_t minRadius, const uint32_t maxRadius):
+                minSquare(minRadius * minRadius), maxSquare(maxRadius * maxRadius)
+            {
+            }
+
+            bool operator()(const int64_t x, const int64_t y) {
+                const int64_t distSquare = x * x + y * y;
+                if ( distSquare > maxSquare )
+                    return false;
+                if ( distSquare < minSquare )
+                    return false;
+                return true;
+            }
+        };
+
+        struct ArcCondition {
+            uint32_t minSquare;
+            uint32_t maxSquare;
+            const RayI& fromRay;
+            const RayI& toRay;
+            bool sum;
+
+            ArcCondition(const uint32_t minRadius, const uint32_t maxRadius, const RayI& fromRay, const RayI& toRay, const bool sum):
+                minSquare(minRadius * minRadius), maxSquare(maxRadius * maxRadius),
+                fromRay(fromRay), toRay(toRay), sum(sum)
+            {
+            }
+
+            bool operator()(const int64_t x, const int64_t y) {
+                const int64_t distSquare = x * x + y * y;
+                if ( distSquare > maxSquare )
+                    return false;
+                if ( distSquare < minSquare )
+                    return false;
+
+                if (sum) {
+                    const double fromSide = fromRay.side( x, y );
+                    if ( fromSide < 0.0 ) {
+                        const double toSide = toRay.side( x, y );
+                        if ( toSide > 0.0 ) {
+                            return false;
+                        }
+                    }
+                } else {
+                    const double fromSide = fromRay.side( x, y );
+                    if (fromSide <= 0.0) {
+                        return false;
+                    }
+                    const double toSide = toRay.side( x, y );
+                    if (toSide >= 0.0) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        };
+
+
+        template <typename Operator>
+        void drawRectEdges(const PointI& center, const RectI& outerBox, const RectI& innerBox, const Image::Pixel& pixColor, Operator& op) {
+            /// top
+            for( int64_t j = outerBox.a.y; j<=innerBox.a.y; ++j ) {
+                const int64_t diffY = j - center.y;
                 Image::RawImage::row_access tgtRow = img->row( j );
-                for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
+                for( int64_t i = outerBox.a.x; i<=outerBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
-                    const int64_t diffY = j - center.y;
-
-                    const int64_t distSquare = diffX * diffX + diffY * diffY;
-                    if ( distSquare < minRSquare ) {
-                        continue;
+                    if ( op(diffX, diffY) ) {
+                        tgtRow[ i ] = pixColor;
                     }
-                    if ( distSquare > maxRSquare ) {
-                        continue;
-                    }
+                }
+            }
 
-                    if (sum) {
-                        const double fromSide = fromRay.side( diffX, diffY );
-                        if ( fromSide < 0.0 ) {
-                            const double toSide = toRay.side( diffX, diffY );
-                            if ( toSide > 0.0 ) {
-                                continue;
-                            }
-                        }
-                    } else {
-                        const double fromSide = fromRay.side( diffX, diffY );
-                        if (fromSide <= 0.0) {
-                            continue;
-                        }
-                        const double toSide = toRay.side( diffX, diffY );
-                        if (toSide >= 0.0) {
-                            continue;
-                        }
-                    }
+            /// left and right
+            for( int64_t j = innerBox.a.y; j<=innerBox.b.y; ++j ) {
+                const int64_t diffY = j - center.y;
+                Image::RawImage::row_access tgtRow = img->row( j );
 
-                    tgtRow[i] = pixColor;
+                /// left
+                for( int64_t i = outerBox.a.x; i<=innerBox.a.x; ++i ) {
+                    const int64_t diffX = i - center.x;
+                    if ( op(diffX, diffY) ) {
+                        tgtRow[ i ] = pixColor;
+                    }
+                }
+
+                /// right
+                for( int64_t i = innerBox.b.x; i<=outerBox.b.x; ++i ) {
+                    const int64_t diffX = i - center.x;
+                    if ( op(diffX, diffY) ) {
+                        tgtRow[ i ] = pixColor;
+                    }
+                }
+            }
+
+            /// bottom
+            for( int64_t j = innerBox.b.y; j<=outerBox.b.y; ++j ) {
+                const int64_t diffY = j - center.y;
+                Image::RawImage::row_access tgtRow = img->row( j );
+                for( int64_t i = outerBox.a.x; i<=outerBox.b.x; ++i ) {
+                    const int64_t diffX = i - center.x;
+                    if ( op(diffX, diffY) ) {
+                        tgtRow[ i ] = pixColor;
+                    }
                 }
             }
         }
 
-        void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) override {
-            const uint32_t minRadius = udiff( radius, width / 2 );
-            const uint32_t maxRadius = radius + width / 2;
-            if (minRadius == 0) {
-                fillCircle( center, maxRadius, color );
-                return ;
-            }
-
-            assert( center.x >= 0 );
-            assert( center.y >= 0 );
-
-            const Image::Pixel pixColor = Image::convertColor( color );
-
-            const uint32_t maxRSquare = maxRadius * maxRadius;
-            const uint32_t minRSquare = minRadius * minRadius;
-
-            const RectI boundingBox = getBBox( center, maxRadius );
-
-            for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+        template <typename Operator>
+        void drawCircleEdges(const PointI& center, const RectI& outerBox, const RectI& innerBox, const Image::Pixel& pixColor, Operator& op) {
+            /// top
+            for( int64_t j = outerBox.a.y; j<=innerBox.a.y; ++j ) {
+                const int64_t diffY = j - center.y;
                 Image::RawImage::row_access tgtRow = img->row( j );
-                for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
+                for( int64_t i = innerBox.a.x; i<=innerBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
-                    const int64_t diffY = j - center.y;
-
-                    const int64_t distSquare = diffX * diffX + diffY * diffY;
-                    if ( distSquare < minRSquare ) {
-                        continue;
+                    if ( op(diffX, diffY) ) {
+                        tgtRow[ i ] = pixColor;
                     }
-                    if ( distSquare > maxRSquare ) {
-                        continue;
-                    }
-
-                    tgtRow[i] = pixColor;
                 }
             }
-        }
 
-//        void drawVector(const PointI& startPoint, const PointI& vector, const Image::Pixel& pixColor) {
-//            PixelDrawer drawer{img, startPoint, pixColor};
-//            linear( vector, drawer );
-//        }
-
-        void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
-            assert( point.x >= 0 );
-            assert( point.y >= 0 );
-            img->fillRect( point.x, point.y, width, height, pixColor );
-        }
-
-        void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {
-            assert( center.x >= 0 );
-            assert( center.y >= 0 );
-            const uint32_t rSquare = radius * radius;
-
-            const Image::Pixel pixColor = Image::convertColor( color );
-
-            const RectI boundingBox = getBBox( center, radius );
-
-            for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+            /// left and right
+            for( int64_t j = innerBox.a.y; j<=innerBox.b.y; ++j ) {
+                const int64_t diffY = j - center.y;
                 Image::RawImage::row_access tgtRow = img->row( j );
-                for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
+
+                /// left
+                for( int64_t i = outerBox.a.x; i<=innerBox.a.x; ++i ) {
                     const int64_t diffX = i - center.x;
-                    const int64_t diffY = j - center.y;
-                    const int64_t distSquare = diffX * diffX + diffY * diffY;
-                    if ( distSquare > rSquare ) {
-                        continue ;
+                    if ( op(diffX, diffY) ) {
+                        tgtRow[ i ] = pixColor;
                     }
-                    tgtRow[i] = pixColor;
+                }
+
+                /// right
+                for( int64_t i = innerBox.b.x; i<=outerBox.b.x; ++i ) {
+                    const int64_t diffX = i - center.x;
+                    if ( op(diffX, diffY) ) {
+                        tgtRow[ i ] = pixColor;
+                    }
+                }
+            }
+
+            /// bottom
+            for( int64_t j = innerBox.b.y; j<=outerBox.b.y; ++j ) {
+                const int64_t diffY = j - center.y;
+                Image::RawImage::row_access tgtRow = img->row( j );
+                for( int64_t i = innerBox.a.x; i<=innerBox.b.x; ++i ) {
+                    const int64_t diffX = i - center.x;
+                    if ( op(diffX, diffY) ) {
+                        tgtRow[ i ] = pixColor;
+                    }
                 }
             }
         }
 
     };
+
+
+    /// =================================================================================================
+
 
     class DifferenceModeWorker: public painter::ModeWorker {
     public:
@@ -351,16 +430,6 @@ namespace imgdraw2d {
             throw std::runtime_error("drawLine not implemented");
         }
 
-        void drawArc(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const double /*startAngle*/, const double /*range*/, const std::string& /*color*/) override {
-            //TODO: implement
-            throw std::runtime_error("drawArc not implemented");
-        }
-
-        void drawRing(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const std::string& /*color*/) override {
-            //TODO: implement
-            throw std::runtime_error("drawRing not implemented");
-        }
-
         void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
@@ -377,6 +446,16 @@ namespace imgdraw2d {
                     tgtRow[ i ] = diffPixels(orig, pixColor);
                 }
             }
+        }
+
+        void drawArc(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const double /*startAngle*/, const double /*range*/, const std::string& /*color*/) override {
+            //TODO: implement
+            throw std::runtime_error("drawArc not implemented");
+        }
+
+        void drawRing(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const std::string& /*color*/) override {
+            //TODO: implement
+            throw std::runtime_error("drawRing not implemented");
         }
 
         void fillCircle(const PointI& /*center*/, const uint32_t /*radius*/, const std::string& /*color*/) override {

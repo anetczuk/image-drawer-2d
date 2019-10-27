@@ -109,14 +109,14 @@ namespace imgdraw2d {
         }
     }
 
-    void Image::fillRect(const std::size_t x, const std::size_t y, const std::size_t width, const std::size_t height, const Pixel& color ) {
+    void Image::fillRect(const std::size_t sx, const std::size_t sy, const std::size_t ex, const std::size_t ey, const Pixel& color ) {
         const std::size_t w = img.get_width();
         const std::size_t h = img.get_height();
-        const std::size_t endW = std::min(w, x + width );
-        const std::size_t endH = std::min(h, y + height );
-        for( std::size_t j = y; j<endH; ++j ) {
+        const std::size_t endW = std::min(w, ex );
+        const std::size_t endH = std::min(h, ey );
+        for( std::size_t j = sy; j<endH; ++j ) {
             Image::RawImage::row_access tgtRow = row(j);
-            for( std::size_t i = x; i<endW; ++i ) {
+            for( std::size_t i = sx; i<endW; ++i ) {
                 tgtRow[i] = color;
             }
         }

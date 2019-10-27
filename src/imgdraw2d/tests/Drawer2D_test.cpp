@@ -102,15 +102,15 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         IMAGE_CHECK_CASE( image, "drawer2d" );
     }
 
-    BOOST_AUTO_TEST_CASE( drawArc_big ) {
+//    BOOST_AUTO_TEST_CASE( drawArc_big ) {
 //        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
-        Drawer2DD drawer(200.0);
-        drawer.drawArc( PointD{10.0, 10.0}, 20.0, 10.0, 0.0, 3 * M_PI_2, "blue" );
-
+//
+//        Drawer2DD drawer(200.0);
+//        drawer.drawArc( PointD{10.0, 10.0}, 20.0, 10.0, 0.0, 3 * M_PI_2, "blue" );
+//
 //        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-//        std::cerr << "time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
-    }
+//        std::cerr << "drawArc time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
+//    }
 
     BOOST_AUTO_TEST_CASE( drawRing_circle ) {
         Drawer2DD drawer(20.0);
@@ -120,15 +120,15 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         IMAGE_CHECK_CASE( image, "drawer2d" );
     }
 
-    BOOST_AUTO_TEST_CASE( drawRing_big ) {
+//    BOOST_AUTO_TEST_CASE( drawRing_big ) {
 //        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
-        Drawer2DD drawer(200.0);
-        drawer.drawRing( PointD{10.0, 10.0}, 20.0, 10.0, "blue" );
-
+//
+//        Drawer2DD drawer(200.0);
+//        drawer.drawRing( PointD{10.0, 10.0}, 20.0, 10.0, "blue" );
+//
 //        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-//        std::cerr << "time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
-    }
+//        std::cerr << "drawRing time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
+//    }
 
     BOOST_AUTO_TEST_CASE( fillCircle_positive ) {
         Drawer2DD drawer(100.0);

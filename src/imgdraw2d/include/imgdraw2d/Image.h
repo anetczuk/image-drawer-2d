@@ -91,7 +91,7 @@ namespace imgdraw2d {
 
         void fill(const Pixel& color);
 
-        void fillRect(const std::size_t x, const std::size_t y, const std::size_t width, const std::size_t height, const Pixel& color );
+        void fillRect(const std::size_t sx, const std::size_t sy, const std::size_t ex, const std::size_t ey, const Pixel& color );
 
         void pasteImage(const std::size_t x, const std::size_t y, const Image& source );
 
