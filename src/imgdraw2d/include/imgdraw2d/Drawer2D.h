@@ -175,6 +175,15 @@ namespace imgdraw2d {
             painter.drawArc( point, rad, w, angle, -range, color );
         }
 
+        void drawRing(const PointT& center, const double radius, const double width, const std::string& color) {
+            expand( center, radius + width / 2.0 );
+
+            const PointI point = base.transformCoords( center[0], center[1] );
+            const uint32_t rad = radius * base.scale;
+            const uint32_t w = width * base.scale;
+            painter.drawRing( point, rad, w, color );
+        }
+
         void fillRect(const PointT& bottomLeftPoint, const double width, const double height, const std::string& color) {
             const Image::Pixel pixColor = Image::convertColor( color );
             fillRect(bottomLeftPoint, width, height, pixColor);

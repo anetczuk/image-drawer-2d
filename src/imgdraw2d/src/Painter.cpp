@@ -23,7 +23,6 @@
 
 #include "imgdraw2d/Painter.h"
 
-#include <chrono>
 #include <cmath>
 
 
@@ -58,49 +57,49 @@ namespace imgdraw2d {
         return value - subtractor;
     }
 
-    /// functor -- functor or function pointer
-    template <typename Functor>
-    static void linear(const PointI& vector, Functor& functor) {
-        if (std::abs(vector.x) > std::abs(vector.y)) {
-            int64_t from = 0;
-            int64_t to = 0;
-            if (vector.x > 0) {
-                from = 0;
-                to = vector.x;
-            } else {
-                from = vector.x;
-                to = 0;
-            }
-            for( int64_t i = from; i<=to; ++i ) {
-                const int64_t j = linearY(vector, i);
-                functor(i, j);
-            }
-        } else {
-            int64_t from = 0;
-            int64_t to = 0;
-            if (vector.y > 0) {
-                from = 0;
-                to = vector.y;
-            } else {
-                from = vector.y;
-                to = 0;
-            }
-            for( int64_t j = from; j<=to; ++j ) {
-                const int64_t i = linearX(vector, j);
-                functor(i, j);
-            }
-        }
-    }
-
-    struct PixelDrawer {
-        Image* img;
-        const PointI& startPoint;
-        const Image::Pixel& pixColor;
-
-        void operator()(const int64_t x, const int64_t y) {
-            img->setPixel( startPoint.x + x, startPoint.y + y, pixColor );
-        }
-    };
+//    /// functor -- functor or function pointer
+//    template <typename Functor>
+//    static void linear(const PointI& vector, Functor& functor) {
+//        if (std::abs(vector.x) > std::abs(vector.y)) {
+//            int64_t from = 0;
+//            int64_t to = 0;
+//            if (vector.x > 0) {
+//                from = 0;
+//                to = vector.x;
+//            } else {
+//                from = vector.x;
+//                to = 0;
+//            }
+//            for( int64_t i = from; i<=to; ++i ) {
+//                const int64_t j = linearY(vector, i);
+//                functor(i, j);
+//            }
+//        } else {
+//            int64_t from = 0;
+//            int64_t to = 0;
+//            if (vector.y > 0) {
+//                from = 0;
+//                to = vector.y;
+//            } else {
+//                from = vector.y;
+//                to = 0;
+//            }
+//            for( int64_t j = from; j<=to; ++j ) {
+//                const int64_t i = linearX(vector, j);
+//                functor(i, j);
+//            }
+//        }
+//    }
+//
+//    struct PixelDrawer {
+//        Image* img;
+//        const PointI& startPoint;
+//        const Image::Pixel& pixColor;
+//
+//        void operator()(const int64_t x, const int64_t y) {
+//            img->setPixel( startPoint.x + x, startPoint.y + y, pixColor );
+//        }
+//    };
 
 
     /// ======================================================================================
@@ -109,17 +108,17 @@ namespace imgdraw2d {
     class DestinationModeWorker: public painter::ModeWorker {
     public:
 
-        struct VectorDrawer {
-            DestinationModeWorker* worker;
-            const PointI& startPoint;
-            const PointI& vector;
-            const Image::Pixel& pixColor;
-
-            void operator()(const int64_t x, const int64_t y) {
-                const PointI currStartPoint{ startPoint.x + x, startPoint.y + y };
-                worker->drawVector(currStartPoint, vector, pixColor);
-            }
-        };
+//        struct VectorDrawer {
+//            DestinationModeWorker* worker;
+//            const PointI& startPoint;
+//            const PointI& vector;
+//            const Image::Pixel& pixColor;
+//
+//            void operator()(const int64_t x, const int64_t y) {
+//                const PointI currStartPoint{ startPoint.x + x, startPoint.y + y };
+//                worker->drawVector(currStartPoint, vector, pixColor);
+//            }
+//        };
 
 
         DestinationModeWorker(Image* image): ModeWorker(image) {
@@ -180,8 +179,6 @@ namespace imgdraw2d {
                 return ;
             }
 
-//            std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
             assert( center.x >= 0 );
             assert( center.y >= 0 );
 
@@ -212,10 +209,19 @@ namespace imgdraw2d {
             const RayI fromRay( fromVector );
             const RayI toRay( toVector );
 
-            for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
-                for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+            for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+                Image::RawImage::row_access tgtRow = img->row( j );
+                for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
                     const int64_t diffY = j - center.y;
+
+                    const int64_t distSquare = diffX * diffX + diffY * diffY;
+                    if ( distSquare < minRSquare ) {
+                        continue;
+                    }
+                    if ( distSquare > maxRSquare ) {
+                        continue;
+                    }
 
                     if (sum) {
                         const double fromSide = fromRay.side( diffX, diffY );
@@ -236,20 +242,9 @@ namespace imgdraw2d {
                         }
                     }
 
-                    const int64_t distSquare = diffX * diffX + diffY * diffY;
-                    if ( distSquare < minRSquare ) {
-                        continue;
-                    }
-                    if ( distSquare > maxRSquare ) {
-                        continue;
-                    }
-
-                    img->setPixel( i, j, pixColor );
+                    tgtRow[i] = pixColor;
                 }
             }
-
-//            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-//            std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
         }
 
         void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) override {
@@ -265,8 +260,9 @@ namespace imgdraw2d {
 
             const RectI boundingBox = getBBox( center, maxRadius );
 
-            for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
-                for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+            for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+                Image::RawImage::row_access tgtRow = img->row( j );
+                for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
                     const int64_t diffY = j - center.y;
 
@@ -278,15 +274,15 @@ namespace imgdraw2d {
                         continue;
                     }
 
-                    img->setPixel( i, j, pixColor );
+                    tgtRow[i] = pixColor;
                 }
             }
         }
 
-        void drawVector(const PointI& startPoint, const PointI& vector, const Image::Pixel& pixColor) {
-            PixelDrawer drawer{img, startPoint, pixColor};
-            linear( vector, drawer );
-        }
+//        void drawVector(const PointI& startPoint, const PointI& vector, const Image::Pixel& pixColor) {
+//            PixelDrawer drawer{img, startPoint, pixColor};
+//            linear( vector, drawer );
+//        }
 
         void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
             assert( point.x >= 0 );
@@ -303,13 +299,14 @@ namespace imgdraw2d {
 
             const RectI boundingBox = getBBox( center, radius );
 
-            for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
-                for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+            for( int64_t j = boundingBox.a.y; j<=boundingBox.b.y; ++j ) {
+                Image::RawImage::row_access tgtRow = img->row( j );
+                for( int64_t i = boundingBox.a.x; i<=boundingBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
                     const int64_t diffY = j - center.y;
                     const int64_t distSquare = diffX * diffX + diffY * diffY;
                     if ( distSquare < rSquare ) {
-                        img->setPixel( i, j, pixColor );
+                        tgtRow[i] = pixColor;
                     }
                 }
             }
@@ -332,10 +329,13 @@ namespace imgdraw2d {
             const int64_t h = img->height();
             const int64_t endW = std::min(w, x + source.width() );
             const int64_t endH = std::min(h, y + source.height() );
-            for( int64_t i = x; i<endW; ++i ) {
-                for( int64_t j = y; j<endH; ++j ) {
-                    const Image::Pixel src = source.pixel( i-x, j-y );
-                    setPixel(i, j, src);
+            for( int64_t j = y; j<endH; ++j ) {
+                Image::RawImage::row_const_access srcRow = source.row( j - y );
+                Image::RawImage::row_access tgtRow = img->row(j);
+                for( int64_t i = x; i<endW; ++i ) {
+                    const Image::Pixel& src = srcRow[ i - x ];
+                    const Image::Pixel& orig = tgtRow[ i ];
+                    tgtRow[ i ] = diffPixels(orig, src);
                 }
             }
         }
@@ -364,9 +364,11 @@ namespace imgdraw2d {
             const int64_t h = img->height();
             const int64_t endW = std::min(w, x + width );
             const int64_t endH = std::min(h, y + height );
-            for( int64_t i = x; i<endW; ++i ) {
-                for( int64_t j = y; j<endH; ++j ) {
-                    setPixel( i, j, pixColor );
+            for( int64_t j = y; j<endH; ++j ) {
+                Image::RawImage::row_access tgtRow = img->row(j);
+                for( int64_t i = x; i<endW; ++i ) {
+                    const Image::Pixel& orig = tgtRow[ i ];
+                    tgtRow[ i ] = diffPixels(orig, pixColor);
                 }
             }
         }
@@ -379,16 +381,13 @@ namespace imgdraw2d {
 
     private:
 
-        void setPixel(const uint32_t x, const uint32_t y, const Image::Pixel& src) {
-            const Image::Pixel orig = img->pixel( x, y );
-            const uint32_t origLight = brightness(orig);
-            const uint32_t srcLight = brightness(src);
-            if (origLight > srcLight) {
-                const Image::Pixel diff = difference(orig, src);
-                img->setPixel( x, y, diff );
+        static Image::Pixel diffPixels(const Image::Pixel& pixA, const Image::Pixel& pixB) {
+            const uint32_t aLight = brightness(pixA);
+            const uint32_t bLight = brightness(pixB);
+            if (aLight > bLight) {
+                return difference(pixA, pixB);
             } else {
-                const Image::Pixel diff = difference(src, orig);
-                img->setPixel( x, y, diff );
+                return difference(pixB, pixA);
             }
         }
 

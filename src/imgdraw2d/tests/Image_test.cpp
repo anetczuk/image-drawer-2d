@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_SUITE( ImageSuite )
         BOOST_CHECK_EQUAL( object.empty(), false );
         BOOST_CHECK_EQUAL(object.width(), 300);
         BOOST_CHECK_EQUAL(object.height(), 300);
-        BOOST_CHECK_EQUAL(object.blue(0, 0), 255);
+        BOOST_CHECK_EQUAL(object.pixel(0, 0).blue, 255);
     }
 
     BOOST_AUTO_TEST_CASE( load_fail ) {
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_SUITE( ImageSuite )
         BOOST_CHECK_EQUAL(object.height(), 10);
         object.fill("red");
         {
-            const Image::Pixel pix = object.pixel(1, 1);
+            const Image::Pixel& pix = object.pixel(1, 1);
             BOOST_CHECK_EQUAL(pix.red, 255);
             BOOST_CHECK_EQUAL(pix.green, 0);
             BOOST_CHECK_EQUAL(pix.blue, 0);
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_SUITE( ImageSuite )
         BOOST_CHECK_EQUAL(loaded.width(), 10);
         BOOST_CHECK_EQUAL(loaded.height(), 10);
 
-        const Image::Pixel pix = loaded.pixel(1, 1);
+        const Image::Pixel& pix = loaded.pixel(1, 1);
         BOOST_CHECK_EQUAL(pix.red, 255);
         BOOST_CHECK_EQUAL(pix.green, 0);
         BOOST_CHECK_EQUAL(pix.blue, 0);

@@ -46,6 +46,8 @@ namespace imgdraw2d {
         typedef png::image< Pixel > RawImage;
 
         static const Pixel TRANSPARENT;
+        static const Pixel BLACK;
+        static const Pixel WHITE;
 
 
     protected:
@@ -77,13 +79,11 @@ namespace imgdraw2d {
         // RawImage::row_access is reference to "row" type
         RawImage::row_access row(const std::size_t y);
 
-        Pixel pixel(const std::size_t x, const std::size_t y) const;
+        const Pixel& pixel(const std::size_t x, const std::size_t y) const;
 
-        PixByte red(const std::size_t x, const std::size_t y) const;
+        void setPixel(const std::size_t x, const std::size_t y, const Pixel& color);
 
-        PixByte green(const std::size_t x, const std::size_t y) const;
-
-        PixByte blue(const std::size_t x, const std::size_t y) const;
+        void setPixelColor(const std::size_t x, const std::size_t y, const std::string& color);
 
         void fillTransparent();
 
@@ -94,10 +94,6 @@ namespace imgdraw2d {
         void fillRect(const std::size_t x, const std::size_t y, const std::size_t width, const std::size_t height, const Pixel& color );
 
         void pasteImage(const std::size_t x, const std::size_t y, const Image& source );
-
-        void setPixel(const std::size_t x, const std::size_t y, const Pixel& color);
-
-        void setPixelColor(const std::size_t x, const std::size_t y, const std::string& color);
 
         bool load(const std::string& path);
 

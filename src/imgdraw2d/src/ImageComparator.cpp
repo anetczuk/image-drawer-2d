@@ -64,14 +64,9 @@ namespace imgdraw2d {
         if (y >= imageA.height()) return true;
         if (y >= imageB.height()) return true;
 
-        const Image::Pixel pixA = imageA.pixel(x, y);
-        const Image::Pixel pixB = imageB.pixel(x, y);
-        if (pixA.red != pixB.red) return true;
-        if (pixA.green != pixB.green) return true;
-        if (pixA.blue != pixB.blue) return true;
-        if (pixA.alpha != pixB.alpha) return true;
-
-        return false;
+        const Image::Pixel& pixA = imageA.pixel(x, y);
+        const Image::Pixel& pixB = imageB.pixel(x, y);
+        return (pixA != pixB);
     }
 
     ImagePtr ImageComparator::compare(const Image& imgA, const Image& imgB) {
@@ -104,12 +99,14 @@ namespace imgdraw2d {
         ImagePtr thresholdPtr( new Image(widthMax, heightMax) );
         Image& threshold = *thresholdPtr;
         threshold.fillTransparent();
-        for (uint32_t wo=0; wo<widthMax; wo++) {
-            for (uint32_t ho=0; ho<heightMax; ho++) {
+        for (uint32_t ho=0; ho<heightMax; ++ho) {
+            Image::RawImage::row_access tgtRow = thresholdPtr->row(ho);
+            for (uint32_t wo=0; wo<widthMax; ++wo) {
+                //TODO: optimize -- replace isDifferent with direct access to pixbuf
                 if ( isDifferent(imgA, imgB, wo, ho) ) {
-                    threshold.setPixelColor(wo, ho, "white");
+                    tgtRow[ wo ] = Image::WHITE;
                 } else {
-                    threshold.setPixelColor(wo, ho, "black");
+                    tgtRow[ wo ] = Image::BLACK;
                 }
             }
         }

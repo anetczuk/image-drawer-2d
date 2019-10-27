@@ -31,6 +31,8 @@
 namespace imgdraw2d {
 
     const Image::Pixel Image::TRANSPARENT = Image::convertColor("transparent");
+    const Image::Pixel Image::BLACK       = Image::convertColor("black");
+    const Image::Pixel Image::WHITE       = Image::convertColor("white");
 
 
     Image::Image(const std::string& path): img() {
@@ -73,23 +75,18 @@ namespace imgdraw2d {
         return pixbuf[ y ];
     }
 
-    Image::Pixel Image::pixel(const std::size_t x, const std::size_t y) const {
-        return img.get_pixel(x, y);
+    const Image::Pixel& Image::pixel(const std::size_t x, const std::size_t y) const {
+        Image::RawImage::row_const_access arow = row(y);
+        return arow[x];
     }
 
-    Image::PixByte Image::red(const std::size_t x, const std::size_t y) const {
-        const Pixel& pix = img.get_pixel(x, y);
-        return pix.red;
+    void Image::setPixel(const std::size_t x, const std::size_t y, const Pixel& color) {
+        img.set_pixel( x, y, color );
     }
 
-    Image::PixByte Image::green(const std::size_t x, const std::size_t y) const {
-        const Pixel& pix = img.get_pixel(x, y);
-        return pix.green;
-    }
-
-    Image::PixByte Image::blue(const std::size_t x, const std::size_t y) const {
-        const Pixel& pix = img.get_pixel(x, y);
-        return pix.blue;
+    void Image::setPixelColor(const std::size_t x, const std::size_t y, const std::string& color) {
+        const Image::Pixel pixColor = convertColor(color);
+        img.set_pixel(x, y, pixColor);
     }
 
     void Image::fillTransparent() {
@@ -138,15 +135,6 @@ namespace imgdraw2d {
                 tgtRow[i] = srcRow[ i - x ];
             }
         }
-    }
-
-    void Image::setPixel(const std::size_t x, const std::size_t y, const Pixel& color) {
-        img.set_pixel( x, y, color );
-    }
-
-    void Image::setPixelColor(const std::size_t x, const std::size_t y, const std::string& color) {
-        const Image::Pixel pixColor = convertColor(color);
-        img.set_pixel(x, y, pixColor);
     }
 
     bool Image::load(const std::string& path) {
