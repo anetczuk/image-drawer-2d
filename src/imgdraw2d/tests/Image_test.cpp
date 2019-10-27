@@ -31,6 +31,22 @@ using namespace imgdraw2d;
 
 BOOST_AUTO_TEST_SUITE( ImageSuite )
 
+    BOOST_AUTO_TEST_CASE( convertColor_hex_3 ) {
+        const Image::Pixel color = Image::convertColor("#030102");
+        BOOST_CHECK_EQUAL( color.red,     3 );
+        BOOST_CHECK_EQUAL( color.green,   1 );
+        BOOST_CHECK_EQUAL( color.blue,    2 );
+        BOOST_CHECK_EQUAL( color.alpha, 255 );
+    }
+
+    BOOST_AUTO_TEST_CASE( convertColor_hex_4 ) {
+        const Image::Pixel color = Image::convertColor("#03010205");
+        BOOST_CHECK_EQUAL( color.red,   3 );
+        BOOST_CHECK_EQUAL( color.green, 1 );
+        BOOST_CHECK_EQUAL( color.blue,  2 );
+        BOOST_CHECK_EQUAL( color.alpha, 5 );
+    }
+
     BOOST_AUTO_TEST_CASE( compare_same_instance ) {
         const Image object;
         BOOST_CHECK_EQUAL( (object == object), true );

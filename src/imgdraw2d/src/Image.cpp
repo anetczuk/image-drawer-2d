@@ -159,15 +159,25 @@ namespace imgdraw2d {
 
     Image::Pixel Image::convertColor(const std::string& color) {
         if ( color[0] == '#' ) {
-            std::string valueCode = color.substr(1);
-            if (valueCode.length() != 6) {
-                throw std::runtime_error( "unknown color format: " + color );
+            const std::string valueCode = color.substr(1);
+            switch(valueCode.length()) {
+            case 6: {
+                const unsigned long value = std::stoul(valueCode, nullptr, 16);
+                const Image::PixByte red   = (value >> 16) & 0xff;
+                const Image::PixByte green = (value >>  8) & 0xff;
+                const Image::PixByte blue  =  value        & 0xff;
+                return Image::Pixel(red, green, blue, 255);
             }
-            const unsigned long value = std::stoul(valueCode, nullptr, 16);
-            const Image::PixByte red = (value >> 16) & 0xff;
-            const Image::PixByte green = (value >> 16) & 0xff;
-            const Image::PixByte blue = (value >> 16) & 0xff;
-            return Image::Pixel(red, green, blue, 255);
+            case 8: {
+                const unsigned long value = std::stoul(valueCode, nullptr, 16);
+                const Image::PixByte red   = (value >> 24) & 0xff;
+                const Image::PixByte green = (value >> 16) & 0xff;
+                const Image::PixByte blue  = (value >>  8) & 0xff;
+                const Image::PixByte alpha =  value        & 0xff;
+                return Image::Pixel(red, green, blue, alpha);
+            }
+            default:    throw std::runtime_error( "unknown color format: " + color );
+            }
         }
 
         if ( color.compare( "red" ) == 0 ) {
