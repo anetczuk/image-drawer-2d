@@ -112,6 +112,14 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 //        std::cerr << "time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
     }
 
+    BOOST_AUTO_TEST_CASE( drawRing_circle ) {
+        Drawer2DD drawer(20.0);
+        drawer.drawRing( PointD{10.0, 10.0}, 4.0, 10.0, "blue" );
+        Image& image = drawer.image();
+
+        IMAGE_CHECK_CASE( image, "drawer2d" );
+    }
+
     BOOST_AUTO_TEST_CASE( drawRing_big ) {
 //        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
