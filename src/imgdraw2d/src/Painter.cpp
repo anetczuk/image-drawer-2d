@@ -142,8 +142,9 @@ namespace imgdraw2d {
 
             const Linear parallelLine = Linear::createFromParallel(lineVector);
 
-            for( int64_t i=box.a.x; i<=box.b.x; ++i ) {
-                for( int64_t j=box.a.y; j<=box.b.y; ++j ) {
+            for( int64_t j=box.a.y; j<=box.b.y; ++j ) {
+                Image::RawImage::row_access tgtRow = img->row( j );
+                for( int64_t i=box.a.x; i<=box.b.x; ++i ) {
                     const PointI currVector = PointI{i, j} - fromPoint;
                     const int64_t side1 = orthoRay.side( currVector );
                     if (side1 < 0) {
@@ -158,7 +159,7 @@ namespace imgdraw2d {
                     if (dist >= radius) {
                         continue;
                     }
-                    img->setPixel( i, j, pixColor );
+                    tgtRow[ i ] = pixColor;
                 }
             }
         }
@@ -290,17 +291,7 @@ namespace imgdraw2d {
         void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
             assert( point.x >= 0 );
             assert( point.y >= 0 );
-            const int64_t x = point.x;
-            const int64_t y = point.y;
-            const int64_t w = img->width();
-            const int64_t h = img->height();
-            const int64_t endW = std::min(w, x + width );
-            const int64_t endH = std::min(h, y + height );
-            for( int64_t i = x; i<endW; ++i ) {
-                for( int64_t j = y; j<endH; ++j ) {
-                    img->setPixel( i, j, pixColor );
-                }
-            }
+            img->fillRect( point.x, point.y, width, height, pixColor );
         }
 
         void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {

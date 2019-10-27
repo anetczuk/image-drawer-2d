@@ -83,6 +83,8 @@ namespace imgdraw2d {
 
         void resizeImage();
 
+        void fillBackground(const RectI& gap);
+
     };
 
 

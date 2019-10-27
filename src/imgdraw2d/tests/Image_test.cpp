@@ -31,6 +31,28 @@ using namespace imgdraw2d;
 
 BOOST_AUTO_TEST_SUITE( ImageSuite )
 
+    BOOST_AUTO_TEST_CASE( Pixel_eq_01 ) {
+        const Image::Pixel color = Image::convertColor("red");
+        BOOST_CHECK_EQUAL( color == color, true );
+    }
+
+    BOOST_AUTO_TEST_CASE( Pixel_eq_02 ) {
+        const Image::Pixel colorA = Image::convertColor("red");
+        const Image::Pixel colorB = Image::convertColor("green");
+        BOOST_CHECK_EQUAL( colorA == colorB, false );
+    }
+
+    BOOST_AUTO_TEST_CASE( Pixel_ne_01 ) {
+        const Image::Pixel color = Image::convertColor("red");
+        BOOST_CHECK_EQUAL( color != color, false );
+    }
+
+    BOOST_AUTO_TEST_CASE( Pixel_ne_02 ) {
+        const Image::Pixel colorA = Image::convertColor("red");
+        const Image::Pixel colorB = Image::convertColor("green");
+        BOOST_CHECK_EQUAL( colorA != colorB, true );
+    }
+
     BOOST_AUTO_TEST_CASE( convertColor_hex_3 ) {
         const Image::Pixel color = Image::convertColor("#030102");
         BOOST_CHECK_EQUAL( color.red,     3 );

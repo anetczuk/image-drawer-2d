@@ -71,6 +71,12 @@ namespace imgdraw2d {
 
         uint32_t height() const;
 
+        // RawImage::row_const_access is reference to "row" type
+        RawImage::row_const_access row(const std::size_t y) const;
+
+        // RawImage::row_access is reference to "row" type
+        RawImage::row_access row(const std::size_t y);
+
         Pixel pixel(const std::size_t x, const std::size_t y) const;
 
         PixByte red(const std::size_t x, const std::size_t y) const;
@@ -79,11 +85,13 @@ namespace imgdraw2d {
 
         PixByte blue(const std::size_t x, const std::size_t y) const;
 
+        void fillTransparent();
+
         void fill(const std::string& color);
 
         void fill(const Pixel& color);
 
-        void fillTransparent();
+        void fillRect(const std::size_t x, const std::size_t y, const std::size_t width, const std::size_t height, const Pixel& color );
 
         void pasteImage(const std::size_t x, const std::size_t y, const Image& source );
 
@@ -110,6 +118,31 @@ namespace imgdraw2d {
         bool compare(const RawImage& image) const;
 
     };
+
+
+    inline bool operator==(const imgdraw2d::Image::Pixel& colorA, const imgdraw2d::Image::Pixel& colorB) {
+        if ( colorA.red != colorB.red )
+            return false;
+        if ( colorA.green != colorB.green )
+            return false;
+        if ( colorA.blue != colorB.blue )
+            return false;
+        if ( colorA.alpha != colorB.alpha )
+            return false;
+        return true;
+    }
+
+    inline bool operator!=(const imgdraw2d::Image::Pixel& colorA, const imgdraw2d::Image::Pixel& colorB) {
+        if ( colorA.red != colorB.red )
+            return true;
+        if ( colorA.green != colorB.green )
+            return true;
+        if ( colorA.blue != colorB.blue )
+            return true;
+        if ( colorA.alpha != colorB.alpha )
+            return true;
+        return false;
+    }
 
 } /* namespace imgdraw2d */
 

@@ -84,13 +84,25 @@ namespace imgdraw2d {
         img.reset( new Image() );
 
         resizeImage();
-        img->fill( backgroundColor );
 
         const double top = oldBox.a.x - MARGIN;
         const double left = oldBox.b.y + MARGIN;
         const Image* source = oldImg.get();
 
         const PointI from = transformCoords(top, left);
+
+        if ( backgroundColor != Image::TRANSPARENT ) {
+//            img->fill( backgroundColor );
+            const PointI oldSize( oldImg->width(), oldImg->height() );
+            PointI to = from + oldSize;
+            const uint32_t w = img->width();
+            const uint32_t h = img->height();
+            if (to.x > w) to.x = w;
+            if (to.y > h) to.y = h;
+            const RectI gap( from, to );
+            fillBackground( gap );
+        }
+
         img->pasteImage(from.x, from.y, *source);
         return true;
     }
@@ -101,6 +113,28 @@ namespace imgdraw2d {
         const std::size_t w = scale * ( 2 * MARGIN + boxW );
         const std::size_t h = scale * ( 2 * MARGIN + boxH );
         img->resize(w, h);
+    }
+
+    void ImageBox::fillBackground( const RectI& gap ) {
+        const uint32_t w = img->width();
+        const uint32_t h = img->height();
+        if (gap.a.y > 0) {
+            /// top side
+            img->fillRect(0, 0, w, gap.a.y, backgroundColor);
+        }
+        if (gap.b.y < h) {
+            /// bottom side
+            img->fillRect(0, gap.b.y, w, h, backgroundColor);
+        }
+
+        if (gap.a.x > 0) {
+            /// left side
+            img->fillRect(0, gap.a.y, gap.a.x, gap.b.y, backgroundColor);
+        }
+        if (gap.b.x < w) {
+            /// right side
+            img->fillRect(gap.b.x, gap.a.y, w, gap.b.y, backgroundColor);
+        }
     }
 
 } /* namespace imgdraw2d */

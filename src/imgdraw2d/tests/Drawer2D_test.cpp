@@ -24,6 +24,7 @@
 #include "imgdraw2d/Drawer2D.h"
 
 #include "Utils.h"
+#include <chrono>
 
 
 using namespace imgdraw2d;
@@ -46,6 +47,20 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
         IMAGE_CHECK_CASE( image, "drawer2d" );
     }
+
+//    BOOST_AUTO_TEST_CASE( drawLine_fill ) {
+//        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+//
+//        Drawer2DD drawer(200.0);
+//        for(std::size_t i=0; i< 10; ++i) {
+//            const PointD start{ 0.0 + i, 10.0 + i};
+//            const PointD end{  10.0 + i, 10.0 + i};
+//            drawer.drawLine( start, end, 2.0, "blue" );
+//        }
+//
+//        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+//        std::cerr << "time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
+//    }
 
     BOOST_AUTO_TEST_CASE( drawArc_full ) {
         Drawer2DD drawer;

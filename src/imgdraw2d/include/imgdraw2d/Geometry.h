@@ -416,10 +416,13 @@ namespace imgdraw2d {
         value_type A;
         value_type B;
         value_type C;
-        double distFactor;
+        double distFactorInv;
 
 
-        Linear(const value_type a, const value_type b, const value_type c): A(a), B(b), C(c), distFactor( std::sqrt( A*A + B*B ) ) {
+        Linear(const value_type a, const value_type b, const value_type c):
+                A(a), B(b), C(c),
+                distFactorInv( 1.0 / std::sqrt( A*A + B*B ) )
+        {
         }
 
         static Linear createFromOrthogonal(const PointI& start, const PointI& ortho) {
@@ -475,7 +478,7 @@ namespace imgdraw2d {
 
         double distance(const PointI& point) const {
             const double factorA = std::abs( A * point.x + B * point.y + C );
-            return factorA / distFactor;
+            return factorA * distFactorInv;
         }
     };
 

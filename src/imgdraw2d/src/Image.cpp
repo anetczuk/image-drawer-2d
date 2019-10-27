@@ -63,6 +63,16 @@ namespace imgdraw2d {
         return img.get_height();
     }
 
+    Image::RawImage::row_const_access Image::row(const std::size_t y) const {
+        const Image::RawImage::pixbuf& pixbuf = img.get_pixbuf();
+        return pixbuf[ y ];
+    }
+
+    Image::RawImage::row_access Image::row(const std::size_t y) {
+        Image::RawImage::pixbuf& pixbuf = img.get_pixbuf();
+        return pixbuf[ y ];
+    }
+
     Image::Pixel Image::pixel(const std::size_t x, const std::size_t y) const {
         return img.get_pixel(x, y);
     }
@@ -82,6 +92,10 @@ namespace imgdraw2d {
         return pix.blue;
     }
 
+    void Image::fillTransparent() {
+        fill("transparent");
+    }
+
     void Image::fill(const std::string& color) {
         const Pixel pixColor = convertColor(color);
         fill( pixColor );
@@ -90,19 +104,25 @@ namespace imgdraw2d {
     void Image::fill(const Pixel& color) {
         const uint32_t w = width();
         const uint32_t h = height();
-        for( uint32_t x = 0; x<w; ++x ) {
-            for( uint32_t y = 0; y<h; ++y ) {
-                img.set_pixel( x, y, color );
+        for( uint32_t y = 0; y<h; ++y ) {
+            Image::RawImage::row_access tgtRow = row(y);
+            for( uint32_t x = 0; x<w; ++x ) {
+                tgtRow[x] = color;
             }
         }
     }
 
-    void Image::fillTransparent() {
-        fill("transparent");
-    }
-
-    void Image::setPixel(const std::size_t x, const std::size_t y, const Pixel& color) {
-        img.set_pixel( x, y, color );
+    void Image::fillRect(const std::size_t x, const std::size_t y, const std::size_t width, const std::size_t height, const Pixel& color ) {
+        const std::size_t w = img.get_width();
+        const std::size_t h = img.get_height();
+        const std::size_t endW = std::min(w, x + width );
+        const std::size_t endH = std::min(h, y + height );
+        for( std::size_t j = y; j<endH; ++j ) {
+            Image::RawImage::row_access tgtRow = row(j);
+            for( std::size_t i = x; i<endW; ++i ) {
+                tgtRow[i] = color;
+            }
+        }
     }
 
     void Image::pasteImage(const std::size_t x, const std::size_t y, const Image& source ) {
@@ -111,12 +131,17 @@ namespace imgdraw2d {
         const std::size_t endW = std::min(w, x + source.width() );
         const std::size_t endH = std::min(h, y + source.height() );
 
-        for( std::size_t i = x; i<endW; ++i ) {
-            for( std::size_t j = y; j<endH; ++j ) {
-                const Image::Pixel src = source.pixel( i-x, j-y );
-                img.set_pixel( i, j, src );
+        for( std::size_t j = y; j<endH; ++j ) {
+            Image::RawImage::row_const_access srcRow = source.row( j - y );
+            Image::RawImage::row_access tgtRow = row(j);
+            for( std::size_t i = x; i<endW; ++i ) {
+                tgtRow[i] = srcRow[ i - x ];
             }
         }
+    }
+
+    void Image::setPixel(const std::size_t x, const std::size_t y, const Pixel& color) {
+        img.set_pixel( x, y, color );
     }
 
     void Image::setPixelColor(const std::size_t x, const std::size_t y, const std::string& color) {
@@ -215,15 +240,13 @@ namespace imgdraw2d {
             return false;
 
         /// compare pixels
-        for(png::uint_32 x=0; x<width; ++x) {
-            for(png::uint_32 y=0; y<height; ++y) {
-                const Pixel& pix = img.get_pixel(x, y);
-                const Pixel& other = image.get_pixel(x, y);
-                if (pix.red != other.red)
-                    return false;
-                if (pix.green != other.green)
-                    return false;
-                if (pix.blue != other.blue)
+        for(png::uint_32 y=0; y<height; ++y) {
+            Image::RawImage::row_const_access rowA = row( y );
+            Image::RawImage::row_const_access rowB = image.get_row( y );
+            for(png::uint_32 x=0; x<width; ++x) {
+                const Pixel& pix = rowA[x];
+                const Pixel& other = rowB[x];
+                if (pix != other)
                     return false;
             }
         }
