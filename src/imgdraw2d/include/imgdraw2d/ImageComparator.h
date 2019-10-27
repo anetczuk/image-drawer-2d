@@ -40,6 +40,16 @@ namespace imgdraw2d {
 
         static bool compare(const Image& imgA, const std::string& imgB, const std::string& diffImage);
 
+        static bool compare(const Image* imgA, const std::string& imgB, const std::string& diffImage) {
+            if (imgA == nullptr)
+                return false;
+            return compare( *imgA, imgB, diffImage );
+        }
+
+        static bool compare(const ImagePtr& imgA, const std::string& imgB, const std::string& diffImage) {
+            return compare( imgA.get(), imgB, diffImage );
+        }
+
     };
 
 }
