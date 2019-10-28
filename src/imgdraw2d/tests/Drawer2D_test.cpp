@@ -30,6 +30,9 @@
 using namespace imgdraw2d;
 
 
+#define CHECK_IMAGE( image )     IMAGE_CHECK_CASE( image, "drawer2d" )
+
+
 BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawLine_1 ) {
@@ -37,7 +40,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawLine( PointD{1.0, 1.0}, PointD{10.0, 6.0}, 0.2, "blue" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( drawLine_negative_short ) {
@@ -45,7 +48,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawLine( PointD{ -9.70711, -9.70711}, PointD{ -9.0, -9.0}, 0.2, "blue" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
 //    BOOST_AUTO_TEST_CASE( drawLine_fill ) {
@@ -62,12 +65,17 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 //        std::cerr << "time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
 //    }
 
+
+//    BOOST_AUTO_TEST_CASE( fillRect_full ) {
+//        //
+//    }
+
     BOOST_AUTO_TEST_CASE( drawArc_full ) {
         Drawer2DD drawer;
         drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, 2 * M_PI, "blue" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( drawArc_1q ) {
@@ -75,7 +83,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI_4 / 2, M_PI_4, "blue" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( drawArc_2q ) {
@@ -83,7 +91,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI_2 + M_PI_4 / 2, M_PI_4, "blue" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( drawArc_3q ) {
@@ -91,7 +99,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI + M_PI_4 / 2, M_PI_4, "blue" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( drawArc_4q ) {
@@ -99,7 +107,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 3 * M_PI_2 + M_PI_4 / 2, M_PI_4, "blue" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
 //    BOOST_AUTO_TEST_CASE( drawArc_big ) {
@@ -117,7 +125,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawRing( PointD{10.0, 10.0}, 4.0, 10.0, "blue" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
 //    BOOST_AUTO_TEST_CASE( drawRing_big ) {
@@ -135,7 +143,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( fillCircle_negative ) {
@@ -143,7 +151,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "red" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
 //    BOOST_AUTO_TEST_CASE( fillCircle_big ) {
@@ -161,7 +169,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.fillRect( PointD{1.0, 1.0}, 5.0, 5.0, "red" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( resize ) {
@@ -170,7 +178,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawLine( PointD{10.0, 2.0}, PointD{10.0, 10.0}, 0.2, "red" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( resize_positive ) {
@@ -179,7 +187,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "green" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( resize_negative ) {
@@ -188,7 +196,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0, "red" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( example ) {
@@ -199,7 +207,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.fillCircle( PointD{5.0, 14.0}, 2.0, "orange" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
     BOOST_AUTO_TEST_CASE( setBackground ) {
@@ -209,7 +217,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.fillCircle( PointD{5.0, 5.0}, 1.0, "green" );
         Image& image = drawer.image();
 
-        IMAGE_CHECK_CASE( image, "drawer2d" );
+        CHECK_IMAGE( image );
     }
 
 BOOST_AUTO_TEST_SUITE_END()
