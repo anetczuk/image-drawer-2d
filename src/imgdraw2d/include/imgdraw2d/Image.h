@@ -48,6 +48,9 @@ namespace imgdraw2d {
         static const Pixel TRANSPARENT;
         static const Pixel BLACK;
         static const Pixel WHITE;
+        static const Pixel RED;
+        static const Pixel GREEN;
+        static const Pixel BLUE;
 
 
     protected:

@@ -42,10 +42,22 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         CHECK_IMAGE( image );
     }
 
-    BOOST_AUTO_TEST_CASE( fillRect ) {
+    BOOST_AUTO_TEST_CASE( fillRect_01 ) {
         Image image(400, 400);
         Painter painter( image );
         painter.fillRect( 100, 100, 200, 200, "blue" );
+
+        CHECK_IMAGE( image );
+    }
+
+    BOOST_AUTO_TEST_CASE( fillRect_02 ) {
+        Image image(260, 260);
+        Painter painter( image );
+        const PointI topLeft{100, 100};
+        const PointI topRight{200, 120};
+        const PointI bottomRight{140, 140};
+        const PointI bottomLeft{120, 190};
+        painter.fillRect( topLeft, topRight, bottomRight, bottomLeft, Image::BLUE );
 
         CHECK_IMAGE( image );
     }

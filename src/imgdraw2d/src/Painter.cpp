@@ -112,6 +112,28 @@ namespace imgdraw2d {
             img->fillRect( point.x, point.y, point.x + width, point.y + height, pixColor );
         }
 
+        void fillRect(const PointI& topLeft, const PointI& topRight, const PointI& bottomRight, const PointI& bottomLeft, const Image::Pixel& pixColor) override {
+            const Linear line1 = Linear::createFromPoints( topLeft, topRight );
+            const Linear line2 = Linear::createFromPoints( topRight, bottomRight );
+            const Linear line3 = Linear::createFromPoints( bottomRight, bottomLeft );
+            const Linear line4 = Linear::createFromPoints( bottomLeft, topLeft );
+
+            RectI bbox = RectI::minmax(topLeft, topRight);
+            bbox.expand(bottomRight);
+            bbox.expand(bottomLeft);
+
+            for( int64_t j = bbox.a.y; j<=bbox.b.y; ++j ) {
+                Image::RawImage::row_access tgtRow = img->row( j );
+                for( int64_t i = bbox.a.x; i<=bbox.b.x; ++i ) {
+                    if (line1.pointSide( i, j ) < 0) continue;
+                    if (line2.pointSide( i, j ) < 0) continue;
+                    if (line3.pointSide( i, j ) < 0) continue;
+                    if (line4.pointSide( i, j ) < 0) continue;
+                    tgtRow[ i ] = pixColor;
+                }
+            }
+        }
+
         RectI getBBoxOnCircle(const PointI& center, const uint32_t radius) {
             const int64_t w = img->width();
             const int64_t h = img->height();
@@ -446,6 +468,11 @@ namespace imgdraw2d {
                     tgtRow[ i ] = diffPixels(orig, pixColor);
                 }
             }
+        }
+
+        void fillRect(const PointI& /*topLeft*/, const PointI& /*topRight*/, const PointI& /*bottomRight*/, const PointI& /*bottomLeft*/, const Image::Pixel& /*pixColor*/) override {
+            //TODO: implement
+            throw std::runtime_error("fillRect not implemented");
         }
 
         void drawArc(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const double /*startAngle*/, const double /*range*/, const std::string& /*color*/) override {

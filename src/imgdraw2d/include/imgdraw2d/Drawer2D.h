@@ -189,6 +189,24 @@ namespace imgdraw2d {
             fillRect(bottomLeftPoint, width, height, pixColor);
         }
 
+        void fillRect(const PointT& center, const double width, const double height, const double angle, const Image::Pixel& color) {
+            const PointT topLeft     = center + rotateVector( PointT( -width/2.0,  height / 2.0 ), angle );
+            const PointT topRight    = center + rotateVector( PointT(  width/2.0,  height / 2.0 ), angle );
+            const PointT bottomRight = center + rotateVector( PointT(  width/2.0, -height / 2.0 ), angle );
+            const PointT bottomLeft  = center + rotateVector( PointT( -width/2.0, -height / 2.0 ), angle );
+
+            RectD bbox = RectD::minmax(topLeft, topRight);
+            bbox.expand(bottomRight);
+            bbox.expand(bottomLeft);
+            extendImage( bbox );
+
+            const PointI a = base.transformCoords( topLeft[0],     topLeft[1] );
+            const PointI b = base.transformCoords( topRight[0],    topRight[1] );
+            const PointI c = base.transformCoords( bottomRight[0], bottomRight[1] );
+            const PointI d = base.transformCoords( bottomLeft[0],  bottomLeft[1] );
+            painter.fillRect( a, b, c, d, color );
+        }
+
         void fillRect(const PointT& bottomLeft, const double width, const double height, const Image::Pixel& color) {
             const PointT topRight = bottomLeft + PointT(width, height);
             expand( bottomLeft, topRight );

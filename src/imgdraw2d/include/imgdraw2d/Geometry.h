@@ -151,12 +151,13 @@ namespace imgdraw2d {
         }
     }
 
-    inline PointI rotateVector(const PointI& vector, const double angle) {
+    template <typename PointT>
+    inline PointT rotateVector(const PointT& vector, const double angle) {
         const double cosA = cos(angle);
         const double sinA = sin(angle);
         const double x = vector[0];
         const double y = vector[1];
-        return PointI( x*cosA - y*sinA, x*sinA + y*cosA );
+        return PointT( x*cosA - y*sinA, x*sinA + y*cosA );
     }
 
 
@@ -363,6 +364,17 @@ namespace imgdraw2d {
             b += r;
         }
 
+        void expand(const Point<T> point) {
+            if (a.x > point.x)
+                a.x = point.x;
+            if (a.y > point.y)
+                a.y = point.y;
+            if (b.x < point.x)
+                b.x = point.x;
+            if (b.y < point.y)
+                b.y = point.y;
+        }
+
         bool expand(const Rect<T>& box) {
             bool changed = false;
             if (a.x > box.a.x) {
@@ -416,13 +428,26 @@ namespace imgdraw2d {
         value_type A;
         value_type B;
         value_type C;
+        double caFactor;        /// -C/A
+        double cbFactor;        /// -C/B
+        double abFactor;        /// -A/B
+        double baFactor;        /// -B/A
         double distFactorInv;
 
 
         Linear(const value_type a, const value_type b, const value_type c):
                 A(a), B(b), C(c),
+                caFactor(1.0), cbFactor(1.0), abFactor(1.0), baFactor(1.0),
                 distFactorInv( 1.0 / std::sqrt( A*A + B*B ) )
         {
+            if (A != 0) {
+                caFactor = (double) - C / A;
+                baFactor = (double) - B / A;
+            }
+            if (B != 0) {
+                cbFactor = (double) - C / B;
+                abFactor = (double) - A / B;
+            }
         }
 
         static Linear createFromOrthogonal(const PointI& start, const PointI& ortho) {
@@ -453,27 +478,43 @@ namespace imgdraw2d {
             // Ax + By + C = 0
             // By =  -C - Ax
             //  y = (-C - Ax) / B
-            return (double) (-C - A*x) / B;
+            /// return (double) (-C - A*x) / B;
+            return (double) cbFactor + abFactor * x;
         }
         value_type valueX(const value_type y) const {
             // Ax + By + C = 0
             // Ax =  -C - By
             //  x = (-C - By) / A
-            return (double) (-C - B*y) / A;
+            /// return (double) (-C - B*y) / A;
+            return (double) caFactor + baFactor * y;
         }
 
         value_type pointSide(const PointI& point) const {
             return pointSide( point.x, point.y );
         }
 
+        /// value:
+        ///     positive -- left side,
+        ///     negative -- right side,
+        ///     zero     -- on line
         value_type pointSide(const value_type x, const value_type y) const {
-            if (B != 0) {
+            if (B > 0) {
                 const PointI::value_type base = valueY( x );
                 return y - base;
-            } else {
+            } else if (B < 0) {
+                const PointI::value_type base = valueY( x );
+                return -(y - base);
+            }
+
+            if (A > 0) {
                 const PointI::value_type base = valueX( y );
                 return x - base;
+            } else if (A < 0) {
+                const PointI::value_type base = valueX( y );
+                return -(x - base);
             }
+
+            return 0;
         }
 
         double distance(const PointI& point) const {

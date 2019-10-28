@@ -48,12 +48,18 @@ namespace imgdraw2d {
 
             //TODO: draw clothoid
 
+            void fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) {
+                fillRect( PointI{x, y}, width, height, color );
+            }
+
             void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const std::string& color) {
                 const Image::Pixel pixColor = Image::convertColor(color);
                 fillRect( point, width, height, pixColor );
             }
 
             virtual void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) = 0;
+
+            virtual void fillRect(const PointI& topLeft, const PointI& topRight, const PointI& bottomRight, const PointI& bottomLeft, const Image::Pixel& pixColor) = 0;
 
             virtual void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) = 0;
 
@@ -91,10 +97,6 @@ namespace imgdraw2d {
 
             void drawLine(const uint32_t fromX, const uint32_t fromY, const uint32_t toX, const uint32_t toY, const uint32_t width, const std::string& color) {
                 drawLine( PointI{fromX, fromY}, PointI{toX, toY}, width, color );
-            }
-
-            void fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) {
-                fillRect( PointI{x, y}, width, height, color );
             }
 
             void fillCircle(const uint32_t x, const uint32_t y, const uint32_t radius, const std::string& color) {
@@ -165,6 +167,10 @@ namespace imgdraw2d {
 
         void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
             worker->fillRect(point, width, height, pixColor);
+        }
+
+        void fillRect(const PointI& topLeft, const PointI& topRight, const PointI& bottomRight, const PointI& bottomLeft, const Image::Pixel& pixColor) override {
+            worker->fillRect(topLeft, topRight, bottomRight, bottomLeft, pixColor);
         }
 
         void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {

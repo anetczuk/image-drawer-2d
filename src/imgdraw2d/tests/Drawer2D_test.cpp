@@ -66,9 +66,21 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 //    }
 
 
-//    BOOST_AUTO_TEST_CASE( fillRect_full ) {
-//        //
-//    }
+    BOOST_AUTO_TEST_CASE( fillRect01 ) {
+        Drawer2DD drawer;
+        drawer.fillRect( PointD{10.0, 10.0}, 2.0, 5.0, 0.0, Image::GREEN );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
+    BOOST_AUTO_TEST_CASE( fillRect02 ) {
+        Drawer2DD drawer;
+        drawer.fillRect( PointD{10.0, 10.0}, 2.0, 5.0, M_PI_2 + M_PI_4 / 2.0, Image::GREEN );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
 
     BOOST_AUTO_TEST_CASE( drawArc_full ) {
         Drawer2DD drawer;
