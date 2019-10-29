@@ -118,6 +118,14 @@ BOOST_AUTO_TEST_SUITE( PainterSuite )
         CHECK_IMAGE( image );
     }
 
+    BOOST_AUTO_TEST_CASE( drawRing_thin ) {
+        Image image(140, 140);
+        Painter painter( image );
+        painter.drawRing( PointI{70, 70}, 40, 1, "blue" );
+
+        CHECK_IMAGE( image );
+    }
+
     BOOST_AUTO_TEST_CASE( drawArc_full_positive ) {
         {
             Image image(140, 140);

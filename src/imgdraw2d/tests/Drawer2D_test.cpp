@@ -90,6 +90,66 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         CHECK_IMAGE( image );
     }
 
+    BOOST_AUTO_TEST_CASE( fillRect ) {
+        Drawer2DD drawer(100.0);
+        drawer.fillRect( PointD{1.0, 1.0}, 5.0, 5.0, "red" );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
+    BOOST_AUTO_TEST_CASE( fillCircle_positive ) {
+        Drawer2DD drawer(100.0);
+        drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
+    BOOST_AUTO_TEST_CASE( fillCircle_negative ) {
+        Drawer2DD drawer(100.0);
+        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "red" );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
+//    BOOST_AUTO_TEST_CASE( fillCircle_big ) {
+//        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+//
+//        Drawer2DD drawer(200.0);
+//        drawer.fillCircle( PointD{-5.0, -5.0}, 20.0, "red" );
+//
+//        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+//        std::cerr << "time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
+//    }
+
+    BOOST_AUTO_TEST_CASE( drawRing_circle ) {
+        Drawer2DD drawer(20.0);
+        drawer.drawRing( PointD{10.0, 10.0}, 4.0, 10.0, "blue" );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawRing_thin ) {
+        Drawer2DD drawer(20.0);
+        drawer.drawRing( PointD{0.0, 0.0}, 1.0, 0.001, "blue" );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
+//    BOOST_AUTO_TEST_CASE( drawRing_big ) {
+//        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+//
+//        Drawer2DD drawer(200.0);
+//        drawer.drawRing( PointD{10.0, 10.0}, 20.0, 10.0, "blue" );
+//
+//        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+//        std::cerr << "drawRing time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
+//    }
+
     BOOST_AUTO_TEST_CASE( drawArc_full ) {
         Drawer2DD drawer;
         drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, 2 * M_PI, "blue" );
@@ -138,6 +198,14 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         CHECK_IMAGE( image );
     }
 
+    BOOST_AUTO_TEST_CASE( drawArc_thin ) {
+        Drawer2DD drawer(100.0);
+        drawer.drawArc( PointD{0.0, 0.0}, 1.0, 0.001, M_PI_4 / 2, M_PI_4, "black" );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
 //    BOOST_AUTO_TEST_CASE( drawArc_big ) {
 //        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 //
@@ -147,58 +215,6 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 //        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 //        std::cerr << "drawArc time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
 //    }
-
-    BOOST_AUTO_TEST_CASE( drawRing_circle ) {
-        Drawer2DD drawer(20.0);
-        drawer.drawRing( PointD{10.0, 10.0}, 4.0, 10.0, "blue" );
-        Image& image = drawer.image();
-
-        CHECK_IMAGE( image );
-    }
-
-//    BOOST_AUTO_TEST_CASE( drawRing_big ) {
-//        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-//
-//        Drawer2DD drawer(200.0);
-//        drawer.drawRing( PointD{10.0, 10.0}, 20.0, 10.0, "blue" );
-//
-//        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-//        std::cerr << "drawRing time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
-//    }
-
-    BOOST_AUTO_TEST_CASE( fillCircle_positive ) {
-        Drawer2DD drawer(100.0);
-        drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
-        Image& image = drawer.image();
-
-        CHECK_IMAGE( image );
-    }
-
-    BOOST_AUTO_TEST_CASE( fillCircle_negative ) {
-        Drawer2DD drawer(100.0);
-        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "red" );
-        Image& image = drawer.image();
-
-        CHECK_IMAGE( image );
-    }
-
-//    BOOST_AUTO_TEST_CASE( fillCircle_big ) {
-//        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-//
-//        Drawer2DD drawer(200.0);
-//        drawer.fillCircle( PointD{-5.0, -5.0}, 20.0, "red" );
-//
-//        const std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-//        std::cerr << "time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
-//    }
-
-    BOOST_AUTO_TEST_CASE( fillRect ) {
-        Drawer2DD drawer(100.0);
-        drawer.fillRect( PointD{1.0, 1.0}, 5.0, 5.0, "red" );
-        Image& image = drawer.image();
-
-        CHECK_IMAGE( image );
-    }
 
     BOOST_AUTO_TEST_CASE( resize ) {
         Drawer2DD drawer;

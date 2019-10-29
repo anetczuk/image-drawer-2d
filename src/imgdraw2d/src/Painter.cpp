@@ -174,8 +174,8 @@ namespace imgdraw2d {
         }
 
         void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) override {
+            const uint32_t maxRadius = radius + std::max( width / 2, (uint32_t) 1 );      /// draw at least 1px width
             const uint32_t minRadius = udiff( radius, width / 2 );
-            const uint32_t maxRadius = radius + width / 2;
             if (minRadius == 0) {
                 fillCircle( center, maxRadius, color );
                 return ;
@@ -210,7 +210,8 @@ namespace imgdraw2d {
 
             const Image::Pixel pixColor = Image::convertColor( color );
 
-            const uint32_t maxRadius = radius + width / 2;
+            //const uint32_t maxRadius = radius + width / 2;
+            const uint32_t maxRadius = radius + std::max( width / 2, (uint32_t) 1 );      /// draw at least 1px width
             const uint32_t minRadius = udiff( radius, width / 2 );
 
             const PointI fromVector = rotateVector( PointI(1000, 0), minAngle );
