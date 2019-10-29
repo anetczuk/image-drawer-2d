@@ -21,8 +21,8 @@
 /// SOFTWARE.
 ///
 
-#ifndef IMGDRAW2D_TESTS_UTILS_H_
-#define IMGDRAW2D_TESTS_UTILS_H_
+#ifndef IMGDRAW2D_TESTS_IMGTESTUTILS_H_
+#define IMGDRAW2D_TESTS_IMGTESTUTILS_H_
 
 #include "imgdraw2d/ImageComparator.h"
 
@@ -52,4 +52,4 @@
     }
 
 
-#endif /* IMGDRAW2D_TESTS_UTILS_H_ */
+#endif /* IMGDRAW2D_TESTS_IMGTESTUTILS_H_ */

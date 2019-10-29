@@ -23,7 +23,7 @@
 
 #include "imgdraw2d/Painter.h"
 
-#include "Utils.h"
+#include "ImgTestUtils.h"
 
 
 using namespace imgdraw2d;

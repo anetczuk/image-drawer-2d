@@ -32,3 +32,10 @@ install( FILES Findimgdraw2d.cmake
          DESTINATION cmake/Modules
          RENAME "Find${TARGET_NAME}.cmake"
 )
+
+option( INSTALL_TEST_UTILS "Install additional image test utils header (Boost)" OFF )
+if ( INSTALL_TEST_UTILS )
+    install( FILES ../tests/ImgTestUtils.h
+             DESTINATION include/${TARGET_NAME}
+    )
+endif()
