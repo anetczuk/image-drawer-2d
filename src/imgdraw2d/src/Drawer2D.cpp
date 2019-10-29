@@ -26,19 +26,17 @@
 
 namespace imgdraw2d {
 
-    static const double MARGIN = 0.5;
-
-
-    ImageBox::ImageBox(const double scale):
+    ImageBox::ImageBox(const double scale, const double margin):
             img(nullptr),
             sizeBox(),
             backgroundColor(0, 0, 0, 0),                             /// transparent color
+            margin(margin),
             scale(scale)
     {
         reset();
     }
 
-    ImageBox::ImageBox(const RectD& size, const double scale, const Image::Pixel& backgroundColor): ImageBox(scale) {
+    ImageBox::ImageBox(const RectD& size, const double scale, const Image::Pixel& backgroundColor, const double margin): ImageBox(scale, margin) {
         setBackground( backgroundColor );
         resize(size);
     }
@@ -58,11 +56,18 @@ namespace imgdraw2d {
     PointI ImageBox::transformCoords(const double x, const double y) const {
         ///flip y coord
         PointD relative{ x - sizeBox.a.x, sizeBox.b.y - y };
-        relative.x += MARGIN;
-        relative.y += MARGIN;
+        relative.x += margin;
+        relative.y += margin;
         PointD scaled = relative * scale;
         const PointI pixelPoint{ (PointI::value_type)scaled.x, (PointI::value_type)scaled.y };
         return pixelPoint;
+
+//        ///flip y coord
+//        PointD relative{ x - sizeBox.a.x + margin, y - sizeBox.a.y + margin };
+//        PointD scaled = relative * scale;
+//        const uint32_t height = img->height();
+//        const PointI pixelPoint{ (PointI::value_type)scaled.x, height - (PointI::value_type)scaled.y };
+//        return pixelPoint;
     }
 
     bool ImageBox::resize(const RectD& box) {
@@ -85,8 +90,8 @@ namespace imgdraw2d {
 
         resizeImage();
 
-        const double top = oldBox.a.x - MARGIN;
-        const double left = oldBox.b.y + MARGIN;
+        const double top = oldBox.a.x - margin;
+        const double left = oldBox.b.y + margin;
         const Image* source = oldImg.get();
 
         const PointI from = transformCoords(top, left);
@@ -110,8 +115,8 @@ namespace imgdraw2d {
     void ImageBox::resizeImage() {
         const double boxW = sizeBox.width();
         const double boxH = sizeBox.height();
-        const std::size_t w = scale * ( 2 * MARGIN + boxW );
-        const std::size_t h = scale * ( 2 * MARGIN + boxH );
+        const std::size_t w = scale * ( 2 * margin + boxW );
+        const std::size_t h = scale * ( 2 * margin + boxH );
         img->resize(w, h);
     }
 

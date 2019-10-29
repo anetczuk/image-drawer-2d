@@ -110,12 +110,40 @@ namespace imgdraw2d {
         return (double) value * vector.y / vector.x;
     }
     
-    /// normailze in range [0, 2*PI)
+    /// normailze to range [0, 2*PI)
     inline double normalizeAngle(const double angle) {
         int parts = angle / (2 * M_PI);
         if (angle < 0.0)
             parts -= 1;
         return angle - 2 * M_PI * parts;
+    }
+
+    /// returns: minAngle < maxAngle
+    /// minAngle in range [0, 4*PI)
+    /// maxAngle in range [0, 6*PI)
+    /// upper limit is 6*PI to allow indicating one full circle (less than two full circles in reality)
+    inline void normalizeAngleRange(const double startAngle, const double range, double& minAngle, double& maxAngle) {
+        double normRange = range;
+        const int rParts = range / ( 2 * M_PI );
+        if (rParts > 1) {
+            normRange -= (rParts-1) * 2 * M_PI;
+        } else if (rParts < -1) {
+            normRange -= (rParts+1) * 2 * M_PI;
+        }
+        /// normRange is in range (-4*PI, 4*PI)
+
+        if (normRange >= 0.0) {
+            minAngle = normalizeAngle( startAngle );
+            maxAngle = normalizeAngle( startAngle ) + normRange;
+            return ;
+        }
+        /// negative case
+        minAngle = normalizeAngle( startAngle ) + normRange;
+        maxAngle = normalizeAngle( startAngle );
+        if (minAngle < 0.0) {
+            minAngle += 4 * M_PI;
+            maxAngle += 4 * M_PI;
+        }
     }
 
     inline double angleFromOXByTan(const double tanAngle, const bool positiveX) {
@@ -158,6 +186,11 @@ namespace imgdraw2d {
         const double x = vector[0];
         const double y = vector[1];
         return PointT( x*cosA - y*sinA, x*sinA + y*cosA );
+    }
+
+    template <typename PointT>
+    inline PointT rotateSenseVector(const double angle) {
+        return rotateVector( PointT(1.0, 0.0), angle );
     }
 
 
@@ -364,7 +397,7 @@ namespace imgdraw2d {
             b += r;
         }
 
-        void expand(const Point<T> point) {
+        void expand(const Point<T>& point) {
             if (a.x > point.x)
                 a.x = point.x;
             if (a.y > point.y)
@@ -394,6 +427,14 @@ namespace imgdraw2d {
                 changed = true;
             }
             return changed;
+        }
+
+        void expand(const Point<T>& center, const double innerRadius, const double outerRadius, const double angle) {
+            const Point<T> sense = rotateSenseVector< Point<T> >( angle );
+            const Point<T> outer = center + sense * outerRadius;
+            const Point<T> inner = center + sense * innerRadius;
+            expand( outer );
+            expand( inner );
         }
 
         static Rect<T> minmax(const Point<T>& p1, const Point<T>& p2) {

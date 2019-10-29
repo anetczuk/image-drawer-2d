@@ -202,18 +202,9 @@ namespace imgdraw2d {
                 return ;
             }
 
-            assert( center.x >= 0 );
-            assert( center.y >= 0 );
-
             double minAngle = 0.0;
             double maxAngle = 0.0;
-            if ( range > 0.0 ) {
-                minAngle = normalizeAngle(startAngle);
-                maxAngle = normalizeAngle(startAngle + range);
-            } else {
-                minAngle = normalizeAngle(startAngle + range);
-                maxAngle = normalizeAngle(startAngle);
-            }
+            normalizeAngleRange(startAngle, range, minAngle, maxAngle);
 
             const bool sum = ( std::abs(range) > M_PI );
 

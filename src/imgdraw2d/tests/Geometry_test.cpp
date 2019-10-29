@@ -61,6 +61,70 @@ BOOST_AUTO_TEST_SUITE( GeometrySuite )
         BOOST_CHECK_CLOSE( angle, 3 * M_PI_2, 1.0 );
     }
 
+    BOOST_AUTO_TEST_CASE( normalizeAngleRange_1 ) {
+        {
+            /// big positive range
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange( 0.0, 5 * M_PI_2 + 4 * M_PI, minAngle, maxAngle);
+            BOOST_CHECK_CLOSE( minAngle,        0.0, 1.0 );
+            BOOST_CHECK_CLOSE( maxAngle, 5 * M_PI_2, 1.0 );
+        }
+        {
+            /// big negative range
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange( 0.0, - M_PI_2 - 4 * M_PI, minAngle, maxAngle);
+            BOOST_CHECK_CLOSE( minAngle, 3 * M_PI_2, 1.0 );
+            BOOST_CHECK_CLOSE( maxAngle, 8 * M_PI_2, 1.0 );
+        }
+        {
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange( M_PI, M_PI_2, minAngle, maxAngle);
+            BOOST_CHECK_CLOSE( minAngle,     M_PI,   1.0 );
+            BOOST_CHECK_CLOSE( maxAngle, 3 * M_PI_2, 1.0 );
+        }
+        {
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange( 3 * M_PI_2, 3 * M_PI_2, minAngle, maxAngle);
+            BOOST_CHECK_CLOSE( minAngle, 3 * M_PI_2, 1.0 );
+            BOOST_CHECK_CLOSE( maxAngle, 6 * M_PI_2, 1.0 );
+        }
+        {
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange( M_PI, -M_PI_2, minAngle, maxAngle);
+            BOOST_CHECK_CLOSE( minAngle,     M_PI_2, 1.0 );
+            BOOST_CHECK_CLOSE( maxAngle, 2 * M_PI_2, 1.0 );
+        }
+        {
+            /// max values
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange( 3 * M_PI_2, 7 * M_PI_2, minAngle, maxAngle);
+            BOOST_CHECK_CLOSE( minAngle,  3 * M_PI_2, 1.0 );
+            BOOST_CHECK_CLOSE( maxAngle, 10 * M_PI_2, 1.0 );
+        }
+        {
+            /// big positive
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange( 7 * M_PI_2, 4 * M_PI, minAngle, maxAngle);
+            BOOST_CHECK_CLOSE( minAngle, 3 * M_PI_2, 1.0 );
+            BOOST_CHECK_CLOSE( maxAngle, 7 * M_PI_2, 1.0 );
+        }
+        {
+            /// negative
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange( -M_PI, -M_PI, minAngle, maxAngle);
+            BOOST_CHECK_CLOSE( minAngle, 0 * M_PI_2, 1.0 );
+            BOOST_CHECK_CLOSE( maxAngle, 2 * M_PI_2, 1.0 );
+        }
+    }
+
     BOOST_AUTO_TEST_CASE( angleFromOX_quarters ) {
         {
             const double angle = angleFromOX(  1.0,  0.5 );             // 22 deg

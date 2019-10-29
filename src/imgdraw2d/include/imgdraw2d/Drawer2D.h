@@ -37,6 +37,7 @@ namespace imgdraw2d {
         ImagePtr img;
         RectD sizeBox;
         Image::Pixel backgroundColor;
+        double margin;
 
 
     public:
@@ -44,9 +45,9 @@ namespace imgdraw2d {
         double scale;
 
 
-        ImageBox(const double scale = 10.0);
+        ImageBox(const double scale = 10.0, const double margin = 0.5);
 
-        ImageBox(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT);
+        ImageBox(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT, const double margin = 0.5);
 
         void reset();
 
@@ -98,11 +99,11 @@ namespace imgdraw2d {
         Painter painter;
 
 
-        Drawer2DBase(const double scale = 10.0): base(scale), painter( base.image() ) {
+        Drawer2DBase(const double scale = 10.0, const double margin = 0.5): base(scale, margin), painter( base.image() ) {
         }
 
-        Drawer2DBase(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT):
-            base(size, scale, backgroundColor), painter( base.image() )
+        Drawer2DBase(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT, const double margin = 0.5):
+            base(size, scale, backgroundColor, margin), painter( base.image() )
         {
         }
 
@@ -143,11 +144,11 @@ namespace imgdraw2d {
     class Drawer2D: public Drawer2DBase {
     public:
 
-        Drawer2D(const double scale = 10.0): Drawer2DBase(scale) {
+        Drawer2D(const double scale = 10.0, const double margin = 0.5): Drawer2DBase(scale, margin) {
         }
 
-        Drawer2D(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT):
-            Drawer2DBase(size, scale, backgroundColor)
+        Drawer2D(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT, const double margin = 0.5):
+            Drawer2DBase(size, scale, backgroundColor, margin)
         {
         }
 
@@ -161,16 +162,43 @@ namespace imgdraw2d {
 
             const PointI from = base.transformCoords( fromPoint[0], fromPoint[1] );
             const PointI to   = base.transformCoords( toPoint[0], toPoint[1] );
-            const uint32_t w = width * base.scale;
+            const uint32_t w  = width * base.scale;
             painter.drawLine( from, to, w, color );
         }
 
         void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
-            expand( center, radius + width / 2.0 );
+            if (std::abs(range) < 2*M_PI) {
+                double minAngle = 0.0;
+                double maxAngle = 0.0;
+                normalizeAngleRange(startAngle, range, minAngle, maxAngle);
+
+                const double innerRadius = std::max( radius - width / 2.0, 0.0);
+                const double outerRadius = radius + width / 2.0;
+
+                RectD bbox;
+                {
+                    const PointD start = center + rotateSenseVector<PointD>( minAngle ) * radius;
+                    bbox = RectD( start );
+                }
+                bbox.expand( center, innerRadius, outerRadius, minAngle );
+                bbox.expand( center, innerRadius, outerRadius, maxAngle );
+
+                std::size_t i    = minAngle / M_PI_2 + 1;
+                std::size_t iMax = maxAngle / M_PI_2 + 1;
+                for(; i<iMax; ++i) {
+                    const double angle = M_PI_2 * i;
+                    bbox.expand( center, innerRadius, outerRadius, angle );
+                }
+
+                extendImage( bbox );
+            } else
+            {
+                expand( center, radius + width / 2.0 );
+            }
 
             const PointI point = base.transformCoords( center[0], center[1] );
             const uint32_t rad = radius * base.scale;
-            const uint32_t w = width * base.scale;
+            const uint32_t w   = width * base.scale;
             const double angle = -normalizeAngle( startAngle );
             painter.drawArc( point, rad, w, angle, -range, color );
         }
@@ -180,7 +208,7 @@ namespace imgdraw2d {
 
             const PointI point = base.transformCoords( center[0], center[1] );
             const uint32_t rad = radius * base.scale;
-            const uint32_t w = width * base.scale;
+            const uint32_t w   = width * base.scale;
             painter.drawRing( point, rad, w, color );
         }
 
