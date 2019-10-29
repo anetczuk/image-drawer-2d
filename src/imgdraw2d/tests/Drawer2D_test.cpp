@@ -51,6 +51,14 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         CHECK_IMAGE( image );
     }
 
+    BOOST_AUTO_TEST_CASE( drawLine_thin ) {
+        Drawer2DD drawer(100.0);
+        drawer.drawLine( PointD{ 0.0, 0.0}, PointD{ 1.0, 1.0}, 0.001, "black" );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
 //    BOOST_AUTO_TEST_CASE( drawLine_fill ) {
 //        const std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 //

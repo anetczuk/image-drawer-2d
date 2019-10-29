@@ -98,7 +98,7 @@ namespace imgdraw2d {
                         continue;
                     }
                     const double dist = parallelLine.distance( currVector );
-                    if (dist >= radius) {
+                    if (dist > radius) {
                         continue;
                     }
                     tgtRow[ i ] = pixColor;
