@@ -33,14 +33,14 @@
 #define CONCAT_STRINGS( strings )            ((std::stringstream&)(std::stringstream() << strings)).str()
 
 
-#define IMAGE_CHECK( image, path )                                                                            \
-    {                                                                                                         \
+#define IMAGE_CHECK( image, path )                                                                              \
+    {                                                                                                           \
         const std::string sourcePath = CONCAT_STRINGS( "refimg/" << path << ".png" );                           \
-        const std::string testPath = CONCAT_STRINGS( "outimg/" << path << ".png" );                            \
-        image.save( testPath );                                                                               \
-        const bool compare = imgdraw2d::ImageComparator::compare(  image, sourcePath,                         \
-                                                        CONCAT_STRINGS( "outimg/" << path << ".diff.png" ) );  \
-        BOOST_CHECK_MESSAGE( compare, CONCAT_STRINGS( testPath <<  " differs from " << sourcePath )  );       \
+        const std::string testPath   = CONCAT_STRINGS( "outimg/" << path << ".png" );                           \
+        image.save( testPath );                                                                                 \
+        const bool compare = imgdraw2d::ImageComparator::compare(  image, sourcePath,                           \
+                                                        CONCAT_STRINGS( "outimg/" << path << ".xdiff.png" ) );  \
+        BOOST_CHECK_MESSAGE( compare, CONCAT_STRINGS( testPath <<  " differs from " << sourcePath )  );         \
     }
 
 

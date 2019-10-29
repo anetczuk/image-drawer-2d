@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
-        result->save("outimg/comparator/black.diff.png");
+        result->save("outimg/comparator/black.xdiff.png");
 
         const Image data("refimg/comparator/black.diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         BOOST_REQUIRE( result != nullptr );
         BOOST_REQUIRE_EQUAL( result->empty(), false );
 
-        result->save("outimg/comparator/white.diff.png");
+        result->save("outimg/comparator/white.xdiff.png");
 
         const Image data("refimg/comparator/white.diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_SUITE( ImageComparatorSuite )
         const ImagePtr result = ImageComparator::compare(imageA, imageB);
         BOOST_REQUIRE( result != nullptr );
 
-        result->save("outimg/comparator/diff_sizes.diff.png");
+        result->save("outimg/comparator/diff_sizes.xdiff.png");
 
         const Image data("refimg/comparator/diff_sizes.diff.png");
         BOOST_REQUIRE_EQUAL( data.empty(), false );
