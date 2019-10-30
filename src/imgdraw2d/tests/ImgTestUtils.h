@@ -44,11 +44,19 @@
     }
 
 
-#define IMAGE_CHECK_CASE( image, checkCase )                                                                  \
+#define IMAGE_CHECK_CASE( image, checkSuite )                                                                 \
     {                                                                                                         \
         const std::string testCaseName = boost::unit_test::framework::current_test_case().p_name;             \
-        const std::string imgDir = checkCase + std::string("/") + testCaseName;                               \
+        const std::string imgDir = checkSuite + std::string("/") + testCaseName;                              \
         IMAGE_CHECK( image, imgDir );                                                                         \
+    }
+
+#define IMAGES_COMPARE( imageA, imageB, checkSuite )                                                               \
+    {                                                                                                              \
+        const std::string testCaseName = boost::unit_test::framework::current_test_case().p_name;                  \
+        const std::string imgDiffPath = checkSuite + std::string("/") + testCaseName + std::string(".xdiff.png");  \
+        const bool compare = imgdraw2d::ImageComparator::compare(  imageA, imageB, imgDiffPath );                  \
+        BOOST_CHECK_MESSAGE( compare, "given images differ" );                                                     \
     }
 
 

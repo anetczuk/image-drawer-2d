@@ -175,19 +175,21 @@ namespace imgdraw2d {
                 const double innerRadius = std::max( radius - width / 2.0, 0.0);
                 const double outerRadius = radius + width / 2.0;
 
+                const PointD centerPoint{ center[0], center[1] };
+
                 RectD bbox;
                 {
-                    const PointD start = center + rotateSenseVector<PointD>( minAngle ) * radius;
+                    const PointD start = centerPoint + rotateSenseVector<PointD>( minAngle ) * radius;
                     bbox = RectD( start );
                 }
-                bbox.expand( center, innerRadius, outerRadius, minAngle );
-                bbox.expand( center, innerRadius, outerRadius, maxAngle );
+                bbox.expand( centerPoint, innerRadius, outerRadius, minAngle );
+                bbox.expand( centerPoint, innerRadius, outerRadius, maxAngle );
 
                 std::size_t i    = minAngle / M_PI_2 + 1;
                 std::size_t iMax = maxAngle / M_PI_2 + 1;
                 for(; i<iMax; ++i) {
                     const double angle = M_PI_2 * i;
-                    bbox.expand( center, innerRadius, outerRadius, angle );
+                    bbox.expand( centerPoint, innerRadius, outerRadius, angle );
                 }
 
                 extendImage( bbox );
@@ -218,10 +220,12 @@ namespace imgdraw2d {
         }
 
         void fillRect(const PointT& center, const double width, const double height, const double angle, const Image::Pixel& color) {
-            const PointT topLeft     = center + rotateVector( PointT( -width/2.0,  height / 2.0 ), angle );
-            const PointT topRight    = center + rotateVector( PointT(  width/2.0,  height / 2.0 ), angle );
-            const PointT bottomRight = center + rotateVector( PointT(  width/2.0, -height / 2.0 ), angle );
-            const PointT bottomLeft  = center + rotateVector( PointT( -width/2.0, -height / 2.0 ), angle );
+            const PointD centerPoint{ center[0], center[1] };
+
+            const PointD topLeft     = centerPoint + rotateVector( PointD( -width/2.0,  height / 2.0 ), angle );
+            const PointD topRight    = centerPoint + rotateVector( PointD(  width/2.0,  height / 2.0 ), angle );
+            const PointD bottomRight = centerPoint + rotateVector( PointD(  width/2.0, -height / 2.0 ), angle );
+            const PointD bottomLeft  = centerPoint + rotateVector( PointD( -width/2.0, -height / 2.0 ), angle );
 
             RectD bbox = RectD::minmax(topLeft, topRight);
             bbox.expand(bottomRight);

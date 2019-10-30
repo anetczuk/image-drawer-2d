@@ -135,12 +135,19 @@ namespace imgdraw2d {
         return compare( *imgA, *imgB );
     }
 
+    bool ImageComparator::compare(const Image& imgA, const Image& imgB, const std::string& diffImage) {
+        ImagePtr diff = compare(imgA, imgB);
+        if (imgA != imgB) {
+            diff->save( diffImage );
+            return false;
+        }
+        return true;
+    }
+
     bool ImageComparator::compare(const Image& imgA, const std::string& imgB, const std::string& diffImage) {
         Image imageB;
         imageB.load( imgB );
-        ImagePtr diff = compare(imgA, imageB);
-        diff->save( diffImage );
-        return (imgA == imageB);
+        return compare( imgA, imageB, diffImage );
     }
 
 }

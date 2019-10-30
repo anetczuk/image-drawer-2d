@@ -15,8 +15,17 @@ include_directories( "../include" )
 
 set( EXT_LIBS ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} imgdraw2d )
 
-
 file(GLOB_RECURSE cpp_files *.cpp )
+
+
+find_package(Eigen3 3.3)
+
+if ( ${EIGEN3_FOUND} )
+    #old way: include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
+    list(APPEND EXT_LIBS Eigen3::Eigen )
+else()
+    list(REMOVE_ITEM cpp_files "${CMAKE_CURRENT_SOURCE_DIR}/Drawer2DEigen_test.cpp" )
+endif()
 
 
 add_executable( ${TARGET_NAME} ${cpp_files} )

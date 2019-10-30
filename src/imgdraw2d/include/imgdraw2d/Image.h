@@ -67,6 +67,9 @@ namespace imgdraw2d {
         bool operator==(const Image& image) const {
             return equals(image);
         }
+        bool operator!=(const Image& image) const {
+            return !equals(image);
+        }
 
         bool equals(const Image& image) const;
 
