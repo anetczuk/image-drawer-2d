@@ -47,7 +47,7 @@ namespace imgdraw2d {
 
         ImageBox(const double scale = 10.0, const double margin = 0.5);
 
-        ImageBox(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT, const double margin = 0.5);
+        ImageBox(const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT, const double margin = 0.5);
 
         void reset();
 
@@ -76,8 +76,10 @@ namespace imgdraw2d {
 
         PointI transformCoords(const double x, const double y) const;
 
+        void resize(const RectD& box);
+
         /// returns true if image instance changed, otherwise false
-        bool resize(const RectD& box);
+        bool expand(const RectD& box);
 
 
     protected:
@@ -100,11 +102,6 @@ namespace imgdraw2d {
 
 
         Drawer2DBase(const double scale = 10.0, const double margin = 0.5): base(scale, margin), painter( base.image() ) {
-        }
-
-        Drawer2DBase(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT, const double margin = 0.5):
-            base(size, scale, backgroundColor, margin), painter( base.image() )
-        {
         }
 
         const Image& image() const {
@@ -130,8 +127,13 @@ namespace imgdraw2d {
             base.setBackground( color );
         }
 
+        void resizeImage(const double left, const double bottom, const double right, const double top) {
+            const RectD bbox = RectD::minmax( left, bottom, right, top );
+            base.resize( bbox );
+        }
+
         void extendImage(const RectD& box) {
-            if (base.resize(box)) {
+            if (base.expand(box)) {
                 Image& img = base.image();
                 painter.setImage( img );
             }
@@ -144,12 +146,16 @@ namespace imgdraw2d {
     class Drawer2D: public Drawer2DBase {
     public:
 
-        Drawer2D(const double scale = 10.0, const double margin = 0.5): Drawer2DBase(scale, margin) {
+        bool autoResize;
+
+
+        Drawer2D(const double scale = 10.0, const double margin = 0.5): Drawer2DBase(scale, margin), autoResize(true) {
         }
 
-        Drawer2D(const RectD& size, const double scale = 10.0, const Image::Pixel& backgroundColor = Image::TRANSPARENT, const double margin = 0.5):
-            Drawer2DBase(size, scale, backgroundColor, margin)
-        {
+        using Drawer2DBase::resizeImage;
+
+        void resizeImage(const PointT& bottomLeft, const PointT& topRight) {
+            resizeImage( bottomLeft[0], bottomLeft[1], topRight[0], topRight[1] );
         }
 
         void drawImage(const PointT& topLeftPoint, const Image& source) {
@@ -158,7 +164,9 @@ namespace imgdraw2d {
         }
 
         void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const std::string& color) {
-            expand( fromPoint, toPoint, width / 2.0 );
+            if (autoResize) {
+                expand( fromPoint, toPoint, width / 2.0 );
+            }
 
             const PointI from = base.transformCoords( fromPoint[0], fromPoint[1] );
             const PointI to   = base.transformCoords( toPoint[0], toPoint[1] );
@@ -167,35 +175,37 @@ namespace imgdraw2d {
         }
 
         void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
-            if (std::abs(range) < 2*M_PI) {
-                double minAngle = 0.0;
-                double maxAngle = 0.0;
-                normalizeAngleRange(startAngle, range, minAngle, maxAngle);
+            if (autoResize) {
+                if (std::abs(range) < 2*M_PI) {
+                    double minAngle = 0.0;
+                    double maxAngle = 0.0;
+                    normalizeAngleRange(startAngle, range, minAngle, maxAngle);
 
-                const double innerRadius = std::max( radius - width / 2.0, 0.0);
-                const double outerRadius = radius + width / 2.0;
+                    const double innerRadius = std::max( radius - width / 2.0, 0.0);
+                    const double outerRadius = radius + width / 2.0;
 
-                const PointD centerPoint{ center[0], center[1] };
+                    const PointD centerPoint{ center[0], center[1] };
 
-                RectD bbox;
+                    RectD bbox;
+                    {
+                        const PointD start = centerPoint + rotateSenseVector<PointD>( minAngle ) * radius;
+                        bbox = RectD( start );
+                    }
+                    bbox.expand( centerPoint, innerRadius, outerRadius, minAngle );
+                    bbox.expand( centerPoint, innerRadius, outerRadius, maxAngle );
+
+                    std::size_t i    = minAngle / M_PI_2 + 1;
+                    std::size_t iMax = maxAngle / M_PI_2 + 1;
+                    for(; i<iMax; ++i) {
+                        const double angle = M_PI_2 * i;
+                        bbox.expand( centerPoint, innerRadius, outerRadius, angle );
+                    }
+
+                    extendImage( bbox );
+                } else
                 {
-                    const PointD start = centerPoint + rotateSenseVector<PointD>( minAngle ) * radius;
-                    bbox = RectD( start );
+                    expand( center, radius + width / 2.0 );
                 }
-                bbox.expand( centerPoint, innerRadius, outerRadius, minAngle );
-                bbox.expand( centerPoint, innerRadius, outerRadius, maxAngle );
-
-                std::size_t i    = minAngle / M_PI_2 + 1;
-                std::size_t iMax = maxAngle / M_PI_2 + 1;
-                for(; i<iMax; ++i) {
-                    const double angle = M_PI_2 * i;
-                    bbox.expand( centerPoint, innerRadius, outerRadius, angle );
-                }
-
-                extendImage( bbox );
-            } else
-            {
-                expand( center, radius + width / 2.0 );
             }
 
             const PointI point = base.transformCoords( center[0], center[1] );
@@ -206,7 +216,9 @@ namespace imgdraw2d {
         }
 
         void drawRing(const PointT& center, const double radius, const double width, const std::string& color) {
-            expand( center, radius + width / 2.0 );
+            if (autoResize) {
+                expand( center, radius + width / 2.0 );
+            }
 
             const PointI point = base.transformCoords( center[0], center[1] );
             const uint32_t rad = radius * base.scale;
@@ -227,10 +239,12 @@ namespace imgdraw2d {
             const PointD bottomRight = centerPoint + rotateVector( PointD(  width/2.0, -height / 2.0 ), angle );
             const PointD bottomLeft  = centerPoint + rotateVector( PointD( -width/2.0, -height / 2.0 ), angle );
 
-            RectD bbox = RectD::minmax(topLeft, topRight);
-            bbox.expand(bottomRight);
-            bbox.expand(bottomLeft);
-            extendImage( bbox );
+            if (autoResize) {
+                RectD bbox = RectD::minmax(topLeft, topRight);
+                bbox.expand(bottomRight);
+                bbox.expand(bottomLeft);
+                extendImage( bbox );
+            }
 
             const PointI a = base.transformCoords( topLeft[0],     topLeft[1] );
             const PointI b = base.transformCoords( topRight[0],    topRight[1] );
@@ -240,8 +254,10 @@ namespace imgdraw2d {
         }
 
         void fillRect(const PointT& bottomLeft, const double width, const double height, const Image::Pixel& color) {
-            const PointT topRight = bottomLeft + PointT(width, height);
-            expand( bottomLeft, topRight );
+            if (autoResize) {
+                const PointT topRight = bottomLeft + PointT(width, height);
+                expand( bottomLeft, topRight );
+            }
 
             const PointT topLeft = bottomLeft + PointT(0.0, height);
             const PointI point = base.transformCoords( topLeft[0], topLeft[1] );
@@ -251,7 +267,9 @@ namespace imgdraw2d {
         }
 
         void fillCircle(const PointT& center, const double radius, const std::string& color) {
-            expand(center, radius);
+            if (autoResize) {
+                expand(center, radius);
+            }
 
             const PointI point = base.transformCoords( center[0], center[1] );
             const uint32_t rad = radius * base.scale;

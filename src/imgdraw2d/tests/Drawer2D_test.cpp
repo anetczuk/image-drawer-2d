@@ -216,7 +216,16 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 //        std::cerr << "drawArc time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
 //    }
 
-    BOOST_AUTO_TEST_CASE( resize ) {
+    BOOST_AUTO_TEST_CASE( resizeImage ) {
+        Drawer2DD drawer;
+        drawer.setBackground( Image::RED );
+        drawer.resizeImage( PointD{ 2.0, 2.0}, PointD{ 12.0, 12.0} );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
+    BOOST_AUTO_TEST_CASE( expand ) {
         Drawer2DD drawer;
         drawer.drawLine( PointD{ 2.0, 2.0}, PointD{10.0,  2.0}, 0.2, "blue" );
         drawer.drawLine( PointD{10.0, 2.0}, PointD{10.0, 10.0}, 0.2, "red" );
@@ -225,7 +234,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         CHECK_IMAGE( image );
     }
 
-    BOOST_AUTO_TEST_CASE( resize_positive ) {
+    BOOST_AUTO_TEST_CASE( expand_positive ) {
         Drawer2DD drawer;
         drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0, "red" );
         drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "green" );
@@ -234,7 +243,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         CHECK_IMAGE( image );
     }
 
-    BOOST_AUTO_TEST_CASE( resize_negative ) {
+    BOOST_AUTO_TEST_CASE( expand_negative ) {
         Drawer2DD drawer;
         drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "green" );
         drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0, "red" );
@@ -259,6 +268,18 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.setBackground("white");
         drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
         drawer.fillCircle( PointD{5.0, 5.0}, 1.0, "green" );
+        Image& image = drawer.image();
+
+        CHECK_IMAGE( image );
+    }
+
+    BOOST_AUTO_TEST_CASE( autoResize_disabled ) {
+        Drawer2DD drawer(50.0);
+        drawer.resizeImage( 0.0, 0.0, 10.0, 10.0 );
+        drawer.setBackground("white");
+        drawer.autoResize = false;
+
+        drawer.fillCircle( PointD{10.0, 10.0}, 10.0, "red" );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );

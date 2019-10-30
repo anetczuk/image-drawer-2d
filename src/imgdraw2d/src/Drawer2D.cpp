@@ -36,9 +36,8 @@ namespace imgdraw2d {
         reset();
     }
 
-    ImageBox::ImageBox(const RectD& size, const double scale, const Image::Pixel& backgroundColor, const double margin): ImageBox(scale, margin) {
+    ImageBox::ImageBox(const double scale, const Image::Pixel& backgroundColor, const double margin): ImageBox(scale, margin) {
         setBackground( backgroundColor );
-        resize(size);
     }
 
     void ImageBox::reset() {
@@ -70,11 +69,15 @@ namespace imgdraw2d {
 //        return pixelPoint;
     }
 
-    bool ImageBox::resize(const RectD& box) {
+    void ImageBox::resize(const RectD& box) {
+        sizeBox = box;
+        resizeImage();
+        img->fill( backgroundColor );
+    }
+
+    bool ImageBox::expand(const RectD& box) {
         if (img->empty()) {
-            sizeBox = box;
-            resizeImage();
-            img->fill( backgroundColor );
+            resize( box );
             return false;
         }
 
