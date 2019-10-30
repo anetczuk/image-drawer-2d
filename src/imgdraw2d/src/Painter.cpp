@@ -78,7 +78,7 @@ namespace imgdraw2d {
             const PointI orthoVector = lineVector.ortho();
             const RayI orthoRay( orthoVector );
 
-            const uint32_t radius = width / 2;
+            const uint32_t radius = std::max( width / 2, (uint32_t) 1 );
             RectI box = RectI::minmax(fromPoint, toPoint);
             box.expand( radius );
 
@@ -98,7 +98,7 @@ namespace imgdraw2d {
                         continue;
                     }
                     const double dist = parallelLine.distance( currVector );
-                    if (dist > radius) {
+                    if (dist >= radius) {
                         continue;
                     }
                     tgtRow[ i ] = pixColor;
