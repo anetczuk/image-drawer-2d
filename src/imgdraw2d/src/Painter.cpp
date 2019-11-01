@@ -71,9 +71,7 @@ namespace imgdraw2d {
             img->pasteImage(point.x, point.y, source);
         }
 
-        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const std::string& color) override {
-            const Image::Pixel pixColor = Image::convertColor( color );
-
+        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const Image::Pixel& pixColor) override {
             const PointI lineVector = toPoint - fromPoint;
             const PointI orthoVector = lineVector.ortho();
             const RayI orthoRay( orthoVector );
@@ -81,6 +79,11 @@ namespace imgdraw2d {
             const uint32_t radius = std::max( width / 2, (uint32_t) 1 );
             RectI box = RectI::minmax(fromPoint, toPoint);
             box.expand( radius );
+
+            const int64_t w = img->width();
+            const int64_t h = img->height();
+            const PointI imgSize(w-1, h-1);
+            box.trim( imgSize );
 
             const Linear parallelLine = Linear::createFromParallel(lineVector);
 
@@ -157,13 +160,15 @@ namespace imgdraw2d {
         }
 
         void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {
-            assert( center.x >= 0 );
-            assert( center.y >= 0 );
-
             const Image::Pixel pixColor = Image::convertColor( color );
 
-            const RectI outerBox = getBBoxOnCircle( center, radius );
-            const RectI innerBox = getBBoxInCircle( center, radius );
+            const int64_t w = img->width();
+            const int64_t h = img->height();
+            const PointI imgSize(w-1, h-1);
+            RectI outerBox = getBBoxOnCircle( center, radius );
+            RectI innerBox = getBBoxInCircle( center, radius );
+            outerBox.trim( imgSize );
+            innerBox.trim( imgSize );
 
             /// fill edges
             CircleCondition circle( radius );
@@ -180,9 +185,6 @@ namespace imgdraw2d {
                 fillCircle( center, maxRadius, color );
                 return ;
             }
-
-            assert( center.x >= 0 );
-            assert( center.y >= 0 );
 
             const Image::Pixel pixColor = Image::convertColor( color );
 
@@ -439,7 +441,7 @@ namespace imgdraw2d {
             }
         }
 
-        void drawLine(const PointI& /*fromPoint*/, const PointI& /*toPoint*/, const uint32_t /*width*/, const std::string& /*color*/) override {
+        void drawLine(const PointI& /*fromPoint*/, const PointI& /*toPoint*/, const uint32_t /*width*/, const Image::Pixel& /*pixColor*/) override {
             //TODO: implement
             throw std::runtime_error("drawLine not implemented");
         }

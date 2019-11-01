@@ -33,6 +33,14 @@
 #define CONCAT_STRINGS( strings )            ((std::stringstream&)(std::stringstream() << strings)).str()
 
 
+#define IMAGE_SAVE( image, imgSuite )                                                                                           \
+    {                                                                                                                           \
+        const std::string testCaseName = boost::unit_test::framework::current_test_case().p_name;                               \
+        const std::string imgPath = std::string("outimg/") + imgSuite + std::string("/") + testCaseName+ std::string(".png");   \
+        image.save( imgPath );                                                                                                  \
+    }
+
+
 #define IMAGE_CHECK( image, path )                                                                              \
     {                                                                                                           \
         const std::string sourcePath = CONCAT_STRINGS( "refimg/" << path << ".png" );                           \

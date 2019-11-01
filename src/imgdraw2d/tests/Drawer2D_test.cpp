@@ -30,7 +30,8 @@
 using namespace imgdraw2d;
 
 
-#define CHECK_IMAGE( image )     IMAGE_CHECK_CASE( image, "drawer2d" )
+#define CHECK_IMAGE( image )    IMAGE_CHECK_CASE( image, "drawer2d" )
+#define SAVE_IMAGE( image )     IMAGE_SAVE( image, "drawer2d" )
 
 
 BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
@@ -216,6 +217,109 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 //        std::cerr << "drawArc time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
 //    }
 
+    BOOST_AUTO_TEST_CASE( drawClothoid_distance ) {
+        Drawer2DD drawer( 200.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( 2.0 );
+
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  5.0, 1.0, "black" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -5.0, 1.0, "red" );
+
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  5.0, 2.0, "green" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -5.0, 2.0, "blue" );
+
+        CHECK_IMAGE( drawer.image() );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawClothoid_flatness ) {
+        Drawer2DD drawer( 200.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( 1.0 );
+
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  4.0,  1.0, "black" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  4.0, -1.0, "red" );
+
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -4.0,  1.0, "green" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -4.0, -1.0, "blue" );
+
+        CHECK_IMAGE( drawer.image() );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawClothoid_offset ) {
+        Drawer2DD drawer( 200.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( -0.5, 2.5 );
+
+        drawer.fillCircle( PointD(0.0, 0.0), 0.05, "black" );
+
+        drawer.drawClothoid( PointD(1.0, 1.0), -M_PI_4, 0.03,  5.0, 1.0, "red" );
+        drawer.drawClothoid( PointD(1.0, 1.0), -M_PI_4, 0.03, -5.0, 1.0, "green" );
+
+        CHECK_IMAGE( drawer.image() );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawClothoidLR ) {
+        Drawer2DD drawer( 100.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( 2.0 );
+
+        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01,  2.0,  0.25, Image::BLACK );
+        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01,  2.0, -0.25, Image::RED );
+
+        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01, -2.0,  0.25, Image::GREEN );
+        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01, -2.0, -0.25, Image::BLUE );
+
+        CHECK_IMAGE( drawer.image() );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawClothoidLA ) {
+        Drawer2DD drawer( 300.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( 2.0 );
+
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, M_PI_2, Image::BLACK );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01, -2.0, M_PI_2, Image::RED );
+
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, -M_PI_2, Image::GREEN );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01, -2.0, -M_PI_2, Image::BLUE );
+
+        CHECK_IMAGE( drawer.image() );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawClothoidLA_angle ) {
+        Drawer2DD drawer( 300.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( -0.5, 1.5 );
+
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0,     M_PI_2, Image::BLACK );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 2 * M_PI_2, Image::RED );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 3 * M_PI_2, Image::GREEN );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 4 * M_PI_2, Image::BLUE );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 5 * M_PI_2, Image::ORANGE );
+
+        CHECK_IMAGE( drawer.image() );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawClothoidRA ) {
+        Drawer2DD drawer( 300.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( -1.5, 1.5 );
+
+        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01,  0.5,   2 * M_PI_2, Image::BLACK );
+        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01, -0.5,   2 * M_PI_2, Image::RED );
+        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01,  0.5,  -2 * M_PI_2, Image::GREEN );
+        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01, -0.5,  -2 * M_PI_2, Image::BLUE );
+
+        SAVE_IMAGE( drawer.image() );
+    }
+
     BOOST_AUTO_TEST_CASE( resizeImage ) {
         Drawer2DD drawer;
         drawer.setBackground( Image::RED );
@@ -258,6 +362,7 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.drawArc( PointD{5.0, 5.0}, 5.0, 1.0, 0.0, M_PI, "blue" );
         drawer.fillRect( PointD{3.0, 3.0}, 4.0, 4.0, "green" );
         drawer.fillCircle( PointD{5.0, 14.0}, 2.0, "orange" );
+
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );

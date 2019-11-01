@@ -36,6 +36,7 @@ namespace imgdraw2d {
     const Image::Pixel Image::RED         = Image::convertColor("red");
     const Image::Pixel Image::GREEN       = Image::convertColor("green");
     const Image::Pixel Image::BLUE        = Image::convertColor("blue");
+    const Image::Pixel Image::ORANGE      = Image::convertColor("orange");
 
 
     Image::Image(const std::string& path): img() {

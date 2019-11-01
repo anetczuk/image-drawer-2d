@@ -1,11 +1,11 @@
 # Image drawer 2D
 
-Library allowing to draw simple 2D shapes and store it as image. Main purpose of the library is to visualise and test data in unit tests while avoiding use of additional libraries.
+Library allowing to draw simple 2D shapes and store it as image. Main purpose of the library is to visualise and unit test data while avoiding use of additional heavy libraries.
 
 
 ## Features
 
-- drawing shapes: line, circle, rectangle
+- drawing shapes: line, circle, rectangle, clothoid(Euler spiral)
 - storing as PNG
 - comparing images
 - visualising difference between images
@@ -70,3 +70,7 @@ After that three new variables will be available:
 
 Library depends on following components:
 - libpng++
+
+
+## References
+- https://en.wikipedia.org/wiki/Euler_spiral

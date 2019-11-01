@@ -40,13 +40,16 @@ namespace imgdraw2d {
 
             virtual void drawImage(const PointI& point, const Image& source) = 0;
 
-            virtual void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const std::string& color) = 0;
+            void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const std::string& color) {
+                const Image::Pixel pixColor = Image::convertColor(color);
+                drawLine( fromPoint, toPoint, width, pixColor );
+            }
+
+            virtual void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const Image::Pixel& pixColor) = 0;
 
             virtual void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) = 0;
 
             virtual void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) = 0;
-
-            //TODO: draw clothoid
 
             void fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) {
                 fillRect( PointI{x, y}, width, height, color );
@@ -153,8 +156,8 @@ namespace imgdraw2d {
             worker->drawImage(point, source);
         }
 
-        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const std::string& color) override {
-            worker->drawLine(fromPoint, toPoint, width, color);
+        void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const Image::Pixel& pixColor) override {
+            worker->drawLine(fromPoint, toPoint, width, pixColor);
         }
 
         void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) override {

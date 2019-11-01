@@ -51,6 +51,11 @@ BOOST_AUTO_TEST_SUITE( GeometrySuite )
         }
     }
 
+    BOOST_AUTO_TEST_CASE( radToDeg_90 ) {
+        const double angle = radToDeg( M_PI_2 );
+        BOOST_CHECK_CLOSE( angle, 90.0, 1.0 );
+    }
+
     BOOST_AUTO_TEST_CASE( normalizeAngle_positive ) {
         const double angle = normalizeAngle( M_PI_2 * 15 );
         BOOST_CHECK_CLOSE( angle, 3 * M_PI_2, 1.0 );

@@ -127,8 +127,18 @@ namespace imgdraw2d {
             imgBox.setBackground( color );
         }
 
+        void resizeImage(const double radius) {
+            const RectD bbox( -radius, -radius, radius, radius );
+            imgBox.resize( bbox );
+        }
+
+        void resizeImage(const double minRadius, const double maxRadius) {
+            const RectD bbox( minRadius, minRadius, maxRadius, maxRadius );
+            imgBox.resize( bbox );
+        }
+
         void resizeImage(const double left, const double bottom, const double right, const double top) {
-            const RectD bbox = RectD::minmax( left, bottom, right, top );
+            const RectD bbox( left, bottom, right, top );
             imgBox.resize( bbox );
         }
 
@@ -164,6 +174,11 @@ namespace imgdraw2d {
         }
 
         void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const std::string& color) {
+            const Image::Pixel pixColor = Image::convertColor( color );
+            drawLine( fromPoint, toPoint, width, pixColor );
+        }
+
+        void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const Image::Pixel& color) {
             if (autoResize) {
                 expand( fromPoint, toPoint, width / 2.0 );
             }
@@ -172,58 +187,6 @@ namespace imgdraw2d {
             const PointI to   = imgBox.transformCoords( toPoint[0], toPoint[1] );
             const uint32_t w  = width * imgBox.scale;
             painter.drawLine( from, to, w, color );
-        }
-
-        void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
-            if (autoResize) {
-                if (std::abs(range) < 2*M_PI) {
-                    double minAngle = 0.0;
-                    double maxAngle = 0.0;
-                    normalizeAngleRange(startAngle, range, minAngle, maxAngle);
-
-                    const double innerRadius = std::max( radius - width / 2.0, 0.0);
-                    const double outerRadius = radius + width / 2.0;
-
-                    const PointD centerPoint{ center[0], center[1] };
-
-                    RectD bbox;
-                    {
-                        const PointD start = centerPoint + rotateSenseVector<PointD>( minAngle ) * radius;
-                        bbox = RectD( start );
-                    }
-                    bbox.expand( centerPoint, innerRadius, outerRadius, minAngle );
-                    bbox.expand( centerPoint, innerRadius, outerRadius, maxAngle );
-
-                    std::size_t i    = minAngle / M_PI_2 + 1;
-                    std::size_t iMax = maxAngle / M_PI_2 + 1;
-                    for(; i<iMax; ++i) {
-                        const double angle = M_PI_2 * i;
-                        bbox.expand( centerPoint, innerRadius, outerRadius, angle );
-                    }
-
-                    extendImage( bbox );
-                } else
-                {
-                    expand( center, radius + width / 2.0 );
-                }
-            }
-
-            const PointI point = imgBox.transformCoords( center[0], center[1] );
-            const uint32_t rad = radius * imgBox.scale;
-            const uint32_t w   = width * imgBox.scale;
-            const double angle = -normalizeAngle( startAngle );
-            painter.drawArc( point, rad, w, angle, -range, color );
-        }
-
-        void drawRing(const PointT& center, const double radius, const double width, const std::string& color) {
-            if (autoResize) {
-                expand( center, radius + width / 2.0 );
-            }
-
-            const PointI point = imgBox.transformCoords( center[0], center[1] );
-            const uint32_t rad = radius * imgBox.scale;
-            const uint32_t w   = width * imgBox.scale;
-            painter.drawRing( point, rad, w, color );
         }
 
         void fillRect(const PointT& bottomLeftPoint, const double width, const double height, const std::string& color) {
@@ -275,6 +238,142 @@ namespace imgdraw2d {
             const uint32_t rad = radius * imgBox.scale;
             painter.fillCircle( point, rad, color );
         }
+
+        void drawRing(const PointT& center, const double radius, const double width, const std::string& color) {
+            if (autoResize) {
+                expand( center, radius + width / 2.0 );
+            }
+
+            const PointI point = imgBox.transformCoords( center[0], center[1] );
+            const uint32_t rad = radius * imgBox.scale;
+            const uint32_t w   = width * imgBox.scale;
+            painter.drawRing( point, rad, w, color );
+        }
+
+        void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
+            if (autoResize) {
+                if (std::abs(range) < 2*M_PI) {
+                    double minAngle = 0.0;
+                    double maxAngle = 0.0;
+                    normalizeAngleRange(startAngle, range, minAngle, maxAngle);
+
+                    const double innerRadius = std::max( radius - width / 2.0, 0.0);
+                    const double outerRadius = radius + width / 2.0;
+
+                    const PointD centerPoint{ center[0], center[1] };
+
+                    RectD bbox;
+                    {
+                        const PointD start = centerPoint + rotateSenseVector<PointD>( minAngle ) * radius;
+                        bbox = RectD( start );
+                    }
+                    bbox.expand( centerPoint, innerRadius, outerRadius, minAngle );
+                    bbox.expand( centerPoint, innerRadius, outerRadius, maxAngle );
+
+                    std::size_t i    = minAngle / M_PI_2 + 1;
+                    std::size_t iMax = maxAngle / M_PI_2 + 1;
+                    for(; i<iMax; ++i) {
+                        const double angle = M_PI_2 * i;
+                        bbox.expand( centerPoint, innerRadius, outerRadius, angle );
+                    }
+
+                    extendImage( bbox );
+                } else
+                {
+                    expand( center, radius + width / 2.0 );
+                }
+            }
+
+            const PointI point = imgBox.transformCoords( center[0], center[1] );
+            const uint32_t rad = radius * imgBox.scale;
+            const uint32_t w   = width * imgBox.scale;
+            const double angle = -normalizeAngle( startAngle );
+            painter.drawArc( point, rad, w, angle, -range, color );
+        }
+
+
+        /// =========================================================================
+
+
+        /// L -- distance
+        /// R -- radius
+        /// A -- flatness or homothetic parameter
+        /// r*l = Ri * Li = A^2
+        /// A = sqrt(R*L)
+        ///
+        /// alpha -- direction angle
+        /// da = (Li)^2/(2*A^2) = Li / (2*Ri)
+        ///
+        /// flatness = 1 / a
+        void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLength, const double flatness, const std::string& color) {
+            const Image::Pixel pixColor = Image::convertColor( color );
+            drawClothoid(start, startHeading, width, curveLength, flatness, pixColor);
+        }
+
+        void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLength, const double flatness, const Image::Pixel& color) {
+            const PointD startPoint{ start[0], start[1] };
+
+            double ds = 0.01;
+            if (curveLength < 0.0) {
+                ds *= -1.0;
+            }
+
+            const double param = curveLength / flatness;
+            const std::size_t steps = std::abs(param / ds);
+            double dsXFactor = ds * flatness;
+            if (flatness < 0.0) dsXFactor *= -1.0;
+            const double dsYFactor = ds * flatness;
+
+            PointD prev = startPoint;
+            double s = 0.0;                         /// length of curve from it's initial position
+
+            PointD current;
+            for(std::size_t i=0; i<steps; ++i) {
+                /// Fresnel integral
+                const double dx = cos(s*s + startHeading) * dsXFactor;
+                const double dy = sin(s*s + startHeading) * dsYFactor;
+                s += ds;
+
+                current = PointD( prev.x + dx, prev.y + dy );
+                drawLine( prev, current, width, color );
+                prev = current;
+            }
+        }
+
+        void drawClothoidLR(const PointT& start, const double startHeading, const double width, const double curveLength, const double radius, const Image::Pixel& pixColor) {
+            /// 2*R*L = 1 / a^2
+            /// a^2 = 1 / ( 2*R*L )
+            /// a = 1 / sqrt( 2*R*L )
+            /// 1 / a = sqrt( 2*R*L )
+
+            double flatness = 0.0;                  /// 1 / a
+            if (curveLength < 0.0) {
+                if (radius < 0.0)
+                    flatness = -std::sqrt( 2.0 * -curveLength * -radius );
+                else
+                    flatness =  std::sqrt( 2.0 * -curveLength *  radius );
+            } else {
+                if (radius < 0.0)
+                    flatness = -std::sqrt( 2.0 *  curveLength * -radius );
+                else
+                    flatness =  std::sqrt( 2.0 *  curveLength *  radius );
+            }
+
+            drawClothoid( start, startHeading, width, curveLength, flatness, pixColor );
+        }
+
+        void drawClothoidLA(const PointT& start, const double startHeading, const double width, const double curveLength, const double angle, const Image::Pixel& pixColor) {
+            const double radius = 0.5 * curveLength / angle;
+            drawClothoidLR( start, startHeading, width, curveLength, radius, pixColor );
+        }
+
+        void drawClothoidRA(const PointT& start, const double startHeading, const double width, const double radius, const double angle, const Image::Pixel& pixColor) {
+            const double distance = radius * angle * 2;
+            drawClothoidLR( start, startHeading, width, distance, radius, pixColor );
+        }
+
+
+        /// =========================================================================
 
 
     protected:

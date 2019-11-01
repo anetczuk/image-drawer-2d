@@ -93,6 +93,24 @@ namespace imgdraw2d {
         Point<T> ortho() const {
             return Point<T>{y, -x};
         }
+        double norm() const {
+            return std::sqrt(x*x + y*y);
+        }
+
+        void setInRange(const Point<T>& pA, const Point<T>& pB) {
+            if (x < pA.x) {
+                x = pA.x;
+            }
+            if (y < pA.y) {
+                y = pA.y;
+            }
+            if (x > pB.x) {
+                x = pB.x;
+            }
+            if (y > pB.y) {
+                y = pB.y;
+            }
+        }
     };
 
     typedef Point<int64_t> PointI;
@@ -110,6 +128,10 @@ namespace imgdraw2d {
         return (double) value * vector.y / vector.x;
     }
     
+    inline double radToDeg(const double angle) {
+        return 180 * angle / M_PI;
+    }
+
     /// normailze to range [0, 2*PI)
     inline double normalizeAngle(const double angle) {
         int parts = angle / (2 * M_PI);
@@ -378,6 +400,9 @@ namespace imgdraw2d {
         Rect(): a(), b() {
         }
 
+        Rect(const T x1, const T y1, const T x2, const T y2 ): a(x1, y1), b(x2, y2) {
+        }
+
         Rect(const Point<T>& point): a(point), b(point) {
         }
 
@@ -435,6 +460,17 @@ namespace imgdraw2d {
             const Point<T> inner = center + sense * innerRadius;
             expand( outer );
             expand( inner );
+        }
+
+        void trim( const Point<T>& pB ) {
+            const Point<T> pA(0.0, 0.0);
+            a.setInRange( pA, pB );
+            b.setInRange( pA, pB );
+        }
+
+        void trim( const Point<T>& pA, const Point<T>& pB ) {
+            a.setInRange( pA, pB );
+            b.setInRange( pA, pB );
         }
 
         static Rect<T> minmax(const Point<T>& p1, const Point<T>& p2) {
