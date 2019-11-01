@@ -31,6 +31,8 @@
 using namespace imgdraw2d;
 
 
+#define CHECK_IMAGE( image )                 IMAGE_CHECK_CASE( image, "drawer2dEigen" )
+
 #define COMPARE_IMAGES( imageA, imageB )     IMAGES_COMPARE( imageA, imageB, "drawer2dEigen" )
 
 
@@ -62,6 +64,21 @@ BOOST_AUTO_TEST_SUITE( Drawer2DEigenSuite )
         Image& image2 = drawer2.image();
 
         COMPARE_IMAGES( image1, image2 );
+    }
+
+    BOOST_AUTO_TEST_CASE( drawClothoid_distance ) {
+        Drawer2DE drawer( 200.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( 2.0 );
+
+        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01,  5.0, 1.0, "black" );
+        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01, -5.0, 1.0, "red" );
+
+        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01,  5.0, 2.0, "green" );
+        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01, -5.0, 2.0, "blue" );
+
+        CHECK_IMAGE( drawer.image() );
     }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -311,8 +311,6 @@ namespace imgdraw2d {
         }
 
         void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLength, const double flatness, const Image::Pixel& color) {
-            const PointD startPoint{ start[0], start[1] };
-
             double ds = 0.01;
             if (curveLength < 0.0) {
                 ds *= -1.0;
@@ -324,17 +322,17 @@ namespace imgdraw2d {
             if (flatness < 0.0) dsXFactor *= -1.0;
             const double dsYFactor = ds * flatness;
 
-            PointD prev = startPoint;
+            PointT prev = start;
             double s = 0.0;                         /// length of curve from it's initial position
 
-            PointD current;
+            PointT current;
             for(std::size_t i=0; i<steps; ++i) {
                 /// Fresnel integral
                 const double dx = cos(s*s + startHeading) * dsXFactor;
                 const double dy = sin(s*s + startHeading) * dsYFactor;
                 s += ds;
 
-                current = PointD( prev.x + dx, prev.y + dy );
+                current = PointT( prev[0] + dx, prev[1] + dy );
                 drawLine( prev, current, width, color );
                 prev = current;
             }
