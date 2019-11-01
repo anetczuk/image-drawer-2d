@@ -311,25 +311,33 @@ namespace imgdraw2d {
         }
 
         void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLength, const double flatness, const Image::Pixel& color) {
+            drawClothoid( start, startHeading, width, 0.0, curveLength, flatness, color );
+        }
+
+        void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLengthStart, const double curveLengthEnd, const double flatness, const Image::Pixel& color) {
+            const double lengthDiff = curveLengthEnd - curveLengthStart;
             double ds = 0.01;
-            if (curveLength < 0.0) {
+            if (lengthDiff < 0.0) {
                 ds *= -1.0;
             }
 
-            const double param = curveLength / flatness;
-            const std::size_t steps = std::abs(param / ds);
+            const double flatnessStart = curveLengthStart / flatness;
+            const double flatnessLength = lengthDiff / flatness;
+            const std::size_t steps = std::abs(flatnessLength / ds);
             double dsXFactor = ds * flatness;
             if (flatness < 0.0) dsXFactor *= -1.0;
             const double dsYFactor = ds * flatness;
 
             PointT prev = start;
-            double s = 0.0;                         /// length of curve from it's initial position
+            double s = flatnessStart;                         /// position on curvature
+
+            double headingOffset = startHeading - s*s;
 
             PointT current;
             for(std::size_t i=0; i<steps; ++i) {
                 /// Fresnel integral
-                const double dx = cos(s*s + startHeading) * dsXFactor;
-                const double dy = sin(s*s + startHeading) * dsYFactor;
+                const double dx = cos(s*s + headingOffset) * dsXFactor;
+                const double dy = sin(s*s + headingOffset) * dsYFactor;
                 s += ds;
 
                 current = PointT( prev[0] + dx, prev[1] + dy );

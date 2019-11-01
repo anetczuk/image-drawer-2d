@@ -261,6 +261,22 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         CHECK_IMAGE( drawer.image() );
     }
 
+    BOOST_AUTO_TEST_CASE( drawClothoid_point ) {
+        Drawer2DD drawer( 200.0 );
+        drawer.setBackground( Image::WHITE );
+        drawer.autoResize = false;
+        drawer.resizeImage( -0.5, 3.0 );
+
+        drawer.fillCircle( PointD(0.0, 0.0), 0.03, "black" );
+
+        const PointD startPoint(1.0, 2.5);
+        drawer.fillCircle( startPoint, 0.03, "orange" );
+
+        drawer.drawClothoid( startPoint, M_PI_2, 0.01, -3.0, 4.0, 1.5, Image::RED );
+
+        CHECK_IMAGE( drawer.image() );
+    }
+
     BOOST_AUTO_TEST_CASE( drawClothoidLR ) {
         Drawer2DD drawer( 100.0 );
         drawer.setBackground( Image::WHITE );
