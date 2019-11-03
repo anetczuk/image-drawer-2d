@@ -133,7 +133,7 @@ namespace imgdraw2d {
         }
 
         void resizeImage(const double minRadius, const double maxRadius) {
-            const RectD bbox( minRadius, minRadius, maxRadius, maxRadius );
+            const RectD bbox = RectD::minmax( minRadius, minRadius, maxRadius, maxRadius );
             imgBox.resize( bbox );
         }
 
