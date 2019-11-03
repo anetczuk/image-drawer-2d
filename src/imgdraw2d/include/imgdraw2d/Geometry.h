@@ -127,7 +127,7 @@ namespace imgdraw2d {
         // m -- direction coefficient
         return (double) value * vector.y / vector.x;
     }
-    
+
     inline double radToDeg(const double angle) {
         return 180 * angle / M_PI;
     }
@@ -400,6 +400,9 @@ namespace imgdraw2d {
         Rect(): a(), b() {
         }
 
+        Rect(const T x1, const T y1): a(x1, y1), b(x1, y1) {
+        }
+
         Rect(const T x1, const T y1, const T x2, const T y2 ): a(x1, y1), b(x2, y2) {
         }
 
@@ -423,14 +426,18 @@ namespace imgdraw2d {
         }
 
         void expand(const Point<T>& point) {
-            if (a.x > point.x)
-                a.x = point.x;
-            if (a.y > point.y)
-                a.y = point.y;
-            if (b.x < point.x)
-                b.x = point.x;
-            if (b.y < point.y)
-                b.y = point.y;
+            expand( point.x, point.y );
+        }
+
+        void expand(const T pointX, const T pointY) {
+            if (a.x > pointX)
+                a.x = pointX;
+            if (a.y > pointY)
+                a.y = pointY;
+            if (b.x < pointX)
+                b.x = pointX;
+            if (b.y < pointY)
+                b.y = pointY;
         }
 
         bool expand(const Rect<T>& box) {

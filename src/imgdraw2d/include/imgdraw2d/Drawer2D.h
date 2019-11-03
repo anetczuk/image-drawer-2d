@@ -138,7 +138,11 @@ namespace imgdraw2d {
         }
 
         void resizeImage(const double left, const double bottom, const double right, const double top) {
-            const RectD bbox( left, bottom, right, top );
+            const RectD bbox = RectD::minmax( left, bottom, right, top );
+            imgBox.resize( bbox );
+        }
+
+        void resizeImage(const RectD& bbox) {
             imgBox.resize( bbox );
         }
 

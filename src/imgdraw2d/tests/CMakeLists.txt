@@ -18,7 +18,7 @@ set( EXT_LIBS ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} imgdraw2d )
 file(GLOB_RECURSE cpp_files *.cpp )
 
 
-find_package(Eigen3 3.3)
+find_package(Eigen3 3.3 QUIET)
 
 if ( ${EIGEN3_FOUND} )
     #old way: include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
