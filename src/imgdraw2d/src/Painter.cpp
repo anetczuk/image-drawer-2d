@@ -159,9 +159,7 @@ namespace imgdraw2d {
             return RectI( PointI(startW, startH), PointI(endW, endH) );
         }
 
-        void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {
-            const Image::Pixel pixColor = Image::convertColor( color );
-
+        void fillCircle(const PointI& center, const uint32_t radius, const Image::Pixel& pixColor) override {
             const int64_t w = img->width();
             const int64_t h = img->height();
             const PointI imgSize(w-1, h-1);
@@ -178,15 +176,13 @@ namespace imgdraw2d {
             img->fillRect( innerBox.a.x, innerBox.a.y, innerBox.b.x, innerBox.b.y, pixColor );
         }
 
-        void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) override {
+        void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const Image::Pixel& pixColor) override {
             const uint32_t maxRadius = radius + std::max( width / 2, (uint32_t) 1 );      /// draw at least 1px width
             const uint32_t minRadius = udiff( radius, width / 2 );
             if (minRadius == 0) {
-                fillCircle( center, maxRadius, color );
+                fillCircle( center, maxRadius, pixColor );
                 return ;
             }
-
-            const Image::Pixel pixColor = Image::convertColor( color );
 
             const RectI outerBox  = getBBoxOnCircle( center, maxRadius );
             const RectI middleBox = getBBoxInCircle( center, maxRadius );
@@ -198,9 +194,9 @@ namespace imgdraw2d {
             drawRectEdges(center, middleBox, innerBox, pixColor, circle );
         }
 
-        void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) override {
+        void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const Image::Pixel& pixColor) override {
             if ( std::abs(range) >= 2 * M_PI ) {
-                drawRing( center, radius, width, color );
+                drawRing( center, radius, width, pixColor );
                 return ;
             }
 
@@ -209,8 +205,6 @@ namespace imgdraw2d {
             normalizeAngleRange(startAngle, range, minAngle, maxAngle);
 
             const bool sum = ( std::abs(range) > M_PI );
-
-            const Image::Pixel pixColor = Image::convertColor( color );
 
             //const uint32_t maxRadius = radius + width / 2;
             const uint32_t maxRadius = radius + std::max( width / 2, (uint32_t) 1 );      /// draw at least 1px width
@@ -469,17 +463,17 @@ namespace imgdraw2d {
             throw std::runtime_error("fillRect not implemented");
         }
 
-        void drawArc(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const double /*startAngle*/, const double /*range*/, const std::string& /*color*/) override {
+        void drawArc(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const double /*startAngle*/, const double /*range*/, const Image::Pixel& /*pixColor*/) override {
             //TODO: implement
             throw std::runtime_error("drawArc not implemented");
         }
 
-        void drawRing(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const std::string& /*color*/) override {
+        void drawRing(const PointI& /*center*/, const uint32_t /*radius*/, const uint32_t /*width*/, const Image::Pixel& /*pixColor*/) override {
             //TODO: implement
             throw std::runtime_error("drawRing not implemented");
         }
 
-        void fillCircle(const PointI& /*center*/, const uint32_t /*radius*/, const std::string& /*color*/) override {
+        void fillCircle(const PointI& /*center*/, const uint32_t /*radius*/, const Image::Pixel& /*pixColor*/) override {
             //TODO: implement
             throw std::runtime_error("fillCircle not implemented");
         }

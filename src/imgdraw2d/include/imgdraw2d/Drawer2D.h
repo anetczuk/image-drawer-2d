@@ -160,10 +160,22 @@ namespace imgdraw2d {
     class Drawer2D: public Drawer2DBase {
     public:
 
+        Image::Pixel drawColor;
         bool autoResize;
 
 
-        Drawer2D(const double scale = 10.0, const double margin = 0.5): Drawer2DBase(scale, margin), autoResize(true) {
+        Drawer2D(const double scale = 10.0, const double margin = 0.5):
+            Drawer2DBase(scale, margin),
+            drawColor( Image::BLACK ), autoResize(true)
+        {
+        }
+
+        void setDrawColor(const Image::Pixel& color) {
+            drawColor = color;
+        }
+
+        void setDrawColor(const std::string& color) {
+            drawColor = Image::convertColor(color);
         }
 
         using Drawer2DBase::resizeImage;
@@ -177,12 +189,7 @@ namespace imgdraw2d {
             painter.drawImage( from, source );
         }
 
-        void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const std::string& color) {
-            const Image::Pixel pixColor = Image::convertColor( color );
-            drawLine( fromPoint, toPoint, width, pixColor );
-        }
-
-        void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width, const Image::Pixel& color) {
+        void drawLine(const PointT& fromPoint, const PointT& toPoint, const double width) {
             if (autoResize) {
                 expand( fromPoint, toPoint, width / 2.0 );
             }
@@ -190,15 +197,10 @@ namespace imgdraw2d {
             const PointI from = imgBox.transformCoords( fromPoint[0], fromPoint[1] );
             const PointI to   = imgBox.transformCoords( toPoint[0], toPoint[1] );
             const uint32_t w  = width * imgBox.scale;
-            painter.drawLine( from, to, w, color );
+            painter.drawLine( from, to, w, drawColor );
         }
 
-        void fillRect(const PointT& bottomLeftPoint, const double width, const double height, const std::string& color) {
-            const Image::Pixel pixColor = Image::convertColor( color );
-            fillRect(bottomLeftPoint, width, height, pixColor);
-        }
-
-        void fillRect(const PointT& center, const double width, const double height, const double angle, const Image::Pixel& color) {
+        void fillRect(const PointT& center, const double width, const double height, const double angle) {
             const PointD centerPoint{ center[0], center[1] };
 
             const PointD topLeft     = centerPoint + rotateVector( PointD( -width/2.0,  height / 2.0 ), angle );
@@ -217,10 +219,10 @@ namespace imgdraw2d {
             const PointI b = imgBox.transformCoords( topRight[0],    topRight[1] );
             const PointI c = imgBox.transformCoords( bottomRight[0], bottomRight[1] );
             const PointI d = imgBox.transformCoords( bottomLeft[0],  bottomLeft[1] );
-            painter.fillRect( a, b, c, d, color );
+            painter.fillRect( a, b, c, d, drawColor );
         }
 
-        void fillRect(const PointT& bottomLeft, const double width, const double height, const Image::Pixel& color) {
+        void fillRect(const PointT& bottomLeft, const double width, const double height) {
             if (autoResize) {
                 const PointT topRight = bottomLeft + PointT(width, height);
                 expand( bottomLeft, topRight );
@@ -230,20 +232,20 @@ namespace imgdraw2d {
             const PointI point = imgBox.transformCoords( topLeft[0], topLeft[1] );
             const uint32_t w = width * imgBox.scale;
             const uint32_t h = height * imgBox.scale;
-            painter.fillRect( point, w, h, color );
+            painter.fillRect( point, w, h, drawColor );
         }
 
-        void fillCircle(const PointT& center, const double radius, const std::string& color) {
+        void fillCircle(const PointT& center, const double radius) {
             if (autoResize) {
                 expand(center, radius);
             }
 
             const PointI point = imgBox.transformCoords( center[0], center[1] );
             const uint32_t rad = radius * imgBox.scale;
-            painter.fillCircle( point, rad, color );
+            painter.fillCircle( point, rad, drawColor );
         }
 
-        void drawRing(const PointT& center, const double radius, const double width, const std::string& color) {
+        void drawRing(const PointT& center, const double radius, const double width) {
             if (autoResize) {
                 expand( center, radius + width / 2.0 );
             }
@@ -251,37 +253,13 @@ namespace imgdraw2d {
             const PointI point = imgBox.transformCoords( center[0], center[1] );
             const uint32_t rad = radius * imgBox.scale;
             const uint32_t w   = width * imgBox.scale;
-            painter.drawRing( point, rad, w, color );
+            painter.drawRing( point, rad, w, drawColor );
         }
 
-        void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range, const std::string& color) {
+        void drawArc(const PointT& center, const double radius, const double width, const double startAngle, const double range) {
             if (autoResize) {
                 if (std::abs(range) < 2*M_PI) {
-                    double minAngle = 0.0;
-                    double maxAngle = 0.0;
-                    normalizeAngleRange(startAngle, range, minAngle, maxAngle);
-
-                    const double innerRadius = std::max( radius - width / 2.0, 0.0);
-                    const double outerRadius = radius + width / 2.0;
-
-                    const PointD centerPoint{ center[0], center[1] };
-
-                    RectD bbox;
-                    {
-                        const PointD start = centerPoint + rotateSenseVector<PointD>( minAngle ) * radius;
-                        bbox = RectD( start );
-                    }
-                    bbox.expand( centerPoint, innerRadius, outerRadius, minAngle );
-                    bbox.expand( centerPoint, innerRadius, outerRadius, maxAngle );
-
-                    std::size_t i    = minAngle / M_PI_2 + 1;
-                    std::size_t iMax = maxAngle / M_PI_2 + 1;
-                    for(; i<iMax; ++i) {
-                        const double angle = M_PI_2 * i;
-                        bbox.expand( centerPoint, innerRadius, outerRadius, angle );
-                    }
-
-                    extendImage( bbox );
+                    expand( center, radius, width, startAngle, range );
                 } else
                 {
                     expand( center, radius + width / 2.0 );
@@ -292,7 +270,7 @@ namespace imgdraw2d {
             const uint32_t rad = radius * imgBox.scale;
             const uint32_t w   = width * imgBox.scale;
             const double angle = -normalizeAngle( startAngle );
-            painter.drawArc( point, rad, w, angle, -range, color );
+            painter.drawArc( point, rad, w, angle, -range, drawColor );
         }
 
 
@@ -309,16 +287,11 @@ namespace imgdraw2d {
         /// da = (Li)^2/(2*A^2) = Li / (2*Ri)
         ///
         /// flatness = 1 / a
-        void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLength, const double flatness, const std::string& color) {
-            const Image::Pixel pixColor = Image::convertColor( color );
-            drawClothoid(start, startHeading, width, curveLength, flatness, pixColor);
+        void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLength, const double flatness) {
+            drawClothoid( start, startHeading, width, 0.0, curveLength, flatness );
         }
 
-        void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLength, const double flatness, const Image::Pixel& color) {
-            drawClothoid( start, startHeading, width, 0.0, curveLength, flatness, color );
-        }
-
-        void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLengthStart, const double curveLengthEnd, const double flatness, const Image::Pixel& color) {
+        void drawClothoid(const PointT& start, const double startHeading, const double width, const double curveLengthStart, const double curveLengthEnd, const double flatness) {
             const double lengthDiff = curveLengthEnd - curveLengthStart;
             double ds = 0.01;
             if (lengthDiff < 0.0) {
@@ -345,12 +318,12 @@ namespace imgdraw2d {
                 s += ds;
 
                 current = PointT( prev[0] + dx, prev[1] + dy );
-                drawLine( prev, current, width, color );
+                drawLine( prev, current, width );
                 prev = current;
             }
         }
 
-        void drawClothoidLR(const PointT& start, const double startHeading, const double width, const double curveLength, const double radius, const Image::Pixel& pixColor) {
+        void drawClothoidLR(const PointT& start, const double startHeading, const double width, const double curveLength, const double radius) {
             /// 2*R*L = 1 / a^2
             /// a^2 = 1 / ( 2*R*L )
             /// a = 1 / sqrt( 2*R*L )
@@ -369,17 +342,17 @@ namespace imgdraw2d {
                     flatness =  std::sqrt( 2.0 *  curveLength *  radius );
             }
 
-            drawClothoid( start, startHeading, width, curveLength, flatness, pixColor );
+            drawClothoid( start, startHeading, width, curveLength, flatness );
         }
 
-        void drawClothoidLA(const PointT& start, const double startHeading, const double width, const double curveLength, const double angle, const Image::Pixel& pixColor) {
+        void drawClothoidLA(const PointT& start, const double startHeading, const double width, const double curveLength, const double angle) {
             const double radius = 0.5 * curveLength / angle;
-            drawClothoidLR( start, startHeading, width, curveLength, radius, pixColor );
+            drawClothoidLR( start, startHeading, width, curveLength, radius );
         }
 
-        void drawClothoidRA(const PointT& start, const double startHeading, const double width, const double radius, const double angle, const Image::Pixel& pixColor) {
+        void drawClothoidRA(const PointT& start, const double startHeading, const double width, const double radius, const double angle) {
             const double distance = radius * angle * 2;
-            drawClothoidLR( start, startHeading, width, distance, radius, pixColor );
+            drawClothoidLR( start, startHeading, width, distance, radius );
         }
 
 
@@ -393,6 +366,34 @@ namespace imgdraw2d {
             RectD box( centerPoint );
             box.expand(radius);
             extendImage(box);
+        }
+
+        void expand(const PointT& center, const double radius, const double width, const double startAngle, const double range) {
+            double minAngle = 0.0;
+            double maxAngle = 0.0;
+            normalizeAngleRange(startAngle, range, minAngle, maxAngle);
+
+            const double innerRadius = std::max( radius - width / 2.0, 0.0);
+            const double outerRadius = radius + width / 2.0;
+
+            const PointD centerPoint{ center[0], center[1] };
+
+            RectD bbox;
+            {
+                const PointD start = centerPoint + rotateSenseVector<PointD>( minAngle ) * radius;
+                bbox = RectD( start );
+            }
+            bbox.expand( centerPoint, innerRadius, outerRadius, minAngle );
+            bbox.expand( centerPoint, innerRadius, outerRadius, maxAngle );
+
+            std::size_t i    = minAngle / M_PI_2 + 1;
+            std::size_t iMax = maxAngle / M_PI_2 + 1;
+            for(; i<iMax; ++i) {
+                const double angle = M_PI_2 * i;
+                bbox.expand( centerPoint, innerRadius, outerRadius, angle );
+            }
+
+            extendImage( bbox );
         }
 
         void expand(const PointT& bottomLeft, const PointT& topRight) {

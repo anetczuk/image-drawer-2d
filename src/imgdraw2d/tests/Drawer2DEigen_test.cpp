@@ -44,11 +44,13 @@ BOOST_AUTO_TEST_SUITE( Drawer2DEigenSuite )
 
     BOOST_AUTO_TEST_CASE( fillRect ) {
         Drawer2DD drawer1( 10.0, 1.0 );
-        drawer1.fillRect( PointD{10.0, 10.0}, 1.0, 1.0, 0.0, Image::RED );
+        drawer1.setDrawColor( Image::RED );
+        drawer1.fillRect( PointD{10.0, 10.0}, 1.0, 1.0, 0.0 );
         Image& image1 = drawer1.image();
 
         Drawer2DE drawer2( 10.0, 1.0 );
-        drawer2.fillRect( Vec2{10.0, 10.0}, 1.0, 1.0, 0.0, Image::RED );
+        drawer2.setDrawColor( Image::RED );
+        drawer2.fillRect( Vec2{10.0, 10.0}, 1.0, 1.0, 0.0 );
         Image& image2 = drawer2.image();
 
         COMPARE_IMAGES( image1, image2 );
@@ -56,11 +58,13 @@ BOOST_AUTO_TEST_SUITE( Drawer2DEigenSuite )
 
     BOOST_AUTO_TEST_CASE( drawArc_90 ) {
         Drawer2DD drawer1( 10.0, 1.0 );
-        drawer1.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, M_PI_2, "blue" );
+        drawer1.setDrawColor( "blue" );
+        drawer1.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, M_PI_2 );
         Image& image1 = drawer1.image();
 
         Drawer2DE drawer2( 10.0, 1.0 );
-        drawer2.drawArc( Vec2{10.0, 10.0}, 5.0, 1.0, 0.0, M_PI_2, "blue" );
+        drawer2.setDrawColor( "blue" );
+        drawer2.drawArc( Vec2{10.0, 10.0}, 5.0, 1.0, 0.0, M_PI_2 );
         Image& image2 = drawer2.image();
 
         COMPARE_IMAGES( image1, image2 );
@@ -72,11 +76,15 @@ BOOST_AUTO_TEST_SUITE( Drawer2DEigenSuite )
         drawer.autoResize = false;
         drawer.resizeImage( 2.0 );
 
-        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01,  5.0, 1.0, "black" );
-        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01, -5.0, 1.0, "red" );
+        drawer.setDrawColor( "black" );
+        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01,  5.0, 1.0 );
+        drawer.setDrawColor( "red" );
+        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01, -5.0, 1.0 );
 
-        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01,  5.0, 2.0, "green" );
-        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01, -5.0, 2.0, "blue" );
+        drawer.setDrawColor( "green" );
+        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01,  5.0, 2.0 );
+        drawer.setDrawColor( "blue" );
+        drawer.drawClothoid( Vec2(0.0, 0.0), 0.0, 0.01, -5.0, 2.0 );
 
         CHECK_IMAGE( drawer.image() );
     }

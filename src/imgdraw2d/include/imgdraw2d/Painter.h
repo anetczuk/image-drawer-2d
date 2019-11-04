@@ -47,9 +47,19 @@ namespace imgdraw2d {
 
             virtual void drawLine(const PointI& fromPoint, const PointI& toPoint, const uint32_t width, const Image::Pixel& pixColor) = 0;
 
-            virtual void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) = 0;
+            void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) {
+                const Image::Pixel pixColor = Image::convertColor(color);
+                drawArc( center, radius, width, startAngle, range, pixColor );
+            }
 
-            virtual void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) = 0;
+            virtual void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const Image::Pixel& pixColor) = 0;
+
+            void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) {
+                const Image::Pixel pixColor = Image::convertColor(color);
+                drawRing( center, radius, width, pixColor );
+            }
+
+            virtual void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const Image::Pixel& pixColor) = 0;
 
             void fillRect(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height, const std::string& color) {
                 fillRect( PointI{x, y}, width, height, color );
@@ -64,7 +74,12 @@ namespace imgdraw2d {
 
             virtual void fillRect(const PointI& topLeft, const PointI& topRight, const PointI& bottomRight, const PointI& bottomLeft, const Image::Pixel& pixColor) = 0;
 
-            virtual void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) = 0;
+            void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) {
+                const Image::Pixel pixColor = Image::convertColor(color);
+                fillCircle( center, radius, pixColor );
+            }
+
+            virtual void fillCircle(const PointI& center, const uint32_t radius, const Image::Pixel& pixColor) = 0;
 
         };
 
@@ -100,6 +115,10 @@ namespace imgdraw2d {
 
             void drawLine(const uint32_t fromX, const uint32_t fromY, const uint32_t toX, const uint32_t toY, const uint32_t width, const std::string& color) {
                 drawLine( PointI{fromX, fromY}, PointI{toX, toY}, width, color );
+            }
+
+            void fillCircle(const uint32_t x, const uint32_t y, const uint32_t radius, const Image::Pixel& pixColor) {
+                fillCircle( PointI{x, y}, radius, pixColor );
             }
 
             void fillCircle(const uint32_t x, const uint32_t y, const uint32_t radius, const std::string& color) {
@@ -151,6 +170,10 @@ namespace imgdraw2d {
 
         using painter::ModeWorker::fillCircle;
 
+        using painter::ModeWorker::drawRing;
+
+        using painter::ModeWorker::drawArc;
+
 
         void drawImage(const PointI& point, const Image& source) override {
             worker->drawImage(point, source);
@@ -160,12 +183,12 @@ namespace imgdraw2d {
             worker->drawLine(fromPoint, toPoint, width, pixColor);
         }
 
-        void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const std::string& color) override {
-            worker->drawArc(center, radius, width, startAngle, range, color);
+        void drawArc(const PointI& center, const uint32_t radius, const uint32_t width, const double startAngle, const double range, const Image::Pixel& pixColor) override {
+            worker->drawArc(center, radius, width, startAngle, range, pixColor);
         }
 
-        void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const std::string& color) override {
-            worker->drawRing(center, radius, width, color);
+        void drawRing(const PointI& center, const uint32_t radius, const uint32_t width, const Image::Pixel& pixColor) override {
+            worker->drawRing(center, radius, width, pixColor);
         }
 
         void fillRect(const PointI& point, const uint32_t width, const uint32_t height, const Image::Pixel& pixColor) override {
@@ -176,8 +199,8 @@ namespace imgdraw2d {
             worker->fillRect(topLeft, topRight, bottomRight, bottomLeft, pixColor);
         }
 
-        void fillCircle(const PointI& center, const uint32_t radius, const std::string& color) override {
-            worker->fillCircle(center, radius, color);
+        void fillCircle(const PointI& center, const uint32_t radius, const Image::Pixel& pixColor) override {
+            worker->fillCircle(center, radius, pixColor);
         }
 
     };

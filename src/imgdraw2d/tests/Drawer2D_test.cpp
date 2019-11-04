@@ -38,7 +38,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawLine_1 ) {
         Drawer2DD drawer;
-        drawer.drawLine( PointD{1.0, 1.0}, PointD{10.0, 6.0}, 0.2, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawLine( PointD{1.0, 1.0}, PointD{10.0, 6.0}, 0.2 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -46,7 +47,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawLine_negative_short ) {
         Drawer2DD drawer(200.0);
-        drawer.drawLine( PointD{ -9.70711, -9.70711}, PointD{ -9.0, -9.0}, 0.2, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawLine( PointD{ -9.70711, -9.70711}, PointD{ -9.0, -9.0}, 0.2 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -54,7 +56,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawLine_thin ) {
         Drawer2DD drawer(100.0);
-        drawer.drawLine( PointD{ 0.0, 0.0}, PointD{ 1.0, 1.0}, 0.001, "black" );
+        drawer.setDrawColor( "black" );
+        drawer.drawLine( PointD{ 0.0, 0.0}, PointD{ 1.0, 1.0}, 0.001 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -77,7 +80,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( fillRect01 ) {
         Drawer2DD drawer;
-        drawer.fillRect( PointD{10.0, 10.0}, 2.0, 5.0, 0.0, Image::GREEN );
+        drawer.setDrawColor( Image::GREEN );
+        drawer.fillRect( PointD{10.0, 10.0}, 2.0, 5.0, 0.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -85,7 +89,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( fillRect02 ) {
         Drawer2DD drawer;
-        drawer.fillRect( PointD{10.0, 10.0}, 2.0, 5.0, M_PI_2 + M_PI_4 / 2.0, Image::GREEN );
+        drawer.setDrawColor( Image::GREEN );
+        drawer.fillRect( PointD{10.0, 10.0}, 2.0, 5.0, M_PI_2 + M_PI_4 / 2.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -93,7 +98,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( fillRect ) {
         Drawer2DD drawer(100.0);
-        drawer.fillRect( PointD{1.0, 1.0}, 5.0, 5.0, "red" );
+        drawer.setDrawColor( "red" );
+        drawer.fillRect( PointD{1.0, 1.0}, 5.0, 5.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -101,7 +107,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( fillCircle_positive ) {
         Drawer2DD drawer(100.0);
-        drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
+        drawer.setDrawColor( "red" );
+        drawer.fillCircle( PointD{1.0, 1.0}, 1.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -109,7 +116,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( fillCircle_negative ) {
         Drawer2DD drawer(100.0);
-        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "red" );
+        drawer.setDrawColor( "red" );
+        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -127,7 +135,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawRing_circle ) {
         Drawer2DD drawer(20.0);
-        drawer.drawRing( PointD{10.0, 10.0}, 4.0, 10.0, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawRing( PointD{10.0, 10.0}, 4.0, 10.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -135,7 +144,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawRing_thin ) {
         Drawer2DD drawer(20.0);
-        drawer.drawRing( PointD{0.0, 0.0}, 1.0, 0.001, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawRing( PointD{0.0, 0.0}, 1.0, 0.001 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -153,7 +163,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawArc_full ) {
         Drawer2DD drawer;
-        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, 2 * M_PI, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, 2 * M_PI );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -161,7 +172,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawArc_90 ) {
         Drawer2DD drawer( 10.0, 1.0 );
-        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, M_PI_2, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 0.0, M_PI_2 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -169,7 +181,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawArc_1q ) {
         Drawer2DD drawer;
-        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI_4 / 2, M_PI_4, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI_4 / 2, M_PI_4 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -177,7 +190,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawArc_2q ) {
         Drawer2DD drawer;
-        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI_2 + M_PI_4 / 2, M_PI_4, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI_2 + M_PI_4 / 2, M_PI_4 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -185,7 +199,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawArc_3q ) {
         Drawer2DD drawer;
-        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI + M_PI_4 / 2, M_PI_4, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, M_PI + M_PI_4 / 2, M_PI_4 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -193,7 +208,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawArc_4q ) {
         Drawer2DD drawer;
-        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 3 * M_PI_2 + M_PI_4 / 2, M_PI_4, "blue" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawArc( PointD{10.0, 10.0}, 5.0, 1.0, 3 * M_PI_2 + M_PI_4 / 2, M_PI_4 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -201,7 +217,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( drawArc_thin ) {
         Drawer2DD drawer(100.0);
-        drawer.drawArc( PointD{0.0, 0.0}, 1.0, 0.001, M_PI_4 / 2, M_PI_4, "black" );
+        drawer.setDrawColor( "black" );
+        drawer.drawArc( PointD{0.0, 0.0}, 1.0, 0.001, M_PI_4 / 2, M_PI_4 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -223,11 +240,15 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.autoResize = false;
         drawer.resizeImage( 2.0 );
 
-        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  5.0, 1.0, "black" );
-        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -5.0, 1.0, "red" );
+        drawer.setDrawColor( "black" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  5.0, 1.0 );
+        drawer.setDrawColor( "red" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -5.0, 1.0 );
 
-        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  5.0, 2.0, "green" );
-        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -5.0, 2.0, "blue" );
+        drawer.setDrawColor( "green" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  5.0, 2.0 );
+        drawer.setDrawColor( "blue" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -5.0, 2.0 );
 
         CHECK_IMAGE( drawer.image() );
     }
@@ -238,11 +259,15 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.autoResize = false;
         drawer.resizeImage( 1.0 );
 
-        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  4.0,  1.0, "black" );
-        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  4.0, -1.0, "red" );
+        drawer.setDrawColor( "black" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  4.0,  1.0 );
+        drawer.setDrawColor( "red" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01,  4.0, -1.0 );
 
-        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -4.0,  1.0, "green" );
-        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -4.0, -1.0, "blue" );
+        drawer.setDrawColor( "green" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -4.0,  1.0 );
+        drawer.setDrawColor( "blue" );
+        drawer.drawClothoid( PointD(0.0, 0.0), 0.0, 0.01, -4.0, -1.0 );
 
         CHECK_IMAGE( drawer.image() );
     }
@@ -253,10 +278,13 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.autoResize = false;
         drawer.resizeImage( -0.5, 2.5 );
 
-        drawer.fillCircle( PointD(0.0, 0.0), 0.05, "black" );
+        drawer.setDrawColor( "black" );
+        drawer.fillCircle( PointD(0.0, 0.0), 0.05 );
 
-        drawer.drawClothoid( PointD(1.0, 1.0), -M_PI_4, 0.03,  5.0, 1.0, "red" );
-        drawer.drawClothoid( PointD(1.0, 1.0), -M_PI_4, 0.03, -5.0, 1.0, "green" );
+        drawer.setDrawColor( "red" );
+        drawer.drawClothoid( PointD(1.0, 1.0), -M_PI_4, 0.03,  5.0, 1.0 );
+        drawer.setDrawColor( "green" );
+        drawer.drawClothoid( PointD(1.0, 1.0), -M_PI_4, 0.03, -5.0, 1.0 );
 
         CHECK_IMAGE( drawer.image() );
     }
@@ -267,12 +295,15 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.autoResize = false;
         drawer.resizeImage( -0.5, 3.0 );
 
-        drawer.fillCircle( PointD(0.0, 0.0), 0.03, "black" );
+        drawer.setDrawColor( "black" );
+        drawer.fillCircle( PointD(0.0, 0.0), 0.03 );
 
+        drawer.setDrawColor( "orange" );
         const PointD startPoint(1.0, 2.5);
-        drawer.fillCircle( startPoint, 0.03, "orange" );
+        drawer.fillCircle( startPoint, 0.03 );
 
-        drawer.drawClothoid( startPoint, M_PI_2, 0.01, -3.0, 4.0, 1.5, Image::RED );
+        drawer.setDrawColor( Image::RED );
+        drawer.drawClothoid( startPoint, M_PI_2, 0.01, -3.0, 4.0, 1.5 );
 
         CHECK_IMAGE( drawer.image() );
     }
@@ -283,11 +314,15 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.autoResize = false;
         drawer.resizeImage( 2.0 );
 
-        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01,  2.0,  0.25, Image::BLACK );
-        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01,  2.0, -0.25, Image::RED );
+        drawer.setDrawColor( Image::BLACK );
+        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01,  2.0,  0.25 );
+        drawer.setDrawColor( Image::RED );
+        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01,  2.0, -0.25 );
 
-        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01, -2.0,  0.25, Image::GREEN );
-        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01, -2.0, -0.25, Image::BLUE );
+        drawer.setDrawColor( Image::GREEN );
+        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01, -2.0,  0.25 );
+        drawer.setDrawColor( Image::BLUE );
+        drawer.drawClothoidLR( PointD(0.0, 0.0), 0.0, 0.01, -2.0, -0.25 );
 
         CHECK_IMAGE( drawer.image() );
     }
@@ -298,11 +333,15 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.autoResize = false;
         drawer.resizeImage( 2.0 );
 
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, M_PI_2, Image::BLACK );
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01, -2.0, M_PI_2, Image::RED );
+        drawer.setDrawColor( Image::BLACK );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, M_PI_2 );
+        drawer.setDrawColor( Image::RED );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01, -2.0, M_PI_2 );
 
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, -M_PI_2, Image::GREEN );
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01, -2.0, -M_PI_2, Image::BLUE );
+        drawer.setDrawColor( Image::GREEN );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, -M_PI_2 );
+        drawer.setDrawColor( Image::BLUE );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01, -2.0, -M_PI_2 );
 
         CHECK_IMAGE( drawer.image() );
     }
@@ -313,11 +352,16 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.autoResize = false;
         drawer.resizeImage( -0.5, 1.5 );
 
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0,     M_PI_2, Image::BLACK );
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 2 * M_PI_2, Image::RED );
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 3 * M_PI_2, Image::GREEN );
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 4 * M_PI_2, Image::BLUE );
-        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 5 * M_PI_2, Image::ORANGE );
+        drawer.setDrawColor( Image::BLACK );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0,     M_PI_2 );
+        drawer.setDrawColor( Image::RED );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 2 * M_PI_2 );
+        drawer.setDrawColor( Image::GREEN );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 3 * M_PI_2 );
+        drawer.setDrawColor( Image::BLUE );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 4 * M_PI_2 );
+        drawer.setDrawColor( Image::ORANGE );
+        drawer.drawClothoidLA( PointD(0.0, 0.0), 0.0, 0.01,  2.0, 5 * M_PI_2 );
 
         CHECK_IMAGE( drawer.image() );
     }
@@ -328,10 +372,14 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.autoResize = false;
         drawer.resizeImage( -1.5, 1.5 );
 
-        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01,  0.5,   2 * M_PI_2, Image::BLACK );
-        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01, -0.5,   2 * M_PI_2, Image::RED );
-        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01,  0.5,  -2 * M_PI_2, Image::GREEN );
-        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01, -0.5,  -2 * M_PI_2, Image::BLUE );
+        drawer.setDrawColor( Image::BLACK );
+        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01,  0.5,   2 * M_PI_2 );
+        drawer.setDrawColor( Image::RED );
+        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01, -0.5,   2 * M_PI_2 );
+        drawer.setDrawColor( Image::GREEN );
+        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01,  0.5,  -2 * M_PI_2 );
+        drawer.setDrawColor( Image::BLUE );
+        drawer.drawClothoidRA( PointD(0.0, 0.0), 0.0, 0.01, -0.5,  -2 * M_PI_2 );
 
         SAVE_IMAGE( drawer.image() );
     }
@@ -347,8 +395,10 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( expand ) {
         Drawer2DD drawer;
-        drawer.drawLine( PointD{ 2.0, 2.0}, PointD{10.0,  2.0}, 0.2, "blue" );
-        drawer.drawLine( PointD{10.0, 2.0}, PointD{10.0, 10.0}, 0.2, "red" );
+        drawer.setDrawColor( "blue" );
+        drawer.drawLine( PointD{ 2.0, 2.0}, PointD{10.0,  2.0}, 0.2 );
+        drawer.setDrawColor( "red" );
+        drawer.drawLine( PointD{10.0, 2.0}, PointD{10.0, 10.0}, 0.2 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -356,8 +406,10 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( expand_positive ) {
         Drawer2DD drawer;
-        drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0, "red" );
-        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "green" );
+        drawer.setDrawColor( "red" );
+        drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0 );
+        drawer.setDrawColor( "green" );
+        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -365,8 +417,10 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( expand_negative ) {
         Drawer2DD drawer;
-        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0, "green" );
-        drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0, "red" );
+        drawer.setDrawColor( "green" );
+        drawer.fillCircle( PointD{-5.0, -5.0}, 1.0 );
+        drawer.setDrawColor( "red" );
+        drawer.fillCircle( PointD{ 5.0,  5.0}, 1.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -374,10 +428,14 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
 
     BOOST_AUTO_TEST_CASE( example ) {
         Drawer2DD drawer(20.0);
-        drawer.drawLine( PointD{0.0, 0.0}, PointD{10.0, 0.0}, 1.0, "red" );
-        drawer.drawArc( PointD{5.0, 5.0}, 5.0, 1.0, 0.0, M_PI, "blue" );
-        drawer.fillRect( PointD{3.0, 3.0}, 4.0, 4.0, "green" );
-        drawer.fillCircle( PointD{5.0, 14.0}, 2.0, "orange" );
+        drawer.setDrawColor( "red" );
+        drawer.drawLine( PointD{0.0, 0.0}, PointD{10.0, 0.0}, 1.0 );
+        drawer.setDrawColor( "blue" );
+        drawer.drawArc( PointD{5.0, 5.0}, 5.0, 1.0, 0.0, M_PI );
+        drawer.setDrawColor( "green" );
+        drawer.fillRect( PointD{3.0, 3.0}, 4.0, 4.0 );
+        drawer.setDrawColor( "orange" );
+        drawer.fillCircle( PointD{5.0, 14.0}, 2.0 );
 
         Image& image = drawer.image();
 
@@ -387,8 +445,10 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
     BOOST_AUTO_TEST_CASE( setBackground ) {
         Drawer2DD drawer(50.0);
         drawer.setBackground("white");
-        drawer.fillCircle( PointD{1.0, 1.0}, 1.0, "red" );
-        drawer.fillCircle( PointD{5.0, 5.0}, 1.0, "green" );
+        drawer.setDrawColor( "red" );
+        drawer.fillCircle( PointD{1.0, 1.0}, 1.0 );
+        drawer.setDrawColor( "green" );
+        drawer.fillCircle( PointD{5.0, 5.0}, 1.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
@@ -400,7 +460,8 @@ BOOST_AUTO_TEST_SUITE( Drawer2DSuite )
         drawer.setBackground("white");
         drawer.autoResize = false;
 
-        drawer.fillCircle( PointD{10.0, 10.0}, 10.0, "red" );
+        drawer.setDrawColor( "red" );
+        drawer.fillCircle( PointD{10.0, 10.0}, 10.0 );
         Image& image = drawer.image();
 
         CHECK_IMAGE( image );
