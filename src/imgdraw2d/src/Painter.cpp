@@ -88,7 +88,7 @@ namespace imgdraw2d {
             const Linear parallelLine = Linear::createFromParallel(lineVector);
 
             for( int64_t j=box.a.y; j<=box.b.y; ++j ) {
-                Image::RawImage::row_access tgtRow = img->row( j );
+                Image::row_access tgtRow = img->row( j );
                 for( int64_t i=box.a.x; i<=box.b.x; ++i ) {
                     const PointI currVector = PointI{i, j} - fromPoint;
                     const int64_t side1 = orthoRay.side( currVector );
@@ -126,7 +126,7 @@ namespace imgdraw2d {
             bbox.expand(bottomLeft);
 
             for( int64_t j = bbox.a.y; j<=bbox.b.y; ++j ) {
-                Image::RawImage::row_access tgtRow = img->row( j );
+                Image::row_access tgtRow = img->row( j );
                 for( int64_t i = bbox.a.x; i<=bbox.b.x; ++i ) {
                     if (line1.pointSide( i, j ) < 0) continue;
                     if (line2.pointSide( i, j ) < 0) continue;
@@ -310,7 +310,7 @@ namespace imgdraw2d {
             /// top
             for( int64_t j = outerBox.a.y; j<=innerBox.a.y; ++j ) {
                 const int64_t diffY = j - center.y;
-                Image::RawImage::row_access tgtRow = img->row( j );
+                Image::row_access tgtRow = img->row( j );
                 for( int64_t i = outerBox.a.x; i<=outerBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
                     if ( op(diffX, diffY) ) {
@@ -322,7 +322,7 @@ namespace imgdraw2d {
             /// left and right
             for( int64_t j = innerBox.a.y; j<=innerBox.b.y; ++j ) {
                 const int64_t diffY = j - center.y;
-                Image::RawImage::row_access tgtRow = img->row( j );
+                Image::row_access tgtRow = img->row( j );
 
                 /// left
                 for( int64_t i = outerBox.a.x; i<=innerBox.a.x; ++i ) {
@@ -344,7 +344,7 @@ namespace imgdraw2d {
             /// bottom
             for( int64_t j = innerBox.b.y; j<=outerBox.b.y; ++j ) {
                 const int64_t diffY = j - center.y;
-                Image::RawImage::row_access tgtRow = img->row( j );
+                Image::row_access tgtRow = img->row( j );
                 for( int64_t i = outerBox.a.x; i<=outerBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
                     if ( op(diffX, diffY) ) {
@@ -359,7 +359,7 @@ namespace imgdraw2d {
             /// top
             for( int64_t j = outerBox.a.y; j<=innerBox.a.y; ++j ) {
                 const int64_t diffY = j - center.y;
-                Image::RawImage::row_access tgtRow = img->row( j );
+                Image::row_access tgtRow = img->row( j );
                 for( int64_t i = innerBox.a.x; i<=innerBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
                     if ( op(diffX, diffY) ) {
@@ -371,7 +371,7 @@ namespace imgdraw2d {
             /// left and right
             for( int64_t j = innerBox.a.y; j<=innerBox.b.y; ++j ) {
                 const int64_t diffY = j - center.y;
-                Image::RawImage::row_access tgtRow = img->row( j );
+                Image::row_access tgtRow = img->row( j );
 
                 /// left
                 for( int64_t i = outerBox.a.x; i<=innerBox.a.x; ++i ) {
@@ -393,7 +393,7 @@ namespace imgdraw2d {
             /// bottom
             for( int64_t j = innerBox.b.y; j<=outerBox.b.y; ++j ) {
                 const int64_t diffY = j - center.y;
-                Image::RawImage::row_access tgtRow = img->row( j );
+                Image::row_access tgtRow = img->row( j );
                 for( int64_t i = innerBox.a.x; i<=innerBox.b.x; ++i ) {
                     const int64_t diffX = i - center.x;
                     if ( op(diffX, diffY) ) {
@@ -425,8 +425,8 @@ namespace imgdraw2d {
             const int64_t endW = std::min(w, x + source.width() );
             const int64_t endH = std::min(h, y + source.height() );
             for( int64_t j = y; j<endH; ++j ) {
-                Image::RawImage::row_const_access srcRow = source.row( j - y );
-                Image::RawImage::row_access tgtRow = img->row(j);
+                Image::row_const_access srcRow = source.row( j - y );
+                Image::row_access tgtRow = img->row(j);
                 for( int64_t i = x; i<endW; ++i ) {
                     const Image::Pixel& src = srcRow[ i - x ];
                     const Image::Pixel& orig = tgtRow[ i ];
@@ -450,7 +450,7 @@ namespace imgdraw2d {
             const int64_t endW = std::min(w, x + width );
             const int64_t endH = std::min(h, y + height );
             for( int64_t j = y; j<endH; ++j ) {
-                Image::RawImage::row_access tgtRow = img->row(j);
+                Image::row_access tgtRow = img->row(j);
                 for( int64_t i = x; i<endW; ++i ) {
                     const Image::Pixel& orig = tgtRow[ i ];
                     tgtRow[ i ] = diffPixels(orig, pixColor);

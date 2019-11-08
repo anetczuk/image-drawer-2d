@@ -100,7 +100,7 @@ namespace imgdraw2d {
         Image& threshold = *thresholdPtr;
         threshold.fillTransparent();
         for (uint32_t ho=0; ho<heightMax; ++ho) {
-            Image::RawImage::row_access tgtRow = thresholdPtr->row(ho);
+            Image::row_access tgtRow = thresholdPtr->row(ho);
             for (uint32_t wo=0; wo<widthMax; ++wo) {
                 //TODO: optimize -- replace isDifferent with direct access to pixbuf
                 if ( isDifferent(imgA, imgB, wo, ho) ) {

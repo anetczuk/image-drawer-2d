@@ -45,6 +45,14 @@ namespace imgdraw2d {
         typedef png::basic_rgba_pixel< PixByte > Pixel;
         typedef png::image< Pixel > RawImage;
 
+//        typedef RawImage::row_access row_access;
+//        typedef RawImage::row_const_access row_const_access;
+
+        /// compatibility with version 0.2.5 (Ubuntu 16)
+        typedef RawImage::pixbuf::row_type& row_access;
+        typedef RawImage::pixbuf::row_type const& row_const_access;
+
+
         static const Pixel TRANSPARENT;
         static const Pixel BLACK;
         static const Pixel WHITE;
@@ -80,11 +88,11 @@ namespace imgdraw2d {
 
         uint32_t height() const;
 
-        // RawImage::row_const_access is reference to "row" type
-        RawImage::row_const_access row(const std::size_t y) const;
+        // row_const_access is reference to "row" type
+        row_const_access row(const std::size_t y) const;
 
-        // RawImage::row_access is reference to "row" type
-        RawImage::row_access row(const std::size_t y);
+        // row_access is reference to "row" type
+        row_access row(const std::size_t y);
 
         const Pixel& pixel(const std::size_t x, const std::size_t y) const;
 

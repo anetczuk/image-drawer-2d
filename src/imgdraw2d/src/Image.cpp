@@ -69,18 +69,18 @@ namespace imgdraw2d {
         return img.get_height();
     }
 
-    Image::RawImage::row_const_access Image::row(const std::size_t y) const {
+    Image::row_const_access Image::row(const std::size_t y) const {
         const Image::RawImage::pixbuf& pixbuf = img.get_pixbuf();
         return pixbuf[ y ];
     }
 
-    Image::RawImage::row_access Image::row(const std::size_t y) {
+    Image::row_access Image::row(const std::size_t y) {
         Image::RawImage::pixbuf& pixbuf = img.get_pixbuf();
         return pixbuf[ y ];
     }
 
     const Image::Pixel& Image::pixel(const std::size_t x, const std::size_t y) const {
-        Image::RawImage::row_const_access arow = row(y);
+        Image::row_const_access arow = row(y);
         return arow[x];
     }
 
@@ -106,7 +106,7 @@ namespace imgdraw2d {
         const uint32_t w = width();
         const uint32_t h = height();
         for( uint32_t y = 0; y<h; ++y ) {
-            Image::RawImage::row_access tgtRow = row(y);
+            Image::row_access tgtRow = row(y);
             for( uint32_t x = 0; x<w; ++x ) {
                 tgtRow[x] = color;
             }
@@ -119,7 +119,7 @@ namespace imgdraw2d {
         const std::size_t endW = std::min(w, ex );
         const std::size_t endH = std::min(h, ey );
         for( std::size_t j = sy; j<endH; ++j ) {
-            Image::RawImage::row_access tgtRow = row(j);
+            Image::row_access tgtRow = row(j);
             for( std::size_t i = sx; i<endW; ++i ) {
                 tgtRow[i] = color;
             }
@@ -133,8 +133,8 @@ namespace imgdraw2d {
         const std::size_t endH = std::min(h, y + source.height() );
 
         for( std::size_t j = y; j<endH; ++j ) {
-            Image::RawImage::row_const_access srcRow = source.row( j - y );
-            Image::RawImage::row_access tgtRow = row(j);
+            Image::row_const_access srcRow = source.row( j - y );
+            Image::row_access tgtRow = row(j);
             for( std::size_t i = x; i<endW; ++i ) {
                 tgtRow[i] = srcRow[ i - x ];
             }
@@ -233,8 +233,8 @@ namespace imgdraw2d {
 
         /// compare pixels
         for(png::uint_32 y=0; y<height; ++y) {
-            Image::RawImage::row_const_access rowA = row( y );
-            Image::RawImage::row_const_access rowB = image.get_row( y );
+            Image::row_const_access rowA = row( y );
+            Image::row_const_access rowB = image.get_row( y );
             for(png::uint_32 x=0; x<width; ++x) {
                 const Pixel& pix = rowA[x];
                 const Pixel& other = rowB[x];
