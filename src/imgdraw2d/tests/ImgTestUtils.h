@@ -30,25 +30,35 @@
 #include <sstream>
 
 
+
+#ifndef IMGDRAW2D_REFIMG_DIR
+    #define IMGDRAW2D_REFIMG_DIR "refimg/"
+#endif
+#ifndef IMGDRAW2D_OUTIMG_DIR
+    #define IMGDRAW2D_OUTIMG_DIR "outimg/"
+#endif
+
+
+
 #define CONCAT_STRINGS( strings )            ((std::stringstream&)(std::stringstream() << strings)).str()
 
 
 #define IMAGE_SAVE( image, imgSuite )                                                                                           \
     {                                                                                                                           \
         const std::string testCaseName = boost::unit_test::framework::current_test_case().p_name;                               \
-        const std::string imgPath = std::string("outimg/") + imgSuite + std::string("/") + testCaseName+ std::string(".png");   \
+        const std::string imgPath = CONCAT_STRINGS( IMGDRAW2D_OUTIMG_DIR << imgSuite << "/" << testCaseName << ".png" );        \
         image.save( imgPath );                                                                                                  \
     }
 
 
 #define IMAGE_CHECK( image, path )                                                                              \
     {                                                                                                           \
-        const std::string sourcePath = CONCAT_STRINGS( "refimg/" << path << ".png" );                           \
-        const std::string testPath   = CONCAT_STRINGS( "outimg/" << path << ".png" );                           \
+        const std::string sourcePath = CONCAT_STRINGS( IMGDRAW2D_REFIMG_DIR << path << ".png" );                \
+        const std::string testPath   = CONCAT_STRINGS( IMGDRAW2D_OUTIMG_DIR << path << ".png" );                \
+        const std::string diffPath   = CONCAT_STRINGS( IMGDRAW2D_OUTIMG_DIR << path << ".xdiff.png" );          \
         image.save( testPath );                                                                                 \
-        const bool compare = imgdraw2d::ImageComparator::compare(  image, sourcePath,                           \
-                                                        CONCAT_STRINGS( "outimg/" << path << ".xdiff.png" ) );  \
-        BOOST_CHECK_MESSAGE( compare, CONCAT_STRINGS( testPath <<  " differs from " << sourcePath )  );         \
+        const bool compare = imgdraw2d::ImageComparator::compare(  image, sourcePath, diffPath );               \
+        BOOST_CHECK_MESSAGE( compare, CONCAT_STRINGS( testPath << " differs from " << sourcePath )  );          \
     }
 
 
@@ -63,7 +73,7 @@
     {                                                                                                              \
         const std::string testCaseName = boost::unit_test::framework::current_test_case().p_name;                  \
         const std::string imgDiffPath = checkSuite + std::string("/") + testCaseName + std::string(".xdiff.png");  \
-        const bool compare = imgdraw2d::ImageComparator::compare(  imageA, imageB, imgDiffPath );                  \
+        const bool compare = imgdraw2d::ImageComparator::compare( imageA, imageB, imgDiffPath );                   \
         BOOST_CHECK_MESSAGE( compare, "given images differ" );                                                     \
     }
 
