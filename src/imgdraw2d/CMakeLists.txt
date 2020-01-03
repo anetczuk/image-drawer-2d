@@ -21,4 +21,6 @@ include_directories(
 )
 
 
-add_subdirectories_recursive()
+add_subdirectory( src )
+
+add_subdirectory( tests )

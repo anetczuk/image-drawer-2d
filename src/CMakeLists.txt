@@ -40,4 +40,4 @@ if( CMAKE_TESTING_ENABLED )
 endif()
 
 
-add_subdirectories_recursive()
+add_subdirectory( imgdraw2d )

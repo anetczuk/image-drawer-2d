@@ -13,10 +13,13 @@ macro(current_dir_name output_var)
 endmacro()
 
 
-function(add_subdirectories_recursive)
+##
+## concept of function "add_subdirectories_recursive" is bad by design (causes CMake errors)
+##
+function( add_subdirectories )
     ## returns files in alphabetic order
     set( subdirs_list )
-    file(GLOB_RECURSE cmake_files */CMakeLists.txt )
+    file(GLOB cmake_files */CMakeLists.txt )
     foreach(item ${cmake_files})
         get_filename_component( dir_path ${item} DIRECTORY)
         
